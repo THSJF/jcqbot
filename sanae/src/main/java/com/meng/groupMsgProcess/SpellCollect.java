@@ -18,9 +18,11 @@ public class SpellCollect extends BaseModule {
 	private ConcurrentHashMap<Long,HashSet<SpellCard>> spellsMap=new ConcurrentHashMap<>();
 	public ConcurrentHashMap<Long,ArchievementBean> archiMap=new ConcurrentHashMap<>();
 	private HashSet<Long> todaySign=new HashSet<>();
+	private SpellCollectBean spelbean=new SpellCollectBean();
 	private File archiFile;
 	private File spellFile;
 	private File signedFile;
+	private File beanF;
 	public ArrayList<Archievement> archList=new ArrayList<>();
 
 	@Override
@@ -46,6 +48,18 @@ public class SpellCollect extends BaseModule {
 		Type type3=new TypeToken<HashSet<Long>>(){	
 		}.getType();
 		todaySign = Autoreply.gson.fromJson(Tools.FileTool.readString(signedFile), type3);
+		
+		
+		beanF = new File(Autoreply.appDirectory + "/properties/sanaeSpellsBean.json");
+        if (!beanF.exists()) {
+            saveSpellConfig();
+        }
+        spelbean = Autoreply.gson.fromJson(Tools.FileTool.readString(spellFile), new TypeToken<SpellCollectBean>() {}.getType());
+		spelbean.spellsMap=spellsMap;
+		spelbean.archiMap=archiMap;
+		spelbean.todaySign=todaySign;
+		
+		saveBeanConfig();
 		archList.add(new Archievement("恶魔领地", "收集东方红魔乡全部符卡", ArchievementBean.th6All, TH06GameData.spellcards.length, TH06GameData.spellcards));
 		archList.add(new Archievement("完美樱花", "收集东方妖妖梦全部符卡", ArchievementBean.th7All, TH07GameData.spellcards.length, TH07GameData.spellcards));
 		archList.add(new Archievement("永恒之夜", "收集东方永夜抄全部符卡", ArchievementBean.th8All, TH08GameData.spellcards.length, TH08GameData.spellcards));
@@ -265,4 +279,21 @@ public class SpellCollect extends BaseModule {
         }
     }
 
+	private void saveBeanConfig() {
+        try {
+            FileOutputStream fos = new FileOutputStream(beanF);
+            OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
+            writer.write(Autoreply.gson.toJson(spelbean));
+            writer.flush();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+	
+	public class SpellCollectBean{
+		public ConcurrentHashMap<Long,HashSet<SpellCard>> spellsMap=new ConcurrentHashMap<>();
+		public ConcurrentHashMap<Long,ArchievementBean> archiMap=new ConcurrentHashMap<>();
+		public HashSet<Long> todaySign=new HashSet<>();
+	}
 }
