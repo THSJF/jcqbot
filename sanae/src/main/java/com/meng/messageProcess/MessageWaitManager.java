@@ -1,28 +1,25 @@
 package com.meng.messageProcess;
+
 import com.meng.*;
 import com.meng.config.*;
 import java.util.*;
 
-public class MessageWaitManager {
-	public static MessageWaitManager ins;
+public class MessageWaitManager extends BaseModule {
+
 	private boolean noTip=true;
-	public void addTip(long InGroup, long toQQ, String msg) {
-		ConfigManager.ins.SanaeConfig.delayMsg.add(new MessageWait(InGroup, toQQ, msg));
-		noTip = false;
-		ConfigManager.ins.saveSanaeConfig();
+
+	@Override
+	public BaseModule load() {
+		enable = true;
+		return this;
 	}
 
-	public void addTip(long toQQ, String msg) {
-		ConfigManager.ins.SanaeConfig.delayMsg.add(new MessageWait(-1, toQQ, msg));
-		noTip = false;
-		ConfigManager.ins.saveSanaeConfig();
-	}
-
-	public void check(long fromGroup, long fromQQ) {
+	@Override
+	public boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (noTip) {
-			return;
+			return false;
 		}
-		Iterator<MessageWait> iter=ConfigManager.ins.SanaeConfig.delayMsg.iterator();
+		Iterator<MessageWait> iter=ConfigManager.instence.SanaeConfig.delayMsg.iterator();
 		while (iter.hasNext()) {
 			MessageWait mw=iter.next();
 			if (mw.q == fromQQ) {
@@ -35,12 +32,25 @@ public class MessageWaitManager {
 				}
 			}
 		}
-		if (ConfigManager.ins.SanaeConfig.delayMsg.size() == 0) {
+		if (ConfigManager.instence.SanaeConfig.delayMsg.size() == 0) {
 			noTip = true;
 		}
-		ConfigManager.ins.saveSanaeConfig();
-		return;
+		ConfigManager.instence.saveSanaeConfig();
+		return false;
 	}
+
+	public void addTip(long InGroup, long toQQ, String msg) {
+		ConfigManager.instence.SanaeConfig.delayMsg.add(new MessageWait(InGroup, toQQ, msg));
+		noTip = false;
+		ConfigManager.instence.saveSanaeConfig();
+	}
+
+	public void addTip(long toQQ, String msg) {
+		ConfigManager.instence.SanaeConfig.delayMsg.add(new MessageWait(-1, toQQ, msg));
+		noTip = false;
+		ConfigManager.instence.saveSanaeConfig();
+	}
+
 	public class MessageWait {
 		public long g=0;
 		public long q=0;

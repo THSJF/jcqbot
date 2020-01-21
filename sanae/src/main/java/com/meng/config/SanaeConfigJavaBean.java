@@ -41,7 +41,7 @@ public class SanaeConfigJavaBean {
 			return null;
 		}
 		ReportBean rb= reportList.remove(0);
-		ConfigManager.ins.saveSanaeConfig();
+		ConfigManager.instence.saveSanaeConfig();
 		return rb;
 	}
 
@@ -50,7 +50,7 @@ public class SanaeConfigJavaBean {
 			return;
 		}
 		reportList.add(reportList.remove(0));
-		ConfigManager.ins.saveSanaeConfig();
+		ConfigManager.instence.saveSanaeConfig();
 	}
 
 	ReportBean getReport() {
@@ -65,7 +65,7 @@ public class SanaeConfigJavaBean {
 			return null;
 		}
 		BugReportBean brb= bugReportList.remove(0);
-		ConfigManager.ins.saveSanaeConfig();
+		ConfigManager.instence.saveSanaeConfig();
 		return brb;
 	}
 
@@ -74,7 +74,7 @@ public class SanaeConfigJavaBean {
 			return;
 		}
 		bugReportList.add(bugReportList.remove(0));
-		ConfigManager.ins.saveSanaeConfig();
+		ConfigManager.instence.saveSanaeConfig();
 	}
 
 	BugReportBean getBugReport() {

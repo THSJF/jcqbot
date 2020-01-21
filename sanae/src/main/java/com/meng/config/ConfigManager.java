@@ -4,8 +4,7 @@ import com.google.gson.reflect.*;
 import com.meng.*;
 import com.meng.bilibili.live.*;
 import com.meng.bilibili.main.*;
-import com.meng.dice.*;
-import com.meng.groupChat.*;
+import com.meng.groupMsgProcess.*;
 import com.meng.messageProcess.*;
 import com.meng.tip.*;
 import com.meng.tools.*;
@@ -22,7 +21,7 @@ import org.java_websocket.exceptions.*;
 import org.java_websocket.handshake.*;
 
 public class ConfigManager extends WebSocketClient {
-	public static ConfigManager ins;
+	public static ConfigManager instence;
     public RanConfigBean RanConfig = new RanConfigBean();
 	public SanaeConfigJavaBean SanaeConfig=new SanaeConfigJavaBean();
 	private File SanaeConfigFile;
@@ -89,42 +88,7 @@ public class ConfigManager extends WebSocketClient {
 				Type type = new TypeToken<RanConfigBean>() {
 				}.getType();
 				RanConfig = Autoreply.gson.fromJson(dataRec.readString(), type);
-				Autoreply.ins.threadPool.execute(new Runnable(){
-
-						@Override
-						public void run() {
-							Autoreply.sleeping = false;
-							SeqManager.ins = new SeqManager();
-							Autoreply.ins.groupMemberChangerListener = new GroupMemberChangerListener();
-							Autoreply.ins.adminMessageProcessor = new AdminMessageProcessor();
-							RepeaterManager.ins = new RepeaterManager();
-							Autoreply.ins.birthdayTip = new BirthdayTip();
-							Autoreply.ins.spellCollect = new SpellCollect();
-							Autoreply.ins.diceImitate = new DiceImitate();
-							Autoreply.ins.threadPool.execute(Autoreply.ins.timeTip);
-							FaithManager.ins = new FaithManager();
-							MessageFireWall.ins = new MessageFireWall();
-							DicReply.ins = new DicReply();
-							MessageWaitManager.ins = new MessageWaitManager();
-							Autoreply.ins.threadPool.execute(new UpdateListener());
-							Autoreply.ins.threadPool.execute(new LiveListener());
-							List<Group> groupList=Autoreply.CQ.getGroupList();
-							for (Group g:groupList) {
-								List<com.sobte.cqp.jcq.entity.Member> mlist=Autoreply.CQ.getGroupMemberList(g.getId());
-								for (com.sobte.cqp.jcq.entity.Member m:mlist) {
-									if (m.getQqId() == 2089693971L) {
-										Autoreply.ins.SeijiaInThis.add(g.getId());
-										break;
-									}
-								}
-								if (!Autoreply.ins.SeijiaInThis.contains(g.getId())) {
-									RepeaterManager.ins.addRepeater(g.getId());
-								}
-							}
-							Autoreply.ins.enable();
-							System.out.println("load success");
-						}
-					});
+				ModuleManager.instence.getModule(SeqManager.class.getSimpleName()).load();
 				break;
 			case SanaeDataPack.opGameOverSpell:
 				resultMap.put(dataRec.getOpCode(), new TaskResult(dataRec.readString()));

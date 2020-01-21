@@ -1,7 +1,7 @@
 package com.meng.tools;
 
 import com.meng.*;
-import com.meng.gameData.TouHou.*;
+import com.meng.game.TouHou.*;
 import com.sobte.cqp.jcq.entity.*;
 import java.io.*;
 import java.net.*;
@@ -142,13 +142,6 @@ public class Tools {
 	}
 
 	public static class CQ {
-		public static boolean checkAt(long fromGroup, long fromQQ, String msg) {
-			if (Autoreply.ins.CC.getAt(msg) == Autoreply.CQ.getLoginQQ()) {      
-				Autoreply.sendMessage(fromGroup, 0, msg.replace("[CQ:at,qq=" + Autoreply.CQ.getLoginQQ() + "]", "[CQ:at,qq=" + fromQQ + "]"));
-				return true;
-			}
-			return false;
-		}
 		public static void findQQInAllGroup(long fromGroup, long fromQQ, String msg) {
 			long findqq;
 			try {

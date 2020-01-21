@@ -5,6 +5,7 @@ import com.meng.*;
 import com.meng.bilibili.*;
 import com.meng.bilibili.main.*;
 import com.meng.config.*;
+import com.meng.groupMsgProcess.*;
 import com.meng.tools.*;
 
 public class LiveListener implements Runnable {
@@ -13,7 +14,7 @@ public class LiveListener implements Runnable {
 	public void run() {
 		while (true) {
 			try {
-				for (BiliMaster personInfo : ConfigManager.ins.SanaeConfig.biliMaster.values()) {
+				for (BiliMaster personInfo : ConfigManager.instence.SanaeConfig.biliMaster.values()) {
 					if (personInfo.roomID == 0 || personInfo.roomID == -1) {
 						continue;
 					}
@@ -52,7 +53,7 @@ public class LiveListener implements Runnable {
         JsonObject data = new JsonParser().parse(jsonInHtml).getAsJsonObject().get("baseInfoRes").getAsJsonObject().get("data").getAsJsonObject();
 		for (int i = 0, groupListSize = p.fans.size(); i < groupListSize; i++) {
             BiliMaster.FansInGroup fans = p.fans.get(i);
-			if (FaithManager.ins.getFaith(fans.qq) > 0) {
+			if (((FaithManager)ModuleManager.instence.getModule(FaithManager.class)).getFaith(fans.qq) > 0) {
 				Autoreply.sendMessage(fans.group, 0, String.format("%s你关注的主播「%s」开播啦\n房间号:%d\n房间标题:%s\n分区:%s", Autoreply.CC.at(fans.qq), userName, p.roomID, data.get("title").getAsString(), data.get("parent_area_name").getAsString()));
 				try {
 					Thread.sleep(1000);

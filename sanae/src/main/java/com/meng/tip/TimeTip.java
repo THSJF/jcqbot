@@ -1,11 +1,11 @@
 package com.meng.tip;
 
 import com.meng.*;
-import com.meng.config.*;
-import java.util.*;
-import com.sobte.cqp.jcq.entity.*;
-import com.meng.tools.*;
 import com.meng.bilibili.*;
+import com.meng.config.*;
+import com.meng.groupMsgProcess.*;
+import com.sobte.cqp.jcq.entity.*;
+import java.util.*;
 
 public class TimeTip implements Runnable {
 
@@ -32,18 +32,18 @@ public class TimeTip implements Runnable {
             Calendar c = Calendar.getInstance();
             if (c.get(Calendar.MINUTE) == 0) {
 				if (c.get(Calendar.HOUR_OF_DAY) == 11) {
-					for (long l : ConfigManager.ins.RanConfig.adminList) {
+					for (long l : ConfigManager.instence.RanConfig.adminList) {
 						Autoreply.CQ.sendLikeV2(l, 10);
 					}
-					for (long l : ConfigManager.ins.SanaeConfig.zanSet) {
+					for (long l : ConfigManager.instence.SanaeConfig.zanSet) {
 						Autoreply.CQ.sendLikeV2(l, 10);
 					}
 				}
 				if (c.get(Calendar.HOUR_OF_DAY) == 0) {
-					for (BiliMaster bm:ConfigManager.ins.SanaeConfig.biliMaster.values()) {
+					for (BiliMaster bm:ConfigManager.instence.SanaeConfig.biliMaster.values()) {
 						for (BiliMaster.FansInGroup fans:bm.fans) {
-							if (FaithManager.ins.getFaith(fans.qq) > 0) {
-								FaithManager.ins.subFaith(fans.qq, 1);
+							if (((FaithManager)ModuleManager.instence.getModule(FaithManager.class)).getFaith(fans.qq) > 0) {
+								((FaithManager)ModuleManager.instence.getModule(FaithManager.class)).subFaith(fans.qq, 1);
 							}
 						}
 					}

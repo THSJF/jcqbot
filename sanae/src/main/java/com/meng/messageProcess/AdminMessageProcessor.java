@@ -2,13 +2,13 @@ package com.meng.messageProcess;
 
 import com.meng.*;
 import com.meng.config.*;
+import com.meng.groupMsgProcess.*;
 import com.meng.tools.*;
 import com.meng.tools.override.*;
 import com.sobte.cqp.jcq.entity.*;
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
-import com.meng.groupChat.*;
-import java.io.*;
 
 public class AdminMessageProcessor {
 	private MyLinkedHashMap<String,String> masterPermission=new MyLinkedHashMap<>();
@@ -42,7 +42,7 @@ public class AdminMessageProcessor {
     public boolean check(final long fromGroup, final long fromQQ, final String msg) {
 		Member m=Autoreply.CQ.getGroupMemberInfo(fromGroup, fromQQ);
 		boolean isGroupAdmin=m == null ?false: m.getAuthority() > 1;
-		if (ConfigManager.ins.isMaster(fromQQ)) {
+		if (ConfigManager.instence.isMaster(fromQQ)) {
 			if (msg.equals("-help")) {
 				Autoreply.sendMessage(fromGroup, 0, masterPermission.toString());
 				return true;
@@ -81,7 +81,7 @@ public class AdminMessageProcessor {
                     long qq = qqs.get(i);
                     sb.append(qq).append(" ");
 				}
-                ConfigManager.ins.RanConfig.QQNotReply.addAll(qqs);
+                ConfigManager.instence.RanConfig.QQNotReply.addAll(qqs);
                 Autoreply.sendMessage(fromGroup, fromQQ, sb.toString());
                 return true;
 			}
@@ -93,7 +93,7 @@ public class AdminMessageProcessor {
                     long qq = qqs.get(i);
                     sb.append(qq).append(" ");
 				}
-                ConfigManager.ins.RanConfig.blackListQQ.addAll(qqs);
+                ConfigManager.instence.RanConfig.blackListQQ.addAll(qqs);
                 Autoreply.sendMessage(fromGroup, fromQQ, sb.toString());
                 return true;
 			}
@@ -104,7 +104,7 @@ public class AdminMessageProcessor {
                 int le = groups.length;
                 for (int i = 1; i < le; ++i) {
                     sb.append(groups[i]).append(" ");
-                    ConfigManager.ins.RanConfig.blackListGroup.add(Long.parseLong(groups[i]));
+                    ConfigManager.instence.RanConfig.blackListGroup.add(Long.parseLong(groups[i]));
 				}
                 Autoreply.sendMessage(fromGroup, fromQQ, sb.toString());
                 return true;
@@ -130,19 +130,19 @@ public class AdminMessageProcessor {
                 return true;
 			}
 			if (msg.startsWith("-老婆列表.添加")) {
-				ConfigManager.ins.SanaeConfig.zanSet.addAll(Autoreply.ins.CC.getAts(msg));
-				ConfigManager.ins.saveSanaeConfig();
+				ConfigManager.instence.SanaeConfig.zanSet.addAll(Autoreply.ins.CC.getAts(msg));
+				ConfigManager.instence.saveSanaeConfig();
 				Autoreply.sendMessage(fromGroup, fromQQ, "已添加至老婆列表");
 				return true;
 			}
 			if (msg.startsWith("-老婆列表.移除")) {
-				ConfigManager.ins.SanaeConfig.zanSet.removeAll(Autoreply.ins.CC.getAts(msg));
-				ConfigManager.ins.saveSanaeConfig();
+				ConfigManager.instence.SanaeConfig.zanSet.removeAll(Autoreply.ins.CC.getAts(msg));
+				ConfigManager.instence.saveSanaeConfig();
 				Autoreply.sendMessage(fromGroup, fromQQ, "已从老婆列表移除");
 				return true;
 			}
 		}
-        if (ConfigManager.ins.isAdmin(fromQQ) || isGroupAdmin) {
+        if (ConfigManager.instence.isAdmin(fromQQ) || isGroupAdmin) {
 			if (msg.equals("-help")) {
 				Autoreply.sendMessage(fromGroup, 0, adminPermission.toString());
 				return true;
@@ -153,36 +153,36 @@ public class AdminMessageProcessor {
 				for (int i=0;i < arr.length;++i) {
 					arr[i] = array[i + 2];
 				}
-				DicReply.ins.addKV(fromGroup, array[1], arr);
+				((DicReply)ModuleManager.instence.getModule(DicReply.class)).addKV(fromGroup, array[1], arr);
 				Autoreply.sendMessage(fromGroup, fromQQ, "KV已添加");
 				return true;
 			}
 			if (msg.startsWith("-removeDic ")) {
-				DicReply.ins.removeK(fromGroup, msg.substring(11));
+				((DicReply)ModuleManager.instence.getModule(DicReply.class)).removeK(fromGroup, msg.substring(11));
 				Autoreply.sendMessage(fromGroup, fromQQ, "Key已移除");
 				return true;
 			}
 			if (msg.equals("-regex")) {
-				if (ConfigManager.ins.SanaeConfig.dicRegex.get(fromGroup) != null) {
-					if (ConfigManager.ins.SanaeConfig.dicRegex.get(fromGroup)) {
-						ConfigManager.ins.SanaeConfig.dicRegex.put(fromGroup, false);
+				if (ConfigManager.instence.SanaeConfig.dicRegex.get(fromGroup) != null) {
+					if (ConfigManager.instence.SanaeConfig.dicRegex.get(fromGroup)) {
+						ConfigManager.instence.SanaeConfig.dicRegex.put(fromGroup, false);
 						Autoreply.sendMessage(fromGroup, 0, "词库正则表达式已停用");
 					} else {
-						ConfigManager.ins.SanaeConfig.dicRegex.put(fromGroup, true);
+						ConfigManager.instence.SanaeConfig.dicRegex.put(fromGroup, true);
 						Autoreply.sendMessage(fromGroup, 0, "词库正则表达式已启用");
 					}
 				} else {
-					ConfigManager.ins.SanaeConfig.dicRegex.put(fromGroup, true);
+					ConfigManager.instence.SanaeConfig.dicRegex.put(fromGroup, true);
 					Autoreply.sendMessage(fromGroup, 0, "词库正则表达式已启用");
 				}
 			}
 			if (msg.equals("-发言数据")) {
-				HashMap<Integer,Integer> hashMap = GroupCounter.ins.getSpeak(fromGroup, Tools.CQ.getDate());
+				HashMap<Integer,Integer> hashMap = ((GroupCounter)ModuleManager.instence.getModule(GroupCounter.class)).getSpeak(fromGroup, Tools.CQ.getDate());
 				if (hashMap == null || hashMap.size() == 0) {
 					Autoreply.sendMessage(fromGroup, 0, "无数据");
 					return true;
 				}
-				StringBuilder sb=new StringBuilder(String.format("群内共有%d条消息,今日消息情况:\n", GroupCounter.ins.groupsMap.get(fromGroup).all));
+				StringBuilder sb=new StringBuilder(String.format("群内共有%d条消息,今日消息情况:\n", ((GroupCounter)ModuleManager.instence.getModule(GroupCounter.class)).groupsMap.get(fromGroup).all));
 				for (int i=0;i < 24;++i) {
 					if (hashMap.get(i) == null) {
 						continue;
@@ -191,14 +191,14 @@ public class AdminMessageProcessor {
 				}
 				Autoreply.sendMessage(fromGroup, 0, sb.toString());
 				try {
-					File pic=GroupCounter.ins.dchart.check(GroupCounter.ins.groupsMap.get(fromGroup));
+					File pic=((GroupCounter)ModuleManager.instence.getModule(GroupCounter.class)).dchart.check(((GroupCounter)ModuleManager.instence.getModule(GroupCounter.class)).groupsMap.get(fromGroup));
 					Autoreply.sendMessage(fromGroup, 0, Autoreply.ins.CC.image(pic));
 					pic.delete();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 				try {
-					File pic=GroupCounter.ins.mchart.check(GroupCounter.ins.groupsMap.get(fromGroup));
+					File pic=((GroupCounter)ModuleManager.instence.getModule(GroupCounter.class)).mchart.check(((GroupCounter)ModuleManager.instence.getModule(GroupCounter.class)).groupsMap.get(fromGroup));
 					Autoreply.sendMessage(fromGroup, 0, Autoreply.ins.CC.image(pic));
 					pic.delete();
 				} catch (IOException e) {
@@ -211,12 +211,12 @@ public class AdminMessageProcessor {
 					Autoreply.sendMessage(fromGroup, 0, "日期格式错误");
 					return true;
 				}
-				HashMap<Integer,Integer> hashMap = GroupCounter.ins.getSpeak(fromGroup, msg.substring(6));
+				HashMap<Integer,Integer> hashMap = ((GroupCounter)ModuleManager.instence.getModule(GroupCounter.class)).getSpeak(fromGroup, msg.substring(6));
 				if (hashMap == null || hashMap.size() == 0) {
 					Autoreply.sendMessage(fromGroup, 0, "无数据");
 					return true;
 				}
-				StringBuilder sb=new StringBuilder(String.format("群内共有%d条消息,今日消息情况:\n", GroupCounter.ins.groupsMap.get(fromGroup).all));
+				StringBuilder sb=new StringBuilder(String.format("群内共有%d条消息,今日消息情况:\n", ((GroupCounter)ModuleManager.instence.getModule(GroupCounter.class)).groupsMap.get(fromGroup).all));
 				for (int i=0;i < 24;++i) {
 					if (hashMap.get(i) == null) {
 						continue;
@@ -227,16 +227,16 @@ public class AdminMessageProcessor {
 				return true;
 			}
 			if (msg.equals(".早苗说话") || msg.equals(".bot on")) {
-				if (ConfigManager.ins.SanaeConfig.botOff.contains(fromGroup)) {
-					ConfigManager.ins.SanaeConfig.botOff.remove(fromGroup);
-					ConfigManager.ins.saveSanaeConfig();
+				if (ConfigManager.instence.SanaeConfig.botOff.contains(fromGroup)) {
+					ConfigManager.instence.SanaeConfig.botOff.remove(fromGroup);
+					ConfigManager.instence.saveSanaeConfig();
 					Autoreply.sendMessage(fromGroup, 0, "稳了");
 					return true;
 				}
 			}
 			if (msg.equals(".早苗闭嘴") || msg.equals(".bot off")) {
-				ConfigManager.ins.SanaeConfig.botOff.add(fromGroup);
-				ConfigManager.ins.saveSanaeConfig();
+				ConfigManager.instence.SanaeConfig.botOff.add(fromGroup);
+				ConfigManager.instence.saveSanaeConfig();
 				Autoreply.sendMessage(fromGroup, 0, "好吧");
 				return true;
 			}
@@ -259,7 +259,7 @@ public class AdminMessageProcessor {
 					Autoreply.sendMessage(fromGroup, 0, "太长了");
 					return true;
 				}
-				ConfigManager.ins.setWelcome(fromGroup, wel);
+				ConfigManager.instence.setWelcome(fromGroup, wel);
 				Autoreply.sendMessage(fromGroup, 0, String.format("已设置入群欢迎词为「%s」", wel));
 				return true;
 			}

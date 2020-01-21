@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.meng.*;
 import com.meng.bilibili.*;
 import com.meng.config.*;
+import com.meng.groupMsgProcess.*;
 import com.meng.tools.*;
 import java.util.*;
 
@@ -16,7 +17,7 @@ public class UpdateListener implements Runnable {
     public void run() {
         while (true) {
             try {
-				for (BiliMaster updater:ConfigManager.ins.SanaeConfig.biliMaster.values()) {
+				for (BiliMaster updater:ConfigManager.instence.SanaeConfig.biliMaster.values()) {
                     NewVideoBean.Data.Vlist vlist = null;
                     NewArticleBean.Data.Articles articles = null;
                     try {
@@ -60,7 +61,7 @@ public class UpdateListener implements Runnable {
 		String userName = new JsonParser().parse(Tools.Network.getSourceCode("https://api.live.bilibili.com/live_user/v1/UserInfo/get_anchor_in_room?roomid=" + p.roomID)).getAsJsonObject().get("data").getAsJsonObject().get("info").getAsJsonObject().get("uname").getAsString();
         for (int i = 0, groupListSize = p.fans.size(); i < groupListSize; i++) {
             BiliMaster.FansInGroup fans = p.fans.get(i);
-			if (FaithManager.ins.getFaith(fans.qq) > 0) {
+			if (((FaithManager)ModuleManager.instence.getModule(FaithManager.class)).getFaith(fans.qq) > 0) {
 				Autoreply.sendMessage(fans.group, 0, String.format("%s你关注的up主「%s」发布了新视频\nAID:%d\n视频名:%s", Autoreply.CC.at(fans.qq), userName, vl.aid, vl.title));
 				try {
 					Thread.sleep(1000);
@@ -73,7 +74,7 @@ public class UpdateListener implements Runnable {
 		String userName = new JsonParser().parse(Tools.Network.getSourceCode("https://api.live.bilibili.com/live_user/v1/UserInfo/get_anchor_in_room?roomid=" + p.roomID)).getAsJsonObject().get("data").getAsJsonObject().get("info").getAsJsonObject().get("uname").getAsString();
 		for (int i = 0, groupListSize = p.fans.size(); i < groupListSize; i++) {
             BiliMaster.FansInGroup fans = p.fans.get(i);
-			if (FaithManager.ins.getFaith(fans.qq) > 0) {
+			if (((FaithManager)ModuleManager.instence.getModule(FaithManager.class)).getFaith(fans.qq) > 0) {
 				Autoreply.sendMessage(fans.group, 0, String.format("%s你关注的up主「%s」发布了新专栏\nCID:%d\n专栏名:%s", Autoreply.CC.at(fans.qq), userName, vl.id, vl.title));
 				try {
 					Thread.sleep(1000);
