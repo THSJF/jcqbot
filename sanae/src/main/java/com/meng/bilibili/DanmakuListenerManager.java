@@ -1,4 +1,4 @@
-package com.meng.bilibili.live;
+package com.meng.bilibili;
 
 import com.google.gson.*;
 import com.meng.bilibili.*;
@@ -26,8 +26,8 @@ public class DanmakuListenerManager {
 	}
 
 	public class DanmakuListener extends WebSocketClient {
-		public BiliMaster liveMaster;
-		public DanmakuListener(URI uri, BiliMaster liveMaster) {
+		public BiliUser liveMaster;
+		public DanmakuListener(URI uri, BiliUser liveMaster) {
 			super(uri);
 			this.liveMaster = liveMaster;
 		}

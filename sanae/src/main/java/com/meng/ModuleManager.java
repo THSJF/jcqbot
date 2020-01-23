@@ -1,9 +1,8 @@
 package com.meng;
 
-import java.util.*;
-import com.meng.messageProcess.*;
-import com.meng.groupMsgProcess.*;
 import com.meng.game.TouHou.*;
+import com.meng.groupMsgProcess.*;
+import java.util.*;
 
 public class ModuleManager extends BaseModule {
 	public static ModuleManager instence;

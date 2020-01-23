@@ -1,4 +1,4 @@
-package com.meng.messageProcess;
+package com.meng.groupMsgProcess;
 
 import com.meng.*;
 import com.meng.config.*;

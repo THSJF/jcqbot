@@ -1,12 +1,10 @@
 package com.meng;
 
 import com.google.gson.*;
-import com.meng.bilibili.live.*;
-import com.meng.bilibili.main.*;
+import com.meng.bilibili.*;
 import com.meng.config.*;
 import com.meng.game.TouHou.*;
 import com.meng.groupMsgProcess.*;
-import com.meng.messageProcess.*;
 import com.meng.tip.*;
 import com.meng.tools.*;
 import com.sobte.cqp.jcq.entity.*;
@@ -61,6 +59,8 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
+		ModuleManager.instence = new ModuleManager();
+		ModuleManager.instence.load();
 		Autoreply.ins.groupMemberChangerListener = new GroupMemberChangerListener();
 		Autoreply.ins.adminMessageProcessor = new AdminMessageProcessor();
 		Autoreply.ins.birthdayTip = new BirthdayTip();

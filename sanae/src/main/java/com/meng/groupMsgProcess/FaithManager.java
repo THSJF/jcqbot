@@ -4,7 +4,6 @@ import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
 import com.meng.bilibili.*;
-import com.meng.bilibili.main.*;
 import com.meng.config.*;
 import com.meng.tools.*;
 import com.meng.tools.override.*;
@@ -51,9 +50,9 @@ public class FaithManager extends BaseModule {
 			if (msg.startsWith("-关注b站 ")) {
 				String uid=msg.substring(6);
 				String name=new JsonParser().parse(Tools.Network.getSourceCode("https://api.bilibili.com/x/space/acc/info?mid=" + uid + "&jsonp=jsonp")).getAsJsonObject().get("data").getAsJsonObject().get("name").getAsString();
-				BiliMaster bm=ConfigManager.instence.SanaeConfig.biliMaster.get(Integer.parseInt(uid));
+				BiliUser bm=ConfigManager.instence.SanaeConfig.biliMaster.get(Integer.parseInt(uid));
 				if (bm == null) {
-					bm = new BiliMaster();
+					bm = new BiliUser();
 					bm.uid = Integer.parseInt(uid);
 					SpaceToLiveJavaBean sjb = Autoreply.gson.fromJson(Tools.Network.getSourceCode("https://api.live.bilibili.com/room/v1/Room/getRoomInfoOld?mid=" + bm.uid), SpaceToLiveJavaBean.class);
 					if (sjb.data.roomid == 0) {
@@ -74,7 +73,7 @@ public class FaithManager extends BaseModule {
 		try {
 			if (msg.startsWith("-取消关注b站 ")) {
 				String uid=msg.substring(8);
-				BiliMaster bm=ConfigManager.instence.SanaeConfig.biliMaster.get(Integer.parseInt(uid));
+				BiliUser bm=ConfigManager.instence.SanaeConfig.biliMaster.get(Integer.parseInt(uid));
 				if (bm == null) {
 					Autoreply.sendMessage(fromGroup, 0, "未关注,无需此操作");
 					return true;

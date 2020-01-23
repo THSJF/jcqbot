@@ -1,8 +1,7 @@
 package com.meng.config;
 
-import com.meng.*;
 import com.meng.bilibili.*;
-import com.meng.messageProcess.*;
+import com.meng.groupMsgProcess.*;
 import com.meng.tools.*;
 import java.util.*;
 import java.util.concurrent.*;
@@ -16,7 +15,7 @@ public class SanaeConfigJavaBean {
 	public ArrayList<BugReportBean> bugReportList=new ArrayList<>();
 	public HashMap<Long,Boolean> dicRegex = new HashMap<>();
 	public ArrayList<MessageWaitManager.MessageWait> delayMsg=new ArrayList<>();
-	public ConcurrentHashMap<Integer,BiliMaster> biliMaster = new ConcurrentHashMap<>();
+	public ConcurrentHashMap<Integer,BiliUser> biliMaster = new ConcurrentHashMap<>();
 
 	void addReport(long fromGroup, long fromQQ, String content) {
 		ReportBean report=new ReportBean();

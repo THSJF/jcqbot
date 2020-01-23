@@ -40,8 +40,8 @@ public class TimeTip implements Runnable {
 					}
 				}
 				if (c.get(Calendar.HOUR_OF_DAY) == 0) {
-					for (BiliMaster bm:ConfigManager.instence.SanaeConfig.biliMaster.values()) {
-						for (BiliMaster.FansInGroup fans:bm.fans) {
+					for (BiliUser bm:ConfigManager.instence.SanaeConfig.biliMaster.values()) {
+						for (BiliUser.FansInGroup fans:bm.fans) {
 							if (((FaithManager)ModuleManager.instence.getModule(FaithManager.class)).getFaith(fans.qq) > 0) {
 								((FaithManager)ModuleManager.instence.getModule(FaithManager.class)).subFaith(fans.qq, 1);
 							}

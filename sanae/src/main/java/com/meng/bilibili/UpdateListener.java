@@ -1,8 +1,7 @@
-package com.meng.bilibili.main;
+package com.meng.bilibili;
 
 import com.google.gson.*;
 import com.meng.*;
-import com.meng.bilibili.*;
 import com.meng.config.*;
 import com.meng.groupMsgProcess.*;
 import com.meng.tools.*;
@@ -10,24 +9,21 @@ import java.util.*;
 
 public class UpdateListener implements Runnable {
 
-    public UpdateListener() {
-    }
-
     @Override
     public void run() {
         while (true) {
             try {
-				for (BiliMaster updater:ConfigManager.instence.SanaeConfig.biliMaster.values()) {
+				for (BiliUser updater:ConfigManager.instence.SanaeConfig.biliMaster.values()) {
                     NewVideoBean.Data.Vlist vlist = null;
                     NewArticleBean.Data.Articles articles = null;
                     try {
                         vlist = Autoreply.gson.fromJson(Tools.Network.getSourceCode("https://space.bilibili.com/ajax/member/getSubmitVideos?mid=" + updater.uid + "&page=1&pagesize=1").replace("\"3\":", "\"n3\":").replace("\"4\":", "\"n4\":"), NewVideoBean.class).data.vlist.get(0);
 						if (vlist != null) {
 							if (vlist.created > updater.lastVideo) {
-								if (updater.needTipVideo) {
+								if (updater.isNeedTipVideo()) {
 									tipVideo(updater, vlist);
 								} else {
-									updater.needTipVideo = true;
+									updater.setNeedTipVideo(true);
 								}
 								updater.lastVideo = vlist.created;
 							}
@@ -38,10 +34,10 @@ public class UpdateListener implements Runnable {
                         articles = Autoreply.gson.fromJson(Tools.Network.getSourceCode("http://api.bilibili.com/x/space/article?mid=" + updater.uid + "&pn=1&ps=1&sort=publish_time&jsonp=jsonp"), NewArticleBean.class).data.articles.get(0);
 						if (articles != null) {
 							if (articles.publish_time > updater.lastArtical) {
-								if (updater.needTipArtical) {
+								if (updater.isNeedTipArtical()) {
 									tipArtical(updater, articles);
 								} else {
-									updater.needTipArtical = true;
+									updater.setNeedTipArtical(true);
 								}
 								updater.lastArtical = articles.publish_time;
 							}
@@ -57,10 +53,10 @@ public class UpdateListener implements Runnable {
         }
     }
 
-    private void tipVideo(BiliMaster p, NewVideoBean.Data.Vlist vl) {
+    private void tipVideo(BiliUser p, NewVideoBean.Data.Vlist vl) {
 		String userName = new JsonParser().parse(Tools.Network.getSourceCode("https://api.live.bilibili.com/live_user/v1/UserInfo/get_anchor_in_room?roomid=" + p.roomID)).getAsJsonObject().get("data").getAsJsonObject().get("info").getAsJsonObject().get("uname").getAsString();
         for (int i = 0, groupListSize = p.fans.size(); i < groupListSize; i++) {
-            BiliMaster.FansInGroup fans = p.fans.get(i);
+            BiliUser.FansInGroup fans = p.fans.get(i);
 			if (((FaithManager)ModuleManager.instence.getModule(FaithManager.class)).getFaith(fans.qq) > 0) {
 				Autoreply.sendMessage(fans.group, 0, String.format("%s你关注的up主「%s」发布了新视频\nAID:%d\n视频名:%s", Autoreply.CC.at(fans.qq), userName, vl.aid, vl.title));
 				try {
@@ -70,10 +66,10 @@ public class UpdateListener implements Runnable {
 		}
     }
 
-	private void tipArtical(BiliMaster p, NewArticleBean.Data.Articles vl) {
+	private void tipArtical(BiliUser p, NewArticleBean.Data.Articles vl) {
 		String userName = new JsonParser().parse(Tools.Network.getSourceCode("https://api.live.bilibili.com/live_user/v1/UserInfo/get_anchor_in_room?roomid=" + p.roomID)).getAsJsonObject().get("data").getAsJsonObject().get("info").getAsJsonObject().get("uname").getAsString();
 		for (int i = 0, groupListSize = p.fans.size(); i < groupListSize; i++) {
-            BiliMaster.FansInGroup fans = p.fans.get(i);
+            BiliUser.FansInGroup fans = p.fans.get(i);
 			if (((FaithManager)ModuleManager.instence.getModule(FaithManager.class)).getFaith(fans.qq) > 0) {
 				Autoreply.sendMessage(fans.group, 0, String.format("%s你关注的up主「%s」发布了新专栏\nCID:%d\n专栏名:%s", Autoreply.CC.at(fans.qq), userName, vl.id, vl.title));
 				try {
