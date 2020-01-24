@@ -11,6 +11,7 @@ import com.sobte.cqp.jcq.entity.*;
 import com.sobte.cqp.jcq.event.*;
 import java.util.*;
 import java.util.concurrent.*;
+import com.meng.remote.*;
 
 public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
@@ -28,6 +29,8 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 	public static final String userAgent="Mozilla/5.0 (Windows NT 6.1; WOW64; rv:28.0) Gecko/20100101 Firefox/28.0";
     public HashSet<Long> SeijiaInThis = new HashSet<>();
 	public BirthdayTip birthdayTip;
+
+	public RemoteWebSocket remoteWebSocket;
 
 	public static final long mainGroup=807242547L;
 	public static Gson gson;
@@ -62,6 +65,8 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 		Autoreply.ins.threadPool.execute(Autoreply.ins.timeTip);
 		Autoreply.ins.threadPool.execute(new UpdateListener());
 		Autoreply.ins.threadPool.execute(new LiveListener());
+		remoteWebSocket = new RemoteWebSocket(7777);
+		remoteWebSocket.start();
 		threadPool.execute(new Runnable(){
 
 				@Override
@@ -132,6 +137,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 		//	if (fromGroup != 807242547L){
 		//		return MSG_IGNORE;
 		//}
+		remoteWebSocket.sendMsg(1, fromGroup, fromQQ, msg, msgId);
 		if (!Autoreply.ins.SeijiaInThis.contains(fromGroup)) {
 			ConfigManager.instence.send(SanaeDataPack.encode(SanaeDataPack.opIncSpeak).write(fromGroup).write(fromQQ));
 		}
