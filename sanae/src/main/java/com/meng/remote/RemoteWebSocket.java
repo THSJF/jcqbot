@@ -45,16 +45,75 @@ public class RemoteWebSocket extends WebSocketServer {
 
 	@Override
 	public void onMessage(WebSocket conn, ByteBuffer message) {
-		BotDataPack botDataPack=BotDataPack.decode(message.array());
+		BotDataPack rec=BotDataPack.decode(message.array());
 		BotDataPack toSend=null;
-		switch (botDataPack.getOpCode()) {
-			case BotDataPack.getConfig:
-				toSend = BotDataPack.encode(botDataPack.getOpCode());
-				toSend.write(Autoreply.gson.toJson(ConfigManager.instence.RanConfig));
+		switch (rec.getOpCode()) {
+			case BotDataPack.opLoginQQ:
+				toSend = BotDataPack.encode(rec.getOpCode());
+				toSend.write(Autoreply.CQ.getLoginQQ());
+				break;
+			case BotDataPack.opLoginNick:
+				toSend = BotDataPack.encode(rec.getOpCode());
+				toSend.write(Autoreply.CQ.getLoginNick());
+				break;
+			case BotDataPack.opPrivateMsg:
+				toSend = BotDataPack.encode(rec.getOpCode());
+				toSend.write(Autoreply.sendMessage(0, rec.readLong(), rec.readString()));
+				break;
+			case BotDataPack.opGroupMsg:
+				toSend = BotDataPack.encode(rec.getOpCode());
+				toSend.write(Autoreply.sendMessage(rec.readLong(), 0, rec.readString()));
+				break;
+			case BotDataPack.opDiscussMsg:
+				//toSend = BotDataPack.encode(botDataPack.getOpCode());
+				break;
+			case BotDataPack.opDeleteMsg:
+				Autoreply.CQ.deleteMsg(rec.readInt());
+				break;
+			case BotDataPack.opSendLike:
+				Autoreply.CQ.sendLikeV2(rec.readLong(), rec.readInt());
+				break;
+			case BotDataPack.opCookies:
+				toSend = BotDataPack.encode(rec.getOpCode());
+				toSend .write(Autoreply.CQ.getCookies());
+				break;
+			case BotDataPack.opCsrfToken:
+				toSend = BotDataPack.encode(rec.getOpCode());
+				toSend.write(Autoreply.CQ.getCsrfToken());
+				break;
+			case BotDataPack.opRecord:
+				//	toSend = BotDataPack.encode(rec.getOpCode());
+				break;
+			case BotDataPack.opGroupKick:
+				Autoreply.CQ.setGroupKick(rec.readLong(), rec.readLong(), rec.readBoolean());
+				break;
+			case BotDataPack.opGroupBan:
+				Autoreply.CQ.setGroupBan(rec.readLong(), rec.readLong(), rec.readInt());
+				break;
+			case BotDataPack.opGroupAdmin:
+				Autoreply.CQ.setGroupAdmin(rec.readLong(), rec.readLong(), rec.readBoolean());
+				break;
+			case BotDataPack.opGroupWholeBan:
+				Autoreply.CQ.setGroupWholeBan(rec.readLong(), rec.readBoolean());
+				break;
+			case BotDataPack.opGroupAnonymousBan:
+				Autoreply.CQ.setGroupAnonymousBan(rec.readLong(), rec.readString(), rec.readLong());
+				break;
+			case BotDataPack.opGroupAnonymous:
+				Autoreply.CQ.setGroupAnonymous(rec.readLong(), rec.readBoolean());
+				break;
+			case BotDataPack.opGroupCard:
+				Autoreply.CQ.setGroupCard(rec.readLong(), rec.readLong(), rec.readString());
+				break;
+			case BotDataPack.opGroupLeave:
+				Autoreply.CQ.setGroupLeave(rec.readLong(), rec.readBoolean());
+				break;
+			case BotDataPack.opGroupSpecialTitle:
+				Autoreply.CQ.setGroupSpecialTitle(rec.readLong(), rec.readLong(), rec.readString(), rec.readLong());
 				break;
 			case BotDataPack.opGroupMemberInfo:
-				toSend = BotDataPack.encode(botDataPack.getOpCode());
-				Member m=Autoreply.ins.CQ.getGroupMemberInfo(botDataPack.readLong(), botDataPack.readLong());
+				toSend = BotDataPack.encode(rec.getOpCode());
+				Member m=Autoreply.ins.CQ.getGroupMemberInfo(rec.readLong(), rec.readLong());
 				toSend.
 					write(m.getGroupId()).
 					write(m.getQqId()).
@@ -72,10 +131,26 @@ public class RemoteWebSocket extends WebSocketServer {
 					write(m.isBad()).
 					write(m.isModifyCard());
 				break;
-			case BotDataPack.opGroupInfo:
-				toSend = BotDataPack.encode(botDataPack.getOpCode());
+			case BotDataPack.opDiscussLeave:
+				toSend = BotDataPack.encode(rec.getOpCode());
+				break;
+			case BotDataPack.opFriendAddRequest:
+				toSend = BotDataPack.encode(rec.getOpCode());
+				break;
+			case BotDataPack.opGroupMemberList:
+				toSend = BotDataPack.encode(rec.getOpCode());
+				break;
+			case BotDataPack.opGroupList:
+				toSend = BotDataPack.encode(rec.getOpCode());
+				break;
+			case BotDataPack.getConfig:
+				toSend = BotDataPack.encode(rec.getOpCode());
+				toSend.write(Autoreply.gson.toJson(ConfigManager.instence.RanConfig));
+				break;
+		/*	case BotDataPack.opGroupInfo:
+				toSend = BotDataPack.encode(rec.getOpCode());
 				ArrayList<Group> gl=(ArrayList<Group>) Autoreply.ins.CQ.getGroupList();
-				long gid=botDataPack.readLong();
+				long gid=rec.readLong();
 				for (Group g:gl) {
 					if (g.getId() == gid) {
 						toSend.write(g.getId()).write(g.getName());
@@ -83,7 +158,7 @@ public class RemoteWebSocket extends WebSocketServer {
 					}
 				}
 				break;
-
+*/
 		}
 		if (toSend != null) {
 			conn.send(toSend.getData());
@@ -97,7 +172,7 @@ public class RemoteWebSocket extends WebSocketServer {
 
 	@Override
 	public void onStart() {
-		setConnectionLostTimeout(100);
+		setConnectionLostTimeout(1800);
 	}
 
 	public void sendMsg(int type, long group, long qq, String msg, long msgId) {
