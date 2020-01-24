@@ -11,6 +11,19 @@ public class RemoteWebSocket extends WebSocketServer {
 
 	public RemoteWebSocket() {
 		super(new InetSocketAddress(7777));
+		Autoreply.ins.threadPool.execute(new Runnable(){
+
+				@Override
+				public void run() {
+					while (true) {
+						msgPack = BotDataPack.encode(BotDataPack.onGroupMsg);
+						try {
+							Thread.sleep(1000);
+							broadcast(msgPack.getData());
+						} catch (Exception e) {}
+					}
+				}
+			});
 	}
 	@Override
 	public void onOpen(WebSocket p1, ClientHandshake p2) {
@@ -29,17 +42,7 @@ public class RemoteWebSocket extends WebSocketServer {
 
 	@Override
 	public void onMessage(WebSocket conn, ByteBuffer message) {
-		Autoreply.ins.threadPool.execute(new Runnable(){
 
-				@Override
-				public void run() {
-					msgPack = BotDataPack.encode(BotDataPack.onGroupMsg);
-					try {
-						Thread.sleep(1000);
-						broadcast(msgPack.getData());
-					} catch (Exception e) {}
-				}
-			});
 	}
 
 	@Override
