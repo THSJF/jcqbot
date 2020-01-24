@@ -2,27 +2,22 @@ package com.meng.config;
 
 import com.google.gson.reflect.*;
 import com.meng.*;
-import com.meng.groupMsgProcess.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
-import java.nio.*;
 import java.nio.charset.*;
 import java.util.concurrent.*;
-import org.java_websocket.client.*;
-import org.java_websocket.exceptions.*;
-import org.java_websocket.handshake.*;
 
-public class ConfigManager extends WebSocketClient {
+public class ConfigManager {
 	public static ConfigManager instence;
     public RanConfigBean RanConfig = new RanConfigBean();
 	public SanaeConfigJavaBean SanaeConfig=new SanaeConfigJavaBean();
 	private File SanaeConfigFile;
+	public NetConfig netConfig;
 
 	private ConcurrentHashMap<Integer,TaskResult> resultMap=new ConcurrentHashMap<>();
-	public ConfigManager(URI uri) {
-		super(uri);
+	public ConfigManager() {
 		Type type = new TypeToken<SanaeConfigJavaBean>() {
 		}.getType();
 		SanaeConfigFile = new File(Autoreply.appDirectory + "/SanaeConfig.json");
@@ -44,114 +39,11 @@ public class ConfigManager extends WebSocketClient {
 			});
 	}
 
-	@Override
-	public void onMessage(String p1) {
-		System.out.println("strMsg:" + p1);
-	}
-
-	@Override
-	public void onOpen(ServerHandshake serverHandshake) {
-		send(SanaeDataPack.encode(SanaeDataPack.opConfigFile));
-		System.out.println("连接到蓝");
-		Autoreply.ins.threadPool.execute(new Runnable(){
-
-				@Override
-				public void run() {
-					try {
-						Thread.sleep(30000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					try {
-						send(SanaeDataPack.encode(SanaeDataPack.opHeartBeat));
-					} catch (WebsocketNotConnectedException e) {
-						System.out.println("和蓝的连接已断开");
-						e.printStackTrace();
-						reconnect();
-					}
-				}
-			});
-	}
-
-	@Override
-	public void onMessage(ByteBuffer bs) {	
-		SanaeDataPack dataRec=SanaeDataPack.decode(bs.array());
-		SanaeDataPack dataToSend=null;
-		switch (dataRec.getOpCode()) {
-			case SanaeDataPack.opConfigFile:
-				Type type = new TypeToken<RanConfigBean>() {
-				}.getType();
-				RanConfig = Autoreply.gson.fromJson(dataRec.readString(), type);
-				ModuleManager.instence.getModule(SeqManager.class.getSimpleName()).load();
-				break;
-			case SanaeDataPack.opGameOverSpell:
-				resultMap.put(dataRec.getOpCode(), new TaskResult(dataRec.readString()));
-				break;
-			case SanaeDataPack.opGameOverPersent:
-				resultMap.put(dataRec.getOpCode(), new TaskResult(dataRec.readInt()));
-				break;
-			case SanaeDataPack.opGrandma:
-				resultMap.put(dataRec.getOpCode(), new TaskResult(dataRec.readString()));
-				break;
-			case SanaeDataPack.opMusicName:
-				resultMap.put(dataRec.getOpCode(), new TaskResult(dataRec.readString()));
-				break;
-			case SanaeDataPack.opGotSpells:
-				resultMap.put(dataRec.getOpCode(), new TaskResult(dataRec.readString()));
-				break;
-			case SanaeDataPack.opNeta:
-				resultMap.put(dataRec.getOpCode(), new TaskResult(dataRec.readString()));
-				break;			
-			case SanaeDataPack.opSeqContent:
-				resultMap.put(dataRec.getOpCode(), new TaskResult(dataRec.readString()));
-				break;
-			case SanaeDataPack.opSendMsg:
-				Autoreply.sendMessage(dataRec.readLong(), dataRec.readLong(), dataRec.readString());
-				break;
-			case SanaeDataPack.opLiveList:
-				StringBuilder sb=new StringBuilder();
-				while (dataRec.hasNext()) {
-					sb.append(dataRec.readString()).append("正在直播:").append(dataRec.readLong()).append("\n");
-				}
-				resultMap.put(dataRec.getOpCode(), new TaskResult(sb.toString()));
-				break;
-			case SanaeDataPack.opLiveStart:
-				Autoreply.sendMessage(Autoreply.mainGroup, 0, dataRec.readString() + "开始直播" + dataRec.readLong());
-				break; 
-			case SanaeDataPack.opLiveStop:
-				Autoreply.sendMessage(Autoreply.mainGroup, 0, dataRec.readString() + "停止直播" + dataRec.readLong());
-				break;
-			case SanaeDataPack.opSpeakInliveRoom:
-				//直播间说话 string(主播称呼) long(blid) string(说话者称呼) long(说话者bid)
-				break; 
-			case SanaeDataPack.opNewVideo:
-				Autoreply.sendMessage(Autoreply.mainGroup, 0, dataRec.readString() + "发布新视频:" + dataRec.readString() + "(av" + dataRec.readLong() + ")");
-				break;
-			case SanaeDataPack.opNewArtical:
-				Autoreply.sendMessage(Autoreply.mainGroup, 0, dataRec.readString() + "发布新专栏:" + dataRec.readString() + "(cv" + dataRec.readLong() + ")");
-				break;
-			default:
-				dataToSend = SanaeDataPack.encode(SanaeDataPack.opNotification, dataRec);
-				dataToSend.write("操作类型错误");
-		}
-		if (dataToSend != null) {
-			try {
-				send(dataToSend);
-			} catch (WebsocketNotConnectedException e) {
-				e.printStackTrace();
-				reconnect();
-			}
-		}
-	}
-
-	@Override
-	public void onClose(int i, String s, boolean b) {
-
-	}
-
-	@Override
-	public void onError(Exception e) {
-		e.printStackTrace();
+	public void load() {
+		try {
+			netConfig = new NetConfig(new URI("ws://123.207.65.93:9760"));
+			netConfig.connect();
+		} catch (URISyntaxException e) {}
 	}
 
 	public String getOverSpell(long fromQQ) {
@@ -334,8 +226,14 @@ public class ConfigManager extends WebSocketClient {
         RanConfig.blackListQQ.add(qq);
         RanConfig.blackListGroup.add(group);
 		send(SanaeDataPack.encode(SanaeDataPack.opAddBlack).write(group).write(qq));
-        Autoreply.sendMessage(Autoreply.mainGroup, 0, "已将用户" + qq + "加入黑名单");
-        Autoreply.sendMessage(Autoreply.mainGroup, 0, "已将群" + group + "加入黑名单");
+		if (netConfig == null || netConfig.isClosed()) {
+			Autoreply.sendMessage(Autoreply.mainGroup, 0, "连接出错,未能将用户" + qq + "加入黑名单");
+			Autoreply.sendMessage(Autoreply.mainGroup, 0, "连接出错,未能将群" + group + "加入黑名单");
+
+		} else {
+			Autoreply.sendMessage(Autoreply.mainGroup, 0, "已将用户" + qq + "加入黑名单");
+			Autoreply.sendMessage(Autoreply.mainGroup, 0, "已将群" + group + "加入黑名单");
+		}
 		Autoreply.CQ.setGroupLeave(group, false);
     }
 
@@ -374,11 +272,14 @@ public class ConfigManager extends WebSocketClient {
 	}
 
 	public void send(final SanaeDataPack sdp) {
+		if (netConfig == null || netConfig.isClosed()) {
+			return;
+		}
 		Autoreply.ins.threadPool.execute(new Runnable(){
 
 				@Override
 				public void run() {
-					send(sdp.getData());
+					netConfig.send(sdp.getData());
 				}
 			});
 	}

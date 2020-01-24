@@ -9,7 +9,6 @@ import com.meng.tip.*;
 import com.meng.tools.*;
 import com.sobte.cqp.jcq.entity.*;
 import com.sobte.cqp.jcq.event.*;
-import java.net.*;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -53,14 +52,10 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 		gson = gb.create();
         // 返回如：D:\CoolQ\app\com.sobte.cqp.jcq\app\com.example.demo\
         System.out.println("开始加载");
-		try {
-			ConfigManager.instence = new ConfigManager(new URI("ws://123.207.65.93:9760"));
-			ConfigManager.instence.connect();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
+		ConfigManager.instence = new ConfigManager();
 		ModuleManager.instence = new ModuleManager();
 		ModuleManager.instence.load();
+		ConfigManager.instence.load();
 		Autoreply.ins.groupMemberChangerListener = new GroupMemberChangerListener();
 		Autoreply.ins.adminMessageProcessor = new AdminMessageProcessor();
 		Autoreply.ins.birthdayTip = new BirthdayTip();

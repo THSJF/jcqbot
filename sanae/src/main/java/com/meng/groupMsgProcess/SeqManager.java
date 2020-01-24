@@ -8,7 +8,7 @@ import java.lang.reflect.*;
 import java.util.*;
 
 public class SeqManager extends BaseModule {
-	
+
 	private ArrayList<SeqBean> seqs=new ArrayList<>();
 	private HashMap<String, ArrayList<String>> jsonData = new HashMap<>();
 
