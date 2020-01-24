@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
 import com.meng.config.javabeans.*;
+import com.meng.config.sanae.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.lang.reflect.*;
@@ -202,8 +203,11 @@ public class ConfigManager {
 		public int configPort = 0;
 		public int dicPort = 0;
 	}
-	
+
     public void saveConfig() {
+		SanaeDataPack sdp = SanaeDataPack.encode(SanaeDataPack.opConfigFile);
+		sdp.write(Autoreply.gson.toJson(Autoreply.instence.configManager.configJavaBean));
+		Autoreply.instence.sanaeServer.send(sdp);
         try {
             File file = new File(Autoreply.appDirectory + "configV3.json");
             FileOutputStream fos = new FileOutputStream(file);

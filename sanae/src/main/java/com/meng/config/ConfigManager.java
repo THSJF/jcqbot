@@ -2,6 +2,8 @@ package com.meng.config;
 
 import com.google.gson.reflect.*;
 import com.meng.*;
+import com.meng.config.*;
+import com.meng.remote.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.lang.reflect.*;
@@ -285,6 +287,9 @@ public class ConfigManager {
 	}
 
 	public void saveSanaeConfig() {
+		BotDataPack toSend = BotDataPack.encode(BotDataPack.getConfig);
+		toSend.write(Autoreply.gson.toJson(ConfigManager.instence.RanConfig));
+		Autoreply.ins.remoteWebSocket.broadcast(toSend.getData());
         try {
             FileOutputStream fos = new FileOutputStream(SanaeConfigFile);
             OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
