@@ -18,8 +18,9 @@ public class RemoteWebSocket extends WebSocketServer {
 					msgPack = BotDataPack.encode(BotDataPack.opGroupMsg);
 					try {
 						Thread.sleep(1000);
-					} catch (InterruptedException e) {}
-					broadcast(msgPack.getData());
+						broadcast(msgPack.getData());
+					} catch (Exception e) {}
+					
 				}
 			});
 	}
