@@ -7,6 +7,7 @@ import com.meng.*;
 import java.net.*;
 import com.sobte.cqp.jcq.entity.*;
 import java.util.*;
+import com.meng.config.*;
 
 public class RemoteWebSocket extends WebSocketServer {
 	BotDataPack msgPack;
@@ -46,41 +47,45 @@ public class RemoteWebSocket extends WebSocketServer {
 	public void onMessage(WebSocket conn, ByteBuffer message) {
 		BotDataPack botDataPack=BotDataPack.decode(message.array());
 		BotDataPack toSend=null;
-		switch(botDataPack.getOpCode()){
+		switch (botDataPack.getOpCode()) {
+			case BotDataPack.getConfig:
+				toSend = BotDataPack.encode(botDataPack.getOpCode());
+				toSend.write(Autoreply.gson.toJson(ConfigManager.instence.RanConfig));
+				break;
 			case BotDataPack.opGroupMemberInfo:
-				toSend=BotDataPack.encode(botDataPack.getOpCode());
-				Member m=Autoreply.ins.CQ.getGroupMemberInfo(botDataPack.readLong(),botDataPack.readLong());
+				toSend = BotDataPack.encode(botDataPack.getOpCode());
+				Member m=Autoreply.ins.CQ.getGroupMemberInfo(botDataPack.readLong(), botDataPack.readLong());
 				toSend.
-				write(m.getGroupId()).
-				write(m.getQqId()).
-				write(m.getNick()).
-				write(m.getCard()).
-				write(m.getGender()).
-				write(m.getAge()).
-				write(m.getArea()).
-				write(m.getAddTime().getTime()).
-				write(m.getLastTime().getTime()).
-				write(m.getLevelName()).
-				write(m.getAuthority()).
-				write(m.getTitle()).
-				write(m.getTitleExpire().getTime()).
-				write(m.isBad()).
-				write(m.isModifyCard());
+					write(m.getGroupId()).
+					write(m.getQqId()).
+					write(m.getNick()).
+					write(m.getCard()).
+					write(m.getGender()).
+					write(m.getAge()).
+					write(m.getArea()).
+					write(m.getAddTime().getTime()).
+					write(m.getLastTime().getTime()).
+					write(m.getLevelName()).
+					write(m.getAuthority()).
+					write(m.getTitle()).
+					write(m.getTitleExpire().getTime()).
+					write(m.isBad()).
+					write(m.isModifyCard());
 				break;
 			case BotDataPack.opGroupInfo:
-				toSend=BotDataPack.encode(botDataPack.getOpCode());
+				toSend = BotDataPack.encode(botDataPack.getOpCode());
 				ArrayList<Group> gl=(ArrayList<Group>) Autoreply.ins.CQ.getGroupList();
 				long gid=botDataPack.readLong();
-				for(Group g:gl){
-					if(g.getId()==gid){
+				for (Group g:gl) {
+					if (g.getId() == gid) {
 						toSend.write(g.getId()).write(g.getName());
 						break;
 					}
 				}
 				break;
-				
+
 		}
-		if(toSend!=null){
+		if (toSend != null) {
 			conn.send(toSend.getData());
 		}
 	}
