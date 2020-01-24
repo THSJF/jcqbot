@@ -65,7 +65,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 		Autoreply.ins.threadPool.execute(Autoreply.ins.timeTip);
 		Autoreply.ins.threadPool.execute(new UpdateListener());
 		Autoreply.ins.threadPool.execute(new LiveListener());
-		remoteWebSocket = new RemoteWebSocket(7777);
+		remoteWebSocket = new RemoteWebSocket();
 		remoteWebSocket.start();
 		threadPool.execute(new Runnable(){
 
