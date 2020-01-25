@@ -13,7 +13,8 @@ import com.meng.groupChat.Sequence.*;
 import com.meng.messageProcess.*;
 import com.meng.ocr.*;
 import com.meng.picProcess.*;
-import com.meng.picProcess.barcode.BarcodeManager;
+import com.meng.picProcess.barcode.*;
+import com.meng.remote.*;
 import com.meng.tip.*;
 import com.meng.tools.*;
 import com.meng.tools.override.*;
@@ -65,6 +66,8 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 	public SpellCollect spellCollect;
     public ExecutorService threadPool = Executors.newCachedThreadPool();
 
+	public RemoteWebSocket remoteWebSocket;
+
     public static String lastSend = " ";
     public static String lastSend2 = "  ";
     public static boolean tipedBreak = false;
@@ -113,7 +116,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 		cookieManager = new CookieManager();
         long startTime = System.currentTimeMillis();
         configManager = new ConfigManager();
-		
+
 		picEditManager = new PicEditManager();
 		picSearchManager = new PicSearchManager();
         groupMemberChangerListener = new GroupMemberChangerListener();
@@ -151,6 +154,8 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 			sanaeServer = new SanaeServer(9760);
 			sanaeServer.start();
 		} catch (Exception e) {}
+		remoteWebSocket = new RemoteWebSocket();
+		remoteWebSocket.start();
         FileTipManager fileTipManager = new FileTipManager();
         fileTipManager.addTip(807242547L, 1592608126L);
         //new TimeTipManager().start();
