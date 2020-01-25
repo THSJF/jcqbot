@@ -321,8 +321,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 			value = CQ.sendGroupMsg(fromGroup, msg);
 			((GroupCounter)ModuleManager.instence.getModule(GroupCounter.class)).onMsg(fromGroup, 0, "", 0);
         }
-		ins.remoteWebSocket.sendMsg(1, fromGroup, fromQQ, msg, value);
-        return value;
+		return value;
     }
 
 	public static int sendMessage(long fromGroup, long fromQQ, String[] msg) {
