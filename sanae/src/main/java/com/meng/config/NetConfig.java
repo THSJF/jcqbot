@@ -348,14 +348,8 @@ public class NetConfig extends WebSocketClient {
 		return ConfigManager.instence.SanaeConfig.getBugReport();
 	}
 
-	public void send(final SanaeDataPack sdp) {
-		Autoreply.ins.threadPool.execute(new Runnable(){
-
-				@Override
-				public void run() {
-					send(sdp.getData());
-				}
-			});
+	public void send(SanaeDataPack sdp) {
+		send(sdp.getData());
     }
 
 }

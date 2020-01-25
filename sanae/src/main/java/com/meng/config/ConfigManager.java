@@ -273,17 +273,11 @@ public class ConfigManager {
 		return SanaeConfig.getBugReport();
 	}
 
-	public void send(final SanaeDataPack sdp) {
+	public void send(SanaeDataPack sdp) {
 		if (netConfig == null || netConfig.isClosed()) {
 			return;
 		}
-		Autoreply.ins.threadPool.execute(new Runnable(){
-
-				@Override
-				public void run() {
-					netConfig.send(sdp.getData());
-				}
-			});
+		netConfig.send(sdp.getData());
 	}
 
 	public void saveSanaeConfig() {

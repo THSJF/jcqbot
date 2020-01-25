@@ -8,58 +8,23 @@ import com.meng.game.TouHou.spellCollect.*;
 import com.meng.game.TouHou.zun.*;
 import com.meng.tools.*;
 import java.io.*;
-import java.lang.reflect.*;
 import java.nio.charset.*;
 import java.util.*;
 import java.util.concurrent.*;
 
 public class SpellCollect extends BaseModule {
-	
-	private ConcurrentHashMap<Long,HashSet<SpellCard>> spellsMap=new ConcurrentHashMap<>();
-	public ConcurrentHashMap<Long,ArchievementBean> archiMap=new ConcurrentHashMap<>();
-	private HashSet<Long> todaySign=new HashSet<>();
+
 	private SpellCollectBean spelbean=new SpellCollectBean();
-	private File archiFile;
-	private File spellFile;
-	private File signedFile;
 	private File beanF;
 	public ArrayList<Archievement> archList=new ArrayList<>();
 
 	@Override
 	public BaseModule load() {
-		spellFile = new File(Autoreply.appDirectory + "/properties/sanaeSpells.json");
-        if (!spellFile.exists()) {
-            saveSpellConfig();
-        }
-        Type type = new TypeToken<ConcurrentHashMap<Long,HashSet<SpellCard>>>() {
-        }.getType();
-        spellsMap = Autoreply.gson.fromJson(Tools.FileTool.readString(spellFile), type);
-		archiFile = new File(Autoreply.appDirectory + "/properties/archievement.json");
-        if (!archiFile.exists()) {
-            saveArchiConfig();
-        }
-        Type type2 = new TypeToken<ConcurrentHashMap<Long,ArchievementBean>>() {
-        }.getType();
-        archiMap = Autoreply.gson.fromJson(Tools.FileTool.readString(archiFile), type2);
-		signedFile = new File(Autoreply.appDirectory + "/properties/sign.json");
-		if (!signedFile.exists()) {
-			saveSignConfig();
-		}
-		Type type3=new TypeToken<HashSet<Long>>(){	
-		}.getType();
-		todaySign = Autoreply.gson.fromJson(Tools.FileTool.readString(signedFile), type3);
-		
-		
 		beanF = new File(Autoreply.appDirectory + "/properties/sanaeSpellsBean.json");
         if (!beanF.exists()) {
-            saveSpellConfig();
+            saveBeanConfig();
         }
-        spelbean = Autoreply.gson.fromJson(Tools.FileTool.readString(spellFile), new TypeToken<SpellCollectBean>() {}.getType());
-		spelbean.spellsMap=spellsMap;
-		spelbean.archiMap=archiMap;
-		spelbean.todaySign=todaySign;
-		
-		saveBeanConfig();
+        spelbean = Autoreply.gson.fromJson(Tools.FileTool.readString(beanF), new TypeToken<SpellCollectBean>() {}.getType());
 		archList.add(new Archievement("恶魔领地", "收集东方红魔乡全部符卡", ArchievementBean.th6All, TH06GameData.spellcards.length, TH06GameData.spellcards));
 		archList.add(new Archievement("完美樱花", "收集东方妖妖梦全部符卡", ArchievementBean.th7All, TH07GameData.spellcards.length, TH07GameData.spellcards));
 		archList.add(new Archievement("永恒之夜", "收集东方永夜抄全部符卡", ArchievementBean.th8All, TH08GameData.spellcards.length, TH08GameData.spellcards));
@@ -84,8 +49,8 @@ public class SpellCollect extends BaseModule {
 					while (true) {
 						Calendar c = Calendar.getInstance();
 						if (c.get(Calendar.MINUTE) == 0 && c.get(Calendar.HOUR_OF_DAY) == 0) {
-							todaySign.clear();
-							saveSignConfig();
+							spelbean.todaySign.clear();
+							saveBeanConfig();
 						}
 						try {
 							Thread.sleep(30000);
@@ -102,27 +67,26 @@ public class SpellCollect extends BaseModule {
 	@Override
 	public boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (msg.equals("-签到")) {
-			if (todaySign.contains(fromQQ)) {
+			if (spelbean.todaySign.contains(fromQQ)) {
 				Autoreply.sendMessage(fromGroup, 0, "你今天签到过啦");
 				return true;
 			}
 			SpellCard sc=getRandomSpell();
 			addSpell(fromQQ, sc);
 			Autoreply.sendMessage(fromGroup, 0, String.format("%s获得了10信仰和 %s", ConfigManager.instence.getNickName(fromQQ), sc.n));
-			saveSpellConfig();
 			checkArchievement(fromGroup, fromQQ);
 			((FaithManager)ModuleManager.instence.getModule(FaithManager.class)).addFaith(fromQQ, 10);
-			todaySign.add(fromQQ);
-			saveSignConfig();
+			spelbean.todaySign.add(fromQQ);
+			saveBeanConfig();
 			return true;
 		}
 		if (msg.equals("-clean") && ConfigManager.instence.isAdmin(fromQQ)) {
-			todaySign.clear();
-			saveSignConfig();
+			spelbean.todaySign.clear();
+			saveBeanConfig();
 		}
 		if (msg.equals("-查看符卡")) {
 			StringBuilder sb=new StringBuilder();
-			HashSet<SpellCard> gotSpells=spellsMap.get(fromQQ);
+			HashSet<SpellCard> gotSpells=spelbean.spellsMap.get(fromQQ);
 			if (gotSpells == null) {
 				Autoreply.sendMessage(fromGroup, 0, "你没有参加过抽卡");
 				return true;
@@ -152,11 +116,11 @@ public class SpellCollect extends BaseModule {
 	}
 
 	private void checkArchievement(long fromGroup, long toQQ) {
-		HashSet<SpellCard> gotSpell=spellsMap.get(toQQ);
-		ArchievementBean ab=archiMap.get(toQQ);
+		HashSet<SpellCard> gotSpell=spelbean.spellsMap.get(toQQ);
+		ArchievementBean ab=spelbean.archiMap.get(toQQ);
 		if (ab == null) {
 			ab = new ArchievementBean();
-			archiMap.put(toQQ, ab);
+			spelbean.archiMap.put(toQQ, ab);
 		}
 		for (Archievement ac:archList) {
 			if (ac.getNewArchievement(ab, gotSpell)) {
@@ -165,25 +129,19 @@ public class SpellCollect extends BaseModule {
 				((FaithManager)ModuleManager.instence.getModule(FaithManager.class)).addFaith(toQQ, ac.faith);
 			}
 		}
-		saveArchiConfig();
+		saveBeanConfig();
 	}
 
 	private void backupData() {
         while (true) {
             try {
                 Thread.sleep(86400000);
-                File backup1= new File(spellFile.getAbsolutePath() + ".bak" + System.currentTimeMillis());
+                File backup1= new File(beanF.getAbsolutePath() + ".bak" + System.currentTimeMillis());
                 FileOutputStream fos1 = new FileOutputStream(backup1);
                 OutputStreamWriter writer1 = new OutputStreamWriter(fos1, StandardCharsets.UTF_8);
-                writer1.write(Autoreply.gson.toJson(spellsMap));
+                writer1.write(Autoreply.gson.toJson(spelbean.spellsMap));
                 writer1.flush();
                 fos1.close();			
-				File ar=new File(archiFile.getAbsolutePath() + ".bak" + System.currentTimeMillis());
-				FileOutputStream fos = new FileOutputStream(ar);
-                OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-                writer.write(Autoreply.gson.toJson(archiMap));
-                writer.flush();
-                fos.close();			
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -224,10 +182,10 @@ public class SpellCollect extends BaseModule {
 	}
 
 	public void addSpell(long qq, SpellCard spellToAdd) {
-		HashSet<SpellCard> gotSpellsSet=spellsMap.get(qq);
+		HashSet<SpellCard> gotSpellsSet=spelbean.spellsMap.get(qq);
 		if (gotSpellsSet == null) {
 			gotSpellsSet = new HashSet<SpellCard>();
-			spellsMap.put(qq, gotSpellsSet);
+			spelbean.spellsMap.put(qq, gotSpellsSet);
 		}
 		SpellCard original=null;
 		for (SpellCard orns:gotSpellsSet) {
@@ -243,42 +201,6 @@ public class SpellCollect extends BaseModule {
 		}
 	}
 
-	private void saveSpellConfig() {
-        try {
-            FileOutputStream fos = new FileOutputStream(spellFile);
-            OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-            writer.write(Autoreply.gson.toJson(spellsMap));
-            writer.flush();
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-	private void saveArchiConfig() {
-        try {
-            FileOutputStream fos = new FileOutputStream(archiFile);
-            OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-            writer.write(Autoreply.gson.toJson(archiMap));
-            writer.flush();
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-	private void saveSignConfig() {
-        try {
-            FileOutputStream fos = new FileOutputStream(signedFile);
-            OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-            writer.write(Autoreply.gson.toJson(todaySign));
-            writer.flush();
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 	private void saveBeanConfig() {
         try {
             FileOutputStream fos = new FileOutputStream(beanF);
@@ -290,8 +212,8 @@ public class SpellCollect extends BaseModule {
             e.printStackTrace();
         }
     }
-	
-	public class SpellCollectBean{
+
+	public class SpellCollectBean {
 		public ConcurrentHashMap<Long,HashSet<SpellCard>> spellsMap=new ConcurrentHashMap<>();
 		public ConcurrentHashMap<Long,ArchievementBean> archiMap=new ConcurrentHashMap<>();
 		public HashSet<Long> todaySign=new HashSet<>();

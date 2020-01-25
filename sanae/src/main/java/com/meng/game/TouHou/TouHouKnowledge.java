@@ -11,7 +11,7 @@ import java.nio.charset.*;
 import java.util.*;
 
 public class TouHouKnowledge extends BaseModule {
-	
+
 	public HashMap<Long,QA> qaMap=new HashMap<>();
 	public String imagePath;
 	public ArrayList<QA> qaList=new ArrayList<>();
@@ -28,6 +28,8 @@ public class TouHouKnowledge extends BaseModule {
 	public static final int _2unNotDanmaku=4;
 	public static final int _2unAll=5;
 	public static final int otherDanmaku=6;
+	public static final int luastg=7;
+
 
 	@Override
 	public BaseModule load() {
@@ -135,6 +137,12 @@ public class TouHouKnowledge extends BaseModule {
 					break;
 				case otherDanmaku:
 					sb.append("同人弹幕");
+					break;
+				case luastg:
+					sb.append("LuaSTG");
+					break;
+				default:
+					sb.append("未知");
 			}	
 			sb.append("\n");
 			if (qa2.q.contains("(image)")) {

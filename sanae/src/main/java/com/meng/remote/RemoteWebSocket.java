@@ -88,7 +88,7 @@ public class RemoteWebSocket extends WebSocketServer {
 				Autoreply.CQ.setGroupKick(rec.readLong(), rec.readLong(), rec.readBoolean());
 				break;
 			case BotDataPack.opGroupBan:
-				Autoreply.CQ.setGroupBan(rec.readLong(), rec.readLong(), rec.readInt());
+				Autoreply.CQ.setGroupBan(rec.readLong(), rec.readLong(), rec.readLong());
 				break;
 			case BotDataPack.opGroupAdmin:
 				Autoreply.CQ.setGroupAdmin(rec.readLong(), rec.readLong(), rec.readBoolean());
