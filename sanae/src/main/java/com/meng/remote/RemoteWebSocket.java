@@ -136,29 +136,53 @@ public class RemoteWebSocket extends WebSocketServer {
 				break;
 			case BotDataPack.opFriendAddRequest:
 				toSend = BotDataPack.encode(rec.getOpCode());
+				Autoreply.CQ.setFriendAddRequest(rec.readString(), rec.readInt(), rec.readString());
 				break;
 			case BotDataPack.opGroupMemberList:
 				toSend = BotDataPack.encode(rec.getOpCode());
+				List<Member> ml=Autoreply.CQ.getGroupMemberList(rec.readLong());
+				for (Member mlm:ml) {
+					toSend.
+						write(mlm.getGroupId()).
+						write(mlm.getQqId()).
+						write(mlm.getNick()).
+						write(mlm.getCard()).
+						write(mlm.getGender()).
+						write(mlm.getAge()).
+						write(mlm.getArea()).
+						write(mlm.getAddTime().getTime()).
+						write(mlm.getLastTime().getTime()).
+						write(mlm.getLevelName()).
+						write(mlm.getAuthority()).
+						write(mlm.getTitle()).
+						write(mlm.getTitleExpire().getTime()).
+						write(mlm.isBad()).
+						write(mlm.isModifyCard());
+				}
 				break;
 			case BotDataPack.opGroupList:
 				toSend = BotDataPack.encode(rec.getOpCode());
+				List<Group> gl=Autoreply.CQ.getGroupList();
+				for (Group g:gl) {
+					toSend.write(g.getId()).write(g.getName());
+				}
 				break;
 			case BotDataPack.getConfig:
 				toSend = BotDataPack.encode(rec.getOpCode());
 				toSend.write(Autoreply.gson.toJson(ConfigManager.instence.RanConfig));
 				break;
-		/*	case BotDataPack.opGroupInfo:
-				toSend = BotDataPack.encode(rec.getOpCode());
-				ArrayList<Group> gl=(ArrayList<Group>) Autoreply.ins.CQ.getGroupList();
-				long gid=rec.readLong();
-				for (Group g:gl) {
-					if (g.getId() == gid) {
-						toSend.write(g.getId()).write(g.getName());
-						break;
-					}
-				}
-				break;
-*/
+				/*	case BotDataPack.opGroupInfo:
+				 toSend = BotDataPack.encode(rec.getOpCode());
+				 ArrayList<Group> gl=(ArrayList<Group>) Autoreply.ins.CQ.getGroupList();
+				 long gid=rec.readLong();
+				 for (Group g:gl) {
+				 if (g.getId() == gid) {
+				 toSend.write(g.getId()).write(g.getName());
+				 break;
+				 }
+				 }
+				 break;
+				 */
 		}
 		if (toSend != null) {
 			conn.send(toSend.getData());
