@@ -4,7 +4,7 @@ import com.meng.*;
 import com.meng.config.*;
 
 public class DiceCommand extends BaseModule {
-	
+
 	private String[] cmdMsg;
 	private int pos=0;
 
@@ -40,6 +40,7 @@ public class DiceCommand extends BaseModule {
 						return true;
 					case ".rd":
 						Autoreply.sendMessage(fromGroup, 0, String.format("由于%s %s骰出了: D100=%d", next(), ConfigManager.instence.getNickName(fromGroup, fromQQ), Autoreply.ins.random.nextInt()));
+						return true;
 					case ".nn":
 						String name = next();
 						if (name == null) {

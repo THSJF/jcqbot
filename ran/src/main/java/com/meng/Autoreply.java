@@ -284,6 +284,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         // if (fromGroup != 617745343L)
         // return MSG_IGNORE;
         // 如果消息来自匿名者
+		remoteWebSocket.sendMsg(1, fromGroup, fromQQ, msg, msgId);
         if (fromQQ == 80000000L && !fromAnonymous.equals("")) {
             // 将匿名用户信息放到 anonymous 变量中
             // Anonymous anonymous = CQ.getAnonymous(fromAnonymous);
