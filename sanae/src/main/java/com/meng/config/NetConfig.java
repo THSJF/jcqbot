@@ -11,6 +11,7 @@ import java.util.*;
 import org.java_websocket.client.*;
 import org.java_websocket.exceptions.*;
 import org.java_websocket.handshake.*;
+import com.meng.remote.*;
 
 public class NetConfig extends WebSocketClient {
 
@@ -50,7 +51,7 @@ public class NetConfig extends WebSocketClient {
 
 	@Override
 	public void onMessage(ByteBuffer bs) {
-	++Autoreply.ranExchange;
+		++RemoteWebSocket.botInfoBean.recFrom;
 		SanaeDataPack dataRec=SanaeDataPack.decode(bs.array());
 		switch (dataRec.getOpCode()) {
 			case SanaeDataPack.opConfigFile:
@@ -338,8 +339,7 @@ public class NetConfig extends WebSocketClient {
 	}
 
 	public void send(SanaeDataPack sdp) {
-		++Autoreply.ranExchange;
+		++RemoteWebSocket.botInfoBean.sendTo;
 		send(sdp.getData());
     }
-
 }

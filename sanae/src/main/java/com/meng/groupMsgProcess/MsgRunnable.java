@@ -1,10 +1,7 @@
 package com.meng.groupMsgProcess;
 
 import com.meng.*;
-import com.meng.config.*;
-import com.meng.game.TouHou.*;
-import com.meng.groupMsgProcess.*;
-import com.meng.tools.*;
+import com.meng.remote.*;
 
 public class MsgRunnable implements Runnable {
     private int msgId = 0;
@@ -21,6 +18,8 @@ public class MsgRunnable implements Runnable {
 
     @Override
     public synchronized void run() {
-        ModuleManager.instence.processMsg(fromGroup, fromQQ, msg, msgId);
+       if(ModuleManager.instence.processMsg(fromGroup, fromQQ, msg, msgId)){
+		   ++RemoteWebSocket.botInfoBean.msgCmdPerSec;
+	   }
     }
 }

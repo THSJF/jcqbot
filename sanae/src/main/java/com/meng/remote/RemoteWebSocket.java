@@ -11,7 +11,7 @@ import com.meng.config.*;
 
 public class RemoteWebSocket extends WebSocketServer {
 	BotDataPack msgPack;
-
+	public static BotMsgInfo botInfoBean=new BotMsgInfo();
 	public RemoteWebSocket() {
 		super(new InetSocketAddress(7777));
 		Autoreply.ins.threadPool.execute(new Runnable(){
@@ -23,8 +23,10 @@ public class RemoteWebSocket extends WebSocketServer {
 						try {
 							Thread.sleep(1000);
 							broadcast(msgPack.getData());
-							broadcast(BotDataPack.encode(BotDataPack.onWebSocketPerSecPack).write(Autoreply.ranExchange).getData());
-							Autoreply.ranExchange = 0;
+							BotDataPack bbbbb=BotDataPack.encode(BotDataPack.onPerSecMsgInfo);
+							bbbbb.write(botInfoBean.sendTo).write(botInfoBean.recFrom).write(botInfoBean.msgPerSec).write(botInfoBean.msgCmdPerSec).write(botInfoBean.msgSendPerSec);
+							broadcast(bbbbb.getData());
+							botInfoBean.reset();
 						} catch (Exception e) {}
 					}
 				}

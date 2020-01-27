@@ -16,8 +16,7 @@ import com.meng.remote.*;
 public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
     public static Autoreply ins;
-	public static int ranExchange=0;
-    public Random random = new Random();
+	public Random random = new Random();
 	public TimeTip timeTip = new TimeTip();
 	public CQCodeManager CQcodeManager = new CQCodeManager();
 	public AdminMessageProcessor adminMessageProcessor;
@@ -138,6 +137,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 		//	if (fromGroup != 807242547L){
 		//		return MSG_IGNORE;
 		//}
+		++RemoteWebSocket.botInfoBean.msgPerSec;
 		remoteWebSocket.sendMsg(1, fromGroup, fromQQ, msg, msgId);
 		if (!Autoreply.ins.SeijiaInThis.contains(fromGroup)) {
 			ConfigManager.instence.send(SanaeDataPack.encode(SanaeDataPack.opIncSpeak).write(fromGroup).write(fromQQ));
@@ -315,6 +315,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 		if (sleeping) {
             return -1;
         }
+		++RemoteWebSocket.botInfoBean.msgSendPerSec;
 		int value=-1;
         if (fromGroup == 0 || fromGroup == -1) {
             value = CQ.sendPrivateMsg(fromQQ, msg);
