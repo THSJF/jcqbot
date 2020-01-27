@@ -23,6 +23,8 @@ public class RemoteWebSocket extends WebSocketServer {
 						try {
 							Thread.sleep(1000);
 							broadcast(msgPack.getData());
+							broadcast(BotDataPack.encode(BotDataPack.onWebSocketPerSecPack).write(Autoreply.ranExchange).getData());
+							Autoreply.ranExchange = 0;
 						} catch (Exception e) {}
 					}
 				}

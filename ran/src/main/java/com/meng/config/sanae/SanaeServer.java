@@ -74,6 +74,10 @@ public class SanaeServer extends WebSocketServer {
 				File jsonFile = new File(Autoreply.appDirectory + "seq.json");
 				sdp.write(Tools.FileTool.readString(jsonFile.getAbsolutePath()));
 				break;
+			case SanaeDataPack.opAddBlack:
+				Autoreply.instence.configManager.addBlack(rsdp.readLong(), rsdp.readLong());
+				Autoreply.sendMessage(Autoreply.mainGroup, 0, "添加成功");
+				break;
 		}
 		if (sdp != null) {
 			conn.send(sdp.getData());

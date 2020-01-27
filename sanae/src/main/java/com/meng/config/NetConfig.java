@@ -7,14 +7,14 @@ import com.meng.tools.*;
 import java.lang.reflect.*;
 import java.net.*;
 import java.nio.*;
-import java.util.concurrent.*;
+import java.util.*;
 import org.java_websocket.client.*;
 import org.java_websocket.exceptions.*;
 import org.java_websocket.handshake.*;
 
 public class NetConfig extends WebSocketClient {
 
-	private ConcurrentHashMap<Integer,TaskResult> resultMap=new ConcurrentHashMap<>();
+	private HashMap<Integer,TaskResult> resultMap=new HashMap<>();
 	public NetConfig(URI uri) {
 		super(uri);
 	}
@@ -49,9 +49,9 @@ public class NetConfig extends WebSocketClient {
 	}
 
 	@Override
-	public void onMessage(ByteBuffer bs) {	
+	public void onMessage(ByteBuffer bs) {
+	++Autoreply.ranExchange;
 		SanaeDataPack dataRec=SanaeDataPack.decode(bs.array());
-		SanaeDataPack dataToSend=null;
 		switch (dataRec.getOpCode()) {
 			case SanaeDataPack.opConfigFile:
 				Type type = new TypeToken<RanConfigBean>() {
@@ -105,17 +105,6 @@ public class NetConfig extends WebSocketClient {
 			case SanaeDataPack.opNewArtical:
 				Autoreply.sendMessage(Autoreply.mainGroup, 0, dataRec.readString() + "发布新专栏:" + dataRec.readString() + "(cv" + dataRec.readLong() + ")");
 				break;
-			default:
-				dataToSend = SanaeDataPack.encode(SanaeDataPack.opNotification, dataRec);
-				dataToSend.write("操作类型错误");
-		}
-		if (dataToSend != null) {
-			try {
-				send(dataToSend);
-			} catch (WebsocketNotConnectedException e) {
-				e.printStackTrace();
-				reconnect();
-			}
 		}
 	}
 
@@ -349,6 +338,7 @@ public class NetConfig extends WebSocketClient {
 	}
 
 	public void send(SanaeDataPack sdp) {
+		++Autoreply.ranExchange;
 		send(sdp.getData());
     }
 
