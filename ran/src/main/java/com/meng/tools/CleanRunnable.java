@@ -11,7 +11,7 @@ public class CleanRunnable implements Runnable {
 			File coolData=new File(new File(Autoreply.appDirectory).getParentFile().getParentFile().getParentFile().getParentFile() + "/data/");
 			File[] images=new File(coolData.getAbsolutePath() + "/image/").listFiles();
 			for (File f : images) {
-				if (f.getName().endsWith(".cqimg")) {
+				if (f.getName().endsWith(".cqimg") || f.getName().endsWith(".jpg") || f.getName().equals(".png")) {
 					f.delete();
 				}
             }

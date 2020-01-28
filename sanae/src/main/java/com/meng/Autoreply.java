@@ -16,7 +16,7 @@ import com.meng.remote.*;
 public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
     public static Autoreply ins;
-	public Random random = new Random();
+	public Random random = new MyRandom();
 	public TimeTip timeTip = new TimeTip();
 	public CQCodeManager CQcodeManager = new CQCodeManager();
 	public AdminMessageProcessor adminMessageProcessor;

@@ -51,7 +51,12 @@ public class BotDataPack {
 	public static final int onPerSecMsgInfo=26;
 	public static final int getConfig = 27;
 	
-	
+	public static final int opAddQuestion = 28;
+	public static final int opAllQuestion = 29;
+	public static final int opSetQuestion = 30;
+	public static final int opQuestionPic = 31;
+	public static final int opTextNotify = 32;
+
 	
 	public static BotDataPack encode(int opCode) {
 		return new BotDataPack(opCode);
