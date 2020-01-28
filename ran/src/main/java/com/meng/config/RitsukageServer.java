@@ -17,11 +17,8 @@ import org.java_websocket.server.*;
 
 public class RitsukageServer extends WebSocketServer {
 
-	private ConfigJavaBean configJavaBean;
-
 	public RitsukageServer(int port) {
 		super(new InetSocketAddress(port));
-		configJavaBean = Autoreply.instence.configManager.configJavaBean;
 	}
 
 	@Override
@@ -36,10 +33,12 @@ public class RitsukageServer extends WebSocketServer {
 
 	@Override
 	public void onMessage(WebSocket conn, String message) {
-
+		++Autoreply.instence.remoteWebSocket.botInfoBean.recFrom;
 	}
+	
 	@Override
 	public void onMessage(WebSocket conn, ByteBuffer message) {
+		++Autoreply.instence.remoteWebSocket.botInfoBean.recFrom;
 		RitsukageDataPack dp=RitsukageDataPack.decode(message.array());
 		if (dp.getTarget() == Autoreply.instence.configManager.configJavaBean.ogg) {
 			oggProcess(conn, dp);
@@ -285,7 +284,8 @@ public class RitsukageServer extends WebSocketServer {
 			default:
 				dataToSend = RitsukageDataPack.encode(RitsukageDataPack._0notification, recievedDataPack.getTimeStamp());
 				dataToSend.write(1, "操作类型错误");
-		} 
+		}
+		++Autoreply.instence.remoteWebSocket.botInfoBean.sendTo;
 		ogg.send(dataToSend.getData());
 		//	DataPack ndp=DataPack.encode(DataPack._0notification, dataPack.getTimeStamp());
 		//	ndp.write("成功");

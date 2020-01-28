@@ -28,10 +28,11 @@ public class SanaeServer extends WebSocketServer {
 
 	@Override
 	public void onMessage(WebSocket conn, String message) {
-
+		++Autoreply.instence.remoteWebSocket.botInfoBean.recFrom;
 	}
 	@Override
 	public void onMessage(WebSocket conn, ByteBuffer message) {
+		++Autoreply.instence.remoteWebSocket.botInfoBean.recFrom;
 		SanaeDataPack rsdp=SanaeDataPack.decode(message.array());
 		SanaeDataPack sdp = SanaeDataPack.encode(rsdp);
 		switch (rsdp.getOpCode()) {
@@ -80,6 +81,7 @@ public class SanaeServer extends WebSocketServer {
 				break;
 		}
 		if (sdp != null) {
+			++Autoreply.instence.remoteWebSocket.botInfoBean.sendTo;
 			conn.send(sdp.getData());
 		}
 	}
@@ -103,6 +105,7 @@ public class SanaeServer extends WebSocketServer {
 
 				@Override
 				public void run() {
+					++Autoreply.instence.remoteWebSocket.botInfoBean.sendTo;
 					broadcast(sdp.getData());
 				}
 			});

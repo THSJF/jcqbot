@@ -374,7 +374,6 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 				return MSG_IGNORE;
 			}
 		}
-
         if (adminMessageProcessor.check(fromGroup, fromQQ, msg)) {
             return MSG_IGNORE;
         }
@@ -631,6 +630,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         if (sleeping) {
             return -1;
         }
+		int value=-1;
         // 处理词库中为特殊消息做的标记
         Tools.CQ.setRandomPop();
         try {
@@ -643,33 +643,39 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
                 return -1;
             }
             String[] stri = msg.split(":");
+
             switch (stri[0]) {
                 case "image":
                     useCount.incSpeak(CQ.getLoginQQ());
                     groupCount.incSpeak(fromGroup);
-                    return CQ.sendGroupMsg(fromGroup, stri[2].replace("--image--", instence.CC.image(new File(appDirectory + stri[1]))));
-                case "atFromQQ":
+                    value = CQ.sendGroupMsg(fromGroup, stri[2].replace("--image--", instence.CC.image(new File(appDirectory + stri[1]))));
+					break;
+				case "atFromQQ":
                     useCount.incSpeak(CQ.getLoginQQ());
                     groupCount.incSpeak(fromGroup);
-                    return CQ.sendGroupMsg(fromGroup, instence.CC.at(fromQQ) + stri[1]);
-                case "atQQ":
+                    value = CQ.sendGroupMsg(fromGroup, instence.CC.at(fromQQ) + stri[1]);
+					break;
+				case "atQQ":
                     useCount.incSpeak(CQ.getLoginQQ());
                     groupCount.incSpeak(fromGroup);
-                    return CQ.sendGroupMsg(fromGroup, instence.CC.at(Long.parseLong(stri[1])) + stri[2]);
-                case "imageFolder":
+                    value = CQ.sendGroupMsg(fromGroup, instence.CC.at(Long.parseLong(stri[1])) + stri[2]);
+					break;
+				case "imageFolder":
                     useCount.incSpeak(CQ.getLoginQQ());
                     groupCount.incSpeak(fromGroup);
                     File[] files = (new File(appDirectory + stri[1])).listFiles();
-                    return CQ.sendGroupMsg(fromGroup, stri[2].replace("--image--", instence.CC.image((File) Tools.ArrayTool.rfa(files))));
-                default:
+                    value = CQ.sendGroupMsg(fromGroup, stri[2].replace("--image--", instence.CC.image((File) Tools.ArrayTool.rfa(files))));
+					break;
+				default:
                     useCount.incSpeak(CQ.getLoginQQ());
                     groupCount.incSpeak(fromGroup);
-                    return CQ.sendGroupMsg(fromGroup, msg);
+                    value = CQ.sendGroupMsg(fromGroup, msg);
             }
+			instence.remoteWebSocket.sendMsg(1, fromGroup, CQ.getLoginQQ(), msg, value);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return -1;
+        return value;
     }
 
     private int sendPrivateMessage(long fromQQ, String msg) {
