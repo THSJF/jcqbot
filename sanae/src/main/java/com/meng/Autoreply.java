@@ -145,7 +145,8 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 			for (int i:trueAnswers) {
 				sb.append("\n").append(qa.a.get(i));
 			}
-			sb.append("\n消耗1信仰查看了答案");
+			sb.append("\n消耗1信仰查看了答案,剩余:");
+			sb.append(fm.getFaith(fromQQ));
 			fm.subFaith(fromQQ, 1);
 			sendMessage(0, fromQQ, sb.toString());
 		}
