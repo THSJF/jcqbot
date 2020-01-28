@@ -221,7 +221,7 @@ public class RemoteWebSocket extends WebSocketServer {
 				toSend.write("修改成功");
 				break;
 			case BotDataPack.opQuestionPic:
-				toSend = BotDataPack.encode(SanaeDataPack.opQuestionPic);
+				toSend = BotDataPack.encode(BotDataPack.opQuestionPic);
 				int id = rec.readInt();
 				File img = new File(((TouHouKnowledge)ModuleManager.instence.getModule(TouHouKnowledge.class)).imagePath + id + ".jpg");
 				toSend.write(id);
@@ -248,7 +248,7 @@ public class RemoteWebSocket extends WebSocketServer {
 	}
 
 	private BotDataPack writeQA(ArrayList<QA> qas) {
-		BotDataPack sdp=BotDataPack.encode(SanaeDataPack.opAllQuestion);
+		BotDataPack sdp=BotDataPack.encode(BotDataPack.opAllQuestion);
 		for (QA qa:qas) {
 			sdp.write(qa.getFlag());
 			sdp.write(qa.l);

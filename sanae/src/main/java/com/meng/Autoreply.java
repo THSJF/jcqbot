@@ -130,6 +130,25 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 				sendMessage(Long.parseLong(strings[1]), 0, strings[2]);
 			}
 		}
+		FaithManager fm=(FaithManager)ModuleManager.instence.getModule(FaithManager.class);
+		if (msg.startsWith("-qa a ")) {
+			if (fm.getFaith(fromQQ) <= 0) {
+				sendMessage(0, fromQQ, "你的信仰值不足以完成此操作");
+				return MSG_IGNORE;
+			}
+			QA qa=((TouHouKnowledge)ModuleManager.instence.getModule(TouHouKnowledge.class)).qaList.get(Integer.parseInt(msg.substring("-qa a ".length())));
+			HashSet<Integer> trueAnswers=qa.getTrueAns();
+			StringBuilder sb=new StringBuilder();
+			sb.append("题目:\n");
+			sb.append(qa.q);
+			sb.append("\n答案:");
+			for (int i:trueAnswers) {
+				sb.append("\n").append(qa.a.get(i));
+			}
+			sb.append("\n消耗1信仰查看了答案");
+			fm.subFaith(fromQQ, 1);
+			sendMessage(0, fromQQ, sb.toString());
+		}
         return MSG_IGNORE;
     }
 
