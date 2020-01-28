@@ -1,8 +1,7 @@
 package com.meng.tools;
 
-import com.meng.Autoreply;
-
-import java.io.File;
+import com.meng.*;
+import java.io.*;
 
 public class CleanRunnable implements Runnable {
     @Override

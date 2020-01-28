@@ -53,34 +53,40 @@ public class GroupMsgPart1Runnable implements Runnable {
 			return;
 		}
         if (Autoreply.instence.fph.check(fromQQ, fromGroup, msg, msgId, imageFiles)) {
-            return;
+			++Autoreply.instence.remoteWebSocket.botInfoBean.msgCmdPerSec;
+			return;
         }
         if (msg.equals(".on") && (Autoreply.CQ.getGroupMemberInfoV2(fromGroup, fromQQ).getAuthority() > 1 || Autoreply.instence.configManager.isAdmin(fromQQ))) {
             if (Autoreply.instence.botOff.contains(fromGroup)) {
                 Autoreply.instence.botOff.remove(fromGroup);
                 sendMessage(fromGroup, 0, "已启用");
+				++Autoreply.instence.remoteWebSocket.botInfoBean.msgCmdPerSec;
                 return;
             }
         }
         if (msg.equals(".off") && (Autoreply.CQ.getGroupMemberInfoV2(fromGroup, fromQQ).getAuthority() > 1 || Autoreply.instence.configManager.isAdmin(fromQQ))) {
             Autoreply.instence.botOff.add(fromGroup);
             sendMessage(fromGroup, 0, "已停用");
+			++Autoreply.instence.remoteWebSocket.botInfoBean.msgCmdPerSec;
             return;
         }
         if (Autoreply.instence.configManager.isAdmin(fromQQ) && msg.startsWith("ocr")) {
             if (Autoreply.instence.ocrManager.checkOcr(fromGroup, fromQQ, msg, imageFiles)) {
+				++Autoreply.instence.remoteWebSocket.botInfoBean.msgCmdPerSec;
                 return;
             }
         }
         if (msg.equals("权限检查")) {
             Autoreply.sendMessage(fromGroup, fromQQ, String.valueOf(Autoreply.CQ.getGroupMemberInfoV2(fromGroup, fromQQ).getAuthority()));
-            return;
+            ++Autoreply.instence.remoteWebSocket.botInfoBean.msgCmdPerSec;
+			return;
         }
         if (Autoreply.instence.botOff.contains(fromGroup)) {
             return;
         }
 
 		if (msg.startsWith("-int ")) {
+			++Autoreply.instence.remoteWebSocket.botInfoBean.msgCmdPerSec;
 			try {
 				String[] args=msg.split(" ", 4);
 				int a1=Integer.parseInt(args[1]);
@@ -131,6 +137,7 @@ public class GroupMsgPart1Runnable implements Runnable {
 			return;
 		}
 		if (msg.startsWith("-uint ")) {
+			++Autoreply.instence.remoteWebSocket.botInfoBean.msgCmdPerSec;
 			String[] args=msg.split("\\s", 2);
 			try {
 				Autoreply.sendMessage(fromGroup, 0, (Integer.parseInt(args[1]) & 0x00000000ffffffffL) + "");

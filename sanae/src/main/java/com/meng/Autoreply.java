@@ -59,12 +59,12 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 		ModuleManager.instence = new ModuleManager();
 		ModuleManager.instence.load();
 		ConfigManager.instence.load();
-		Autoreply.ins.groupMemberChangerListener = new GroupMemberChangerListener();
-		Autoreply.ins.adminMessageProcessor = new AdminMessageProcessor();
-		Autoreply.ins.birthdayTip = new BirthdayTip();
-		Autoreply.ins.threadPool.execute(Autoreply.ins.timeTip);
-		Autoreply.ins.threadPool.execute(new UpdateListener());
-		Autoreply.ins.threadPool.execute(new LiveListener());
+		groupMemberChangerListener = new GroupMemberChangerListener();
+		adminMessageProcessor = new AdminMessageProcessor();
+		birthdayTip = new BirthdayTip();
+		threadPool.execute(Autoreply.ins.timeTip);
+		threadPool.execute(new UpdateListener());
+		threadPool.execute(new LiveListener());
 		remoteWebSocket = new RemoteWebSocket();
 		remoteWebSocket.start();
 		threadPool.execute(new Runnable(){
@@ -87,10 +87,11 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 				}
 			});
 		try {
-			new QuestionServer(9001).start();
+			//new QuestionServer(9001).start();
 		} catch (Exception e) {}
-		Autoreply.ins.enable();
+		enable();
 		System.out.println("load success");
+		threadPool.execute(new CleanRunnable());
 		Autoreply.sleeping = false;
 		return 0;
     }

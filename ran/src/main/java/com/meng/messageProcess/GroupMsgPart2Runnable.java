@@ -33,7 +33,9 @@ public class GroupMsgPart2Runnable implements Runnable {
 
     @Override
     public synchronized void run() {
-        check();
+        if(check()){
+			++Autoreply.instence.remoteWebSocket.botInfoBean.msgCmdPerSec;
+		}
 	}
 
     private boolean check() {

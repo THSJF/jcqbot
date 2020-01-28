@@ -44,11 +44,11 @@ public class QuestionServer extends WebSocketServer {
 			case 4:
 				switch (dataRec.getOpCode()) {
 					case SanaeDataPack.opAddQuestion:
-						TouHouKnowledge.QA qa40= new TouHouKnowledge.QA();
+						QA qa40= new QA();
 						qa40.setFlag(dataRec.readInt());
 						qa40.q = dataRec.readString();
 						int ans40=dataRec.readInt();
-						qa40.t = dataRec.readInt();
+						qa40.setTrueAnsFlag(dataRec.readInt());
 						for (int i=0;i < ans40;++i) {
 							qa40.a.add(dataRec.readString());
 						}
@@ -67,11 +67,11 @@ public class QuestionServer extends WebSocketServer {
 						sdp = writeQA(((TouHouKnowledge)ModuleManager.instence.getModule(TouHouKnowledge.class)).qaList);
 						break;
 					case SanaeDataPack.opSetQuestion:
-						TouHouKnowledge.QA qa43= new TouHouKnowledge.QA();
+						QA qa43= new QA();
 						qa43.setFlag(dataRec.readInt());
 						qa43.q = dataRec.readString();
 						int ans43=dataRec.readInt();
-						qa43.t = dataRec.readInt();
+						qa43.setTrueAnsFlag(dataRec.readInt());
 						for (int i=0;i < ans43;++i) {
 							qa43.a.add(dataRec.readString());
 						}
@@ -96,7 +96,6 @@ public class QuestionServer extends WebSocketServer {
 				}
 				break;
 		}
-
 		if (sdp != null) {
 			conn.send(sdp.getData());
 		}
@@ -115,14 +114,14 @@ public class QuestionServer extends WebSocketServer {
 		System.out.println("quesServer started!");
 		setConnectionLostTimeout(100);
 	}
-	private SanaeDataPack writeQA(ArrayList<TouHouKnowledge.QA> qas) {
+	private SanaeDataPack writeQA(ArrayList<QA> qas) {
 		SanaeDataPack sdp=SanaeDataPack.encode(SanaeDataPack.opAllQuestion);
-		for (TouHouKnowledge.QA qa:qas) {
+		for (QA qa:qas) {
 			sdp.write(qa.getFlag());//flag
 			sdp.write(qa.l);
 			sdp.write(qa.q);//ques
 			sdp.write(qa.a.size());//ansCount
-			sdp.write(qa.t);
+			sdp.write(qa.getTrueAnsFlag());
 			for (String s:qa.a) {
 				sdp.write(s);
 			}

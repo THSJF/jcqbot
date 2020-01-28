@@ -1,13 +1,15 @@
 package com.meng.remote;
-import org.java_websocket.server.*;
+import com.meng.*;
+import com.meng.config.*;
+import com.meng.game.TouHou.*;
+import com.sobte.cqp.jcq.entity.*;
+import java.io.*;
+import java.net.*;
+import java.nio.*;
+import java.util.*;
 import org.java_websocket.*;
 import org.java_websocket.handshake.*;
-import java.nio.*;
-import com.meng.*;
-import java.net.*;
-import com.sobte.cqp.jcq.entity.*;
-import java.util.*;
-import com.meng.config.*;
+import org.java_websocket.server.*;
 
 public class RemoteWebSocket extends WebSocketServer {
 	BotDataPack msgPack;
@@ -175,18 +177,56 @@ public class RemoteWebSocket extends WebSocketServer {
 				toSend = BotDataPack.encode(rec.getOpCode());
 				toSend.write(Autoreply.gson.toJson(ConfigManager.instence.RanConfig));
 				break;
-				/*	case BotDataPack.opGroupInfo:
-				 toSend = BotDataPack.encode(rec.getOpCode());
-				 ArrayList<Group> gl=(ArrayList<Group>) Autoreply.ins.CQ.getGroupList();
-				 long gid=rec.readLong();
-				 for (Group g:gl) {
-				 if (g.getId() == gid) {
-				 toSend.write(g.getId()).write(g.getName());
-				 break;
-				 }
-				 }
-				 break;
-				 */
+			case BotDataPack.opAddQuestion:
+				QA qa40= new QA();
+				qa40.setFlag(rec.readInt());
+				qa40.q = rec.readString();
+				int ans40=rec.readInt();
+				qa40.setTrueAnsFlag(rec.readInt());
+				for (int i=0;i < ans40;++i) {
+					qa40.a.add(rec.readString());
+				}
+				qa40.r = rec.readString();
+				if (qa40.r.equals("")) {
+					qa40.r = null;
+				}
+				if (rec.hasNext()) {
+					qa40.l = (int)rec.readFile(new File(((TouHouKnowledge)ModuleManager.instence.getModule(TouHouKnowledge.class)).imagePath + ((TouHouKnowledge)ModuleManager.instence.getModule(TouHouKnowledge.class)).qaList.size() + ".jpg")).length();
+				}
+				((TouHouKnowledge)ModuleManager.instence.getModule(TouHouKnowledge.class)).addQA(qa40);
+				toSend = BotDataPack.encode(BotDataPack.opTextNotify);
+				toSend.write("添加成功");
+				break;
+			case BotDataPack.opAllQuestion:
+				toSend = writeQA(((TouHouKnowledge)ModuleManager.instence.getModule(TouHouKnowledge.class)).qaList);
+				break;
+			case BotDataPack.opSetQuestion:
+				QA qa43= new QA();
+				qa43.setFlag(rec.readInt());
+				qa43.q = rec.readString();
+				int ans43=rec.readInt();
+				qa43.setTrueAnsFlag(rec.readInt());
+				for (int i=0;i < ans43;++i) {
+					qa43.a.add(rec.readString());
+				}
+				qa43.r = rec.readString();
+				if (qa43.r.equals("")) {
+					qa43.r = null;
+				}
+				if (rec.hasNext()) {
+					qa43.l = (int)rec.readFile(new File(((TouHouKnowledge)ModuleManager.instence.getModule(TouHouKnowledge.class)).imagePath + qa43.getId() + ".jpg")).length();
+				}
+				((TouHouKnowledge)ModuleManager.instence.getModule(TouHouKnowledge.class)).setQA(qa43);
+				toSend = BotDataPack.encode(BotDataPack.opTextNotify);
+				toSend.write("修改成功");
+				break;
+			case BotDataPack.opQuestionPic:
+				toSend = BotDataPack.encode(SanaeDataPack.opQuestionPic);
+				int id = rec.readInt();
+				File img = new File(((TouHouKnowledge)ModuleManager.instence.getModule(TouHouKnowledge.class)).imagePath + id + ".jpg");
+				toSend.write(id);
+				toSend.write(img);
+				break;
 		}
 		if (toSend != null) {
 			conn.send(toSend.getData());
@@ -205,5 +245,21 @@ public class RemoteWebSocket extends WebSocketServer {
 
 	public void sendMsg(int type, long group, long qq, String msg, long msgId) {
 		msgPack.write(type).write(group).write(qq).write(msg).write((int)msgId);
+	}
+
+	private BotDataPack writeQA(ArrayList<QA> qas) {
+		BotDataPack sdp=BotDataPack.encode(SanaeDataPack.opAllQuestion);
+		for (QA qa:qas) {
+			sdp.write(qa.getFlag());
+			sdp.write(qa.l);
+			sdp.write(qa.q);
+			sdp.write(qa.a.size());
+			sdp.write(qa.getTrueAnsFlag());
+			for (String s:qa.a) {
+				sdp.write(s);
+			}
+			sdp.write(qa.r == null ?"": qa.r);
+		}
+		return sdp;
 	}
 }

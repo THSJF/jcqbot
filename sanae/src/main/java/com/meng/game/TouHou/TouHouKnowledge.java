@@ -59,12 +59,18 @@ public class TouHouKnowledge extends BaseModule {
 			return true;
 		}
 		if (msg.startsWith("抢答[")) {
-			String ans=msg.substring(msg.indexOf("]") + 1);
 			long target=Autoreply.CC.getAt(msg);
 			if (ConfigManager.instence.getPersonCfg(target).isQaAllowOther()) {
 				QA qa = qaMap.get(fromQQ);
 				if (qa != null) {
-					if (String.valueOf(qa.t + 1).equals(ans)) {
+					HashSet<Integer> userAnss = new HashSet<>();
+					String[] usAnsStrs = msg.split(" ");
+					for (String s : usAnsStrs) {
+						try {
+							userAnss.add(Integer.parseInt(s));
+						} catch (NumberFormatException e) {}
+					}
+					if (qa.getTrueAns().containsAll(userAnss) && qa.getTrueAns().size() == userAnss.size()) {
 						Autoreply.sendMessage(fromGroup, 0, Autoreply.CC.at(fromQQ) + "回答正确");
 					} else {
 						Autoreply.sendMessage(fromGroup, 0, String.format("%s回答错误", Autoreply.CC.at(fromQQ)));
@@ -83,7 +89,14 @@ public class TouHouKnowledge extends BaseModule {
 			return true;
 		}
 		if (qa != null) {
-			if (String.valueOf(qa.t + 1).equals(msg)) {
+			HashSet<Integer> userAnss = new HashSet<>();
+			String[] usAnsStrs = msg.split(" ");
+			for (String s : usAnsStrs) {
+				try {
+					userAnss.add(Integer.parseInt(s));
+				} catch (NumberFormatException e) {}
+			}
+			if (qa.getTrueAns().containsAll(userAnss) && qa.getTrueAns().size() == userAnss.size()) {
 				Autoreply.sendMessage(fromGroup, 0, Autoreply.CC.at(fromQQ) + "回答正确");
 			} else {
 				Autoreply.sendMessage(fromGroup, 0, String.format("%s回答错误", Autoreply.CC.at(fromQQ)));
@@ -98,22 +111,22 @@ public class TouHouKnowledge extends BaseModule {
 			sb.append("难度:");
 			switch (qa2.getDifficulty()) {
 				case 0:
-					sb.append("e");
+					sb.append("easy");
 					break;
 				case 1:
-					sb.append("n");
+					sb.append("normal");
 					break;
 				case 2:
-					sb.append("h");
+					sb.append("hard");
 					break;
 				case 3:
-					sb.append("l");
+					sb.append("lunatic");
 					break;
 				case 4:
-					sb.append("o");
+					sb.append("overdrive");
 					break;
 				case 5:
-					sb.append("k");
+					sb.append("kidding");
 			}
 			sb.append("\n分类:");
 			switch (qa2.getType()) {
@@ -156,12 +169,10 @@ public class TouHouKnowledge extends BaseModule {
 				sb.append(qa2.q);
 			}
 			sb.append("\n");
-			int change=Autoreply.ins.random.nextInt(qa2.a.size());
-			exchange(qa2.a, qa2.t, change);
-			qa2.t = change;
+			qa2.exangeAnswer();
 			saveData();
 			qaMap.put(fromQQ, qa2);
-			int i=1;
+			int i=0;
 			for (String s:qa2.a) {
 				if (s.equals("")) {
 					continue;
@@ -197,59 +208,4 @@ public class TouHouKnowledge extends BaseModule {
 			e.printStackTrace();
 		}
     }
-
-	public <T> void exchange(List<T> list, int pos1, int pos2) {
-		if (null == list || list.size() < 2) {
-			throw new IllegalStateException("The list illegal");
-		}
-		T ele1 = list.get(pos1);
-		list.set(pos1, list.get(pos2));
-		list.set(pos2, ele1);
-	}
-
-	public static class QA {
-		public int flag=0;
-		//flag: id(16bit)					type(8bit)		diffculty(8bit)
-		//	0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0|0 0 0 0 0 0 0 0|0 0 0 0 0 0 0 0
-		public int l=0;//file length
-		public String q;
-		public ArrayList<String> a = new ArrayList<>();
-		public int t;//trueAns
-		public String r;
-
-		public void setFlag(int flag) {
-			this.flag = flag;
-		}
-
-		public int getFlag() {
-			return flag;
-		}
-
-		public void setDifficulty(int d) {
-			flag &= 0xffffff00;
-			flag |= d;
-		}
-
-		public int getDifficulty() {
-			return flag & 0xff;
-		}
-
-		public void setId(int id) {
-			flag &= 0x0000ffff;
-			flag |= (id << 16);
-		}
-
-		public int getId() {
-			return (flag >> 16) & 0xff;
-		}
-
-		public void setType(int type) {
-			flag &= 0xffff00ff;
-			flag |= (type << 8);
-		}
-
-		public int getType() {
-			return (flag >> 8) & 0xff;
-		}
-	}
 }
