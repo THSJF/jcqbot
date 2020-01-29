@@ -189,7 +189,7 @@ public class RitsukageServer extends WebSocketServer {
 				break;
 			case RitsukageDataPack._24MD5Random:
 				dataToSend = RitsukageDataPack.encode(RitsukageDataPack._25returnMD5Random, recievedDataPack.getTimeStamp());
-				String md5=Tools.Hash.toMD5(String.valueOf(recievedDataPack.readNum(1) + System.currentTimeMillis() / (24 * 60 * 60 * 1000)));
+				String md5=Tools.Hash.MD5(String.valueOf(recievedDataPack.readNum(1) + System.currentTimeMillis() / (24 * 60 * 60 * 1000)));
 				char c=md5.charAt(0);
 				if (c == '0') {
 					dataToSend.write(1, 9961);
@@ -215,7 +215,7 @@ public class RitsukageServer extends WebSocketServer {
 				break;
 			case RitsukageDataPack._30MD5grandma:
 				dataToSend = RitsukageDataPack.encode(RitsukageDataPack._31returnMD5grandma, recievedDataPack.getTimeStamp());
-				if (Tools.Hash.toMD5(String.valueOf(recievedDataPack.readNum(1) + System.currentTimeMillis() / (24 * 60 * 60 * 1000))).charAt(0) == '0') {
+				if (Tools.Hash.MD5(String.valueOf(recievedDataPack.readNum(1) + System.currentTimeMillis() / (24 * 60 * 60 * 1000))).charAt(0) == '0') {
 					dataToSend.write(1, "八云紫");
 				} else {
 					dataToSend.write(1, Autoreply.instence.diceImitate.md5RanStr(recievedDataPack.readNum(1), DiceImitate.name));

@@ -41,7 +41,7 @@ public class Tools {
 	public static class Hash {
 		public static String MD5(String str) {
 			try {
-				return MD5(str.getBytes(DEFAULT_ENCODING));
+				return MD5(str.getBytes());
 			} catch (Exception e) {
 				return null;
 			}
@@ -51,7 +51,7 @@ public class Tools {
 			try {
 				MessageDigest mdTemp = MessageDigest.getInstance("MD5");
 				mdTemp.update(bs);
-				return toHexString(mdTemp.digest()).toUpperCase();
+				return toHexString(mdTemp.digest());
 			} catch (Exception e) {
 				return null;
 			}

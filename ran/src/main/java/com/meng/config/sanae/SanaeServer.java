@@ -43,7 +43,7 @@ public class SanaeServer extends WebSocketServer {
 				sdp.write(Autoreply.instence.diceImitate.md5RanStr(rsdp.readLong(), DiceImitate.spells));
 				break;
 			case SanaeDataPack.opGameOverPersent:
-				String md5=Tools.Hash.toMD5(String.valueOf(rsdp.readLong() + System.currentTimeMillis() / (24 * 60 * 60 * 1000)));
+				String md5=Tools.Hash.MD5(String.valueOf(rsdp.readLong() + System.currentTimeMillis() / (24 * 60 * 60 * 1000)));
 				char c=md5.charAt(0);
 				if (c == '0') {
 					sdp.write(9961);
@@ -73,7 +73,7 @@ public class SanaeServer extends WebSocketServer {
 				break;
 			case SanaeDataPack.opSeqContent:
 				File jsonFile = new File(Autoreply.appDirectory + "seq.json");
-				sdp.write(Tools.FileTool.readString(jsonFile.getAbsolutePath()));
+				sdp.write(Tools.FileTool.readString(jsonFile));
 				break;
 			case SanaeDataPack.opAddBlack:
 				Autoreply.instence.configManager.addBlack(rsdp.readLong(), rsdp.readLong());
