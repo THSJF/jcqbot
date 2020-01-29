@@ -162,9 +162,8 @@ public class TouHouKnowledge extends BaseModule {
 				try {
 					sb.append(qa2.q.replace("(image)", Autoreply.CC.image(new File(imagePath + qa2.getId() + ".jpg"))));
 				} catch (IOException e) {
-					Autoreply.sendMessage(fromGroup, 0, "图片出现错误");
 					e.printStackTrace();
-					return true;
+					sb.append(qa2.q.replace("(image)", "(图片出现错误)"));
 				}
 			} else {
 				sb.append(qa2.q);
@@ -181,7 +180,7 @@ public class TouHouKnowledge extends BaseModule {
 				sb.append(i++).append(": ").append(s).append("\n");
 			}
 			sb.append("回答序号即可");
-			if (qa2.a.size() > 1) {
+			if (qa2.getTrueAns().size() > 1) {
 				sb.append(",本题有多个选项");
 			}
 			Autoreply.sendMessage(fromGroup, 0, sb.toString());
