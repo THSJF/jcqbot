@@ -56,7 +56,7 @@ public class BotDataPack {
 	public static final int opSetQuestion = 30;
 	public static final int opQuestionPic = 31;
 	public static final int opTextNotify = 32;
-	
+
 	public static BotDataPack encode(int opCode) {
 		return new BotDataPack(opCode);
 	}
@@ -162,13 +162,15 @@ public class BotDataPack {
 	}
 
 	public BotDataPack write(File file) {
+		FileInputStream fin=null;
 		try {
-			FileInputStream fin=new FileInputStream(file);
+			fin = new FileInputStream(file);
 			byte[] bs=new byte[(int)file.length()];
 			fin.read(bs, 0, bs.length);
 			writeByteDataIntoArray(typeFile);
 			write((int)file.length());
 			writeByteDataIntoArray(bs);
+			fin.close();
 		} catch (Exception e) {
 			throw new RuntimeException(e.toString());
 		}
@@ -178,9 +180,11 @@ public class BotDataPack {
 	public File readFile(File file) {
 		if (dataArray[dataPointer++] == typeFile) {
 			int fileLen=readInt();
+			FileOutputStream fos=null;
 			try {
-				FileOutputStream fos=new FileOutputStream(file);
+				fos = new FileOutputStream(file);
 				fos.write(dataArray, dataPointer, fileLen);
+				fos.close();
 			} catch (Exception e) {
 				file.delete();
 				file = null;
