@@ -61,11 +61,7 @@ public class SeqManager extends BaseModule {
 		}
 		return false;
 	}
-
-	public String dealMsg(long fromGroup, long fromQQ, String msg) {
-
-		return null;
-	}
+	
 	private class SeqBean {
 		public String[] content;
 		public int pos=0;

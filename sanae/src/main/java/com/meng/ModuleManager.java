@@ -22,6 +22,7 @@ public class ModuleManager extends BaseModule {
 		modules.add(new TouHouKnowledge().load());
 		modules.add(new RepeaterManager().load());
 		modules.add(new CQCodeManager().load());
+		modules.add(new VirusModule().load());
 		modules.add(new DiceImitate().load());
 		modules.add(new SeqManager());
 		modules.add(new DicReply().load());
