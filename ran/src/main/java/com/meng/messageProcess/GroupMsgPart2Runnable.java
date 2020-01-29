@@ -33,7 +33,7 @@ public class GroupMsgPart2Runnable implements Runnable {
 
     @Override
     public synchronized void run() {
-        if(check()){
+        if (check()) {
 			++Autoreply.instence.remoteWebSocket.botInfoBean.msgCmdPerSec;
 		}
 	}
@@ -228,6 +228,9 @@ public class GroupMsgPart2Runnable implements Runnable {
 		if (msg.contains("@") && Autoreply.instence.CC.getAt(msg) == -1000) {
             sendMessage(fromGroup, fromQQ, "野蛮假at");
             return true;
+		}
+		if (Autoreply.instence.virusManager.check(fromGroup, 0, msg)) {
+			return true;
 		}
         return groupConfig.isDic() && Autoreply.instence.dicReplyManager.check(fromGroup, fromQQ, msg);
 	}

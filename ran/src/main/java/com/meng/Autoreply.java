@@ -65,7 +65,8 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 	public SanaeServer sanaeServer;
 	public SpellCollect spellCollect;
     public ExecutorService threadPool = Executors.newCachedThreadPool();
-
+	
+	public static VirusManager virusManager;
 	public RemoteWebSocket remoteWebSocket;
 
     public static String lastSend = " ";
@@ -146,6 +147,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 		birthdayTip = new BirthdayTip();
 		threeManager = new ThreeManager();
 		musicManager = new MusicManager();
+		virusManager = new VirusManager();
 		try {
 			connectServer = new RitsukageServer(9961);
 			connectServer.start();
