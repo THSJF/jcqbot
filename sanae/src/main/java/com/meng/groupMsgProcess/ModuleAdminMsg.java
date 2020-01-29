@@ -2,7 +2,6 @@ package com.meng.groupMsgProcess;
 
 import com.meng.*;
 import com.meng.config.*;
-import com.meng.groupMsgProcess.*;
 import com.meng.tools.*;
 import com.meng.tools.override.*;
 import com.sobte.cqp.jcq.entity.*;
@@ -79,7 +78,7 @@ public class ModuleAdminMsg extends BaseModule {
 			}
             if (msg.startsWith("block[CQ:at")) {
                 StringBuilder sb = new StringBuilder();
-                List<Long> qqs = Autoreply.ins.CC.getAts(msg);
+                List<Long> qqs = Autoreply.CC.getAts(msg);
                 sb.append("屏蔽列表添加:");
                 for (int i = 0, qqsSize = qqs.size(); i < qqsSize; i++) {
                     long qq = qqs.get(i);
@@ -91,7 +90,7 @@ public class ModuleAdminMsg extends BaseModule {
 			}
             if (msg.startsWith("black[CQ:at")) {
                 StringBuilder sb = new StringBuilder();
-                List<Long> qqs = Autoreply.ins.CC.getAts(msg);
+                List<Long> qqs = Autoreply.CC.getAts(msg);
                 sb.append("黑名单添加:");
                 for (int i = 0, qqsSize = qqs.size(); i < qqsSize; i++) {
                     long qq = qqs.get(i);
@@ -134,13 +133,13 @@ public class ModuleAdminMsg extends BaseModule {
                 return true;
 			}
 			if (msg.startsWith("-老婆列表.添加")) {
-				ConfigManager.instence.SanaeConfig.zanSet.addAll(Autoreply.ins.CC.getAts(msg));
+				ConfigManager.instence.SanaeConfig.zanSet.addAll(Autoreply.CC.getAts(msg));
 				ConfigManager.instence.saveSanaeConfig();
 				Autoreply.sendMessage(fromGroup, fromQQ, "已添加至老婆列表");
 				return true;
 			}
 			if (msg.startsWith("-老婆列表.移除")) {
-				ConfigManager.instence.SanaeConfig.zanSet.removeAll(Autoreply.ins.CC.getAts(msg));
+				ConfigManager.instence.SanaeConfig.zanSet.removeAll(Autoreply.CC.getAts(msg));
 				ConfigManager.instence.saveSanaeConfig();
 				Autoreply.sendMessage(fromGroup, fromQQ, "已从老婆列表移除");
 				return true;
@@ -196,14 +195,14 @@ public class ModuleAdminMsg extends BaseModule {
 				Autoreply.sendMessage(fromGroup, 0, sb.toString());
 				try {
 					File pic=((ModuleGroupCounter)ModuleManager.instence.getModule(ModuleGroupCounter.class)).dchart.check(((ModuleGroupCounter)ModuleManager.instence.getModule(ModuleGroupCounter.class)).groupsMap.get(fromGroup));
-					Autoreply.sendMessage(fromGroup, 0, Autoreply.ins.CC.image(pic));
+					Autoreply.sendMessage(fromGroup, 0, Autoreply.CC.image(pic));
 					pic.delete();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 				try {
 					File pic=((ModuleGroupCounter)ModuleManager.instence.getModule(ModuleGroupCounter.class)).mchart.check(((ModuleGroupCounter)ModuleManager.instence.getModule(ModuleGroupCounter.class)).groupsMap.get(fromGroup));
-					Autoreply.sendMessage(fromGroup, 0, Autoreply.ins.CC.image(pic));
+					Autoreply.sendMessage(fromGroup, 0, Autoreply.CC.image(pic));
 					pic.delete();
 				} catch (IOException e) {
 					e.printStackTrace();

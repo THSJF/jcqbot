@@ -2,7 +2,6 @@ package com.meng;
 
 import com.google.gson.*;
 import com.google.gson.annotations.*;
-import com.meng.*;
 import com.meng.tools.*;
 import com.sobte.cqp.jcq.entity.*;
 import java.util.*;

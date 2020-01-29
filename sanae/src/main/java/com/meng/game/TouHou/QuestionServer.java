@@ -1,7 +1,6 @@
 package com.meng.game.TouHou;
 
 import com.meng.config.*;
-import com.meng.game.TouHou.*;
 import com.meng.groupMsgProcess.*;
 import java.io.*;
 import java.net.*;

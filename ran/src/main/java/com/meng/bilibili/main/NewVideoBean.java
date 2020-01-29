@@ -1,6 +1,6 @@
 package com.meng.bilibili.main;
 
-import java.util.List;
+import java.util.*;
 
 public class NewVideoBean {
     public String status;

@@ -1,6 +1,6 @@
 package com.meng.tools;
 
-import com.meng.Autoreply;
+import com.meng.*;
 
 public class DeleteMessageRunnable implements Runnable {
 

@@ -2,7 +2,6 @@ package com.meng.config;
 
 import com.google.gson.reflect.*;
 import com.meng.*;
-import com.meng.config.*;
 import com.meng.remote.*;
 import com.meng.tools.*;
 import java.io.*;

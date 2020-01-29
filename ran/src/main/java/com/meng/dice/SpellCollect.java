@@ -1,13 +1,14 @@
 package com.meng.dice;
+
 import com.google.gson.reflect.*;
 import com.meng.*;
+import com.meng.gameData.TouHou.zun.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.nio.charset.*;
 import java.util.*;
 import java.util.concurrent.*;
-import com.meng.gameData.TouHou.zun.*;
 
 public class SpellCollect {
 	public ConcurrentHashMap<Long,HashSet<String>> userSpellsMap=new ConcurrentHashMap<>();

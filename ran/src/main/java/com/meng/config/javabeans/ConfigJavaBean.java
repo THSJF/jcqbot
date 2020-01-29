@@ -1,6 +1,5 @@
 package com.meng.config.javabeans;
 
-import java.util.HashSet;
 import java.util.*;
 
 public class ConfigJavaBean {

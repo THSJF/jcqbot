@@ -1,13 +1,10 @@
 package com.meng.ocr;
 
-import java.io.File;
-import java.util.ArrayList;
-
-import org.json.JSONObject;
-
-import com.google.gson.Gson;
-import com.meng.Autoreply;
-import com.sobte.cqp.jcq.entity.CQImage;
+import com.google.gson.*;
+import com.meng.*;
+import java.io.*;
+import java.util.*;
+import org.json.*;
 
 public class OcrManager {
 

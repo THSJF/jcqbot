@@ -46,7 +46,7 @@ public class ModuleManager extends BaseModule {
 		return false;
 	}
 
-	public BaseModule getModule(Class baseModule) {
+	public BaseModule getModule(Class<?> baseModule) {
 		return getModule(baseModule.getSimpleName());
 	}
 

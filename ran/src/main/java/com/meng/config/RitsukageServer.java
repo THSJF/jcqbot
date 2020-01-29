@@ -4,7 +4,7 @@ import com.meng.*;
 import com.meng.bilibili.live.*;
 import com.meng.config.javabeans.*;
 import com.meng.dice.*;
-import com.meng.picProcess.*;
+import com.meng.remote.*;
 import com.meng.tools.*;
 import com.sobte.cqp.jcq.entity.*;
 import java.io.*;
@@ -33,12 +33,12 @@ public class RitsukageServer extends WebSocketServer {
 
 	@Override
 	public void onMessage(WebSocket conn, String message) {
-		++Autoreply.instence.remoteWebSocket.botInfoBean.recFrom;
+		++RemoteWebSocket.botInfoBean.recFrom;
 	}
 	
 	@Override
 	public void onMessage(WebSocket conn, ByteBuffer message) {
-		++Autoreply.instence.remoteWebSocket.botInfoBean.recFrom;
+		++RemoteWebSocket.botInfoBean.recFrom;
 		RitsukageDataPack dp=RitsukageDataPack.decode(message.array());
 		if (dp.getTarget() == Autoreply.instence.configManager.configJavaBean.ogg) {
 			oggProcess(conn, dp);
@@ -285,7 +285,7 @@ public class RitsukageServer extends WebSocketServer {
 				dataToSend = RitsukageDataPack.encode(RitsukageDataPack._0notification, recievedDataPack.getTimeStamp());
 				dataToSend.write(1, "操作类型错误");
 		}
-		++Autoreply.instence.remoteWebSocket.botInfoBean.sendTo;
+		++RemoteWebSocket.botInfoBean.sendTo;
 		ogg.send(dataToSend.getData());
 		//	DataPack ndp=DataPack.encode(DataPack._0notification, dataPack.getTimeStamp());
 		//	ndp.write("成功");

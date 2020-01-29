@@ -2,7 +2,6 @@ package com.meng.remote;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
 
 public class SendRunnable implements Runnable {
 

@@ -212,6 +212,7 @@ public class SanaeDataPack {
 			writeByteDataIntoArray(typeFile);
 			write((int)file.length());
 			writeByteDataIntoArray(bs);
+			fin.close();
 		} catch (Exception e) {
 			throw new RuntimeException(e.toString());
 		}
@@ -225,6 +226,7 @@ public class SanaeDataPack {
 			try {
 				FileOutputStream fos=new FileOutputStream(recFile);
 				fos.write(dataArray, dataPointer, fileLen);
+				fos.close();
 			} catch (Exception e) {
 				recFile.delete();
 				recFile = null;

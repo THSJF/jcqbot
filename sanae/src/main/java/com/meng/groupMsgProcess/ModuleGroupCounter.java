@@ -4,16 +4,15 @@ import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
 import com.meng.tools.*;
+import java.awt.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.nio.charset.*;
+import java.text.*;
 import java.util.*;
-import java.awt.*;  
-import java.text.*;  
-
-import org.jfree.chart.*; 
-import org.jfree.chart.axis.*;  
-import org.jfree.chart.plot.*;  
+import org.jfree.chart.*;
+import org.jfree.chart.axis.*;
+import org.jfree.chart.plot.*;
 import org.jfree.data.time.*;   
 
 public class ModuleGroupCounter extends BaseModule {

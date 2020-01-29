@@ -3,6 +3,7 @@ package com.meng.config;
 import com.google.gson.reflect.*;
 import com.meng.*;
 import com.meng.groupMsgProcess.*;
+import com.meng.remote.*;
 import com.meng.tools.*;
 import java.lang.reflect.*;
 import java.net.*;
@@ -11,7 +12,6 @@ import java.util.*;
 import org.java_websocket.client.*;
 import org.java_websocket.exceptions.*;
 import org.java_websocket.handshake.*;
-import com.meng.remote.*;
 
 public class NetConfig extends WebSocketClient {
 

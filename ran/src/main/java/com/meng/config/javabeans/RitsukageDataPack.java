@@ -1,12 +1,12 @@
 package com.meng.config.javabeans;
 
-import java.io.*;
-import java.util.*;
 import com.google.gson.*;
-import com.meng.*;
-import java.lang.reflect.*;
 import com.google.gson.reflect.*;
+import com.meng.*;
 import com.meng.tools.*;
+import java.io.*;
+import java.lang.reflect.*;
+import java.util.*;
 
 public class RitsukageDataPack {
 

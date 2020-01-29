@@ -287,7 +287,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         // return MSG_IGNORE;
         // 如果消息来自匿名者
 		remoteWebSocket.sendMsg(1, fromGroup, fromQQ, msg, msgId);
-		++remoteWebSocket.botInfoBean.msgPerSec;
+		++RemoteWebSocket.botInfoBean.msgPerSec;
         if (fromQQ == 80000000L && !fromAnonymous.equals("")) {
             // 将匿名用户信息放到 anonymous 变量中
             // Anonymous anonymous = CQ.getAnonymous(fromAnonymous);
@@ -302,7 +302,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         }
 
         if (msg.equals(".admin enable") && Autoreply.instence.configManager.isAdmin(fromQQ)) {
-			++Autoreply.instence.remoteWebSocket.botInfoBean.msgCmdPerSec;
+			++RemoteWebSocket.botInfoBean.msgCmdPerSec;
 			GroupConfig groupConfig = Autoreply.instence.configManager.getGroupConfig(fromGroup);
             if (groupConfig == null) {
                 Autoreply.sendMessage(fromGroup, fromQQ, "本群没有默认配置");
@@ -314,7 +314,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
             return MSG_IGNORE;
         }
         if (msg.equals(".admin disable") && Autoreply.instence.configManager.isAdmin(fromQQ)) {
-            ++Autoreply.instence.remoteWebSocket.botInfoBean.msgCmdPerSec;
+            ++RemoteWebSocket.botInfoBean.msgCmdPerSec;
 			GroupConfig groupConfig = Autoreply.instence.configManager.getGroupConfig(fromGroup);
             if (groupConfig == null) {
                 Autoreply.sendMessage(fromGroup, fromQQ, "本群没有默认配置");
@@ -344,7 +344,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
             return MSG_IGNORE;
         }
         if (fromQQ == 1033317031L && msg.startsWith("nai.")) {
-            ++Autoreply.instence.remoteWebSocket.botInfoBean.msgCmdPerSec;
+            ++RemoteWebSocket.botInfoBean.msgCmdPerSec;
 			String[] sarr = msg.split("\\.", 3);
             PersonInfo pInfo = configManager.getPersonInfoFromName(sarr[1]);
             if (pInfo != null) {
@@ -355,7 +355,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
             return MSG_IGNORE;
         }
 		if (fromQQ == 1033317031L) {
-			++Autoreply.instence.remoteWebSocket.botInfoBean.msgCmdPerSec;
+			++RemoteWebSocket.botInfoBean.msgCmdPerSec;
 			String[] strings = msg.split("\\.", 3);
 			if (strings[0].equals("cookie")) {
 				switch (strings[1]) {
@@ -371,7 +371,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 			}
 		}
 		if (fromQQ == 2856986197L || fromQQ == 2565128043L) {
-			++Autoreply.instence.remoteWebSocket.botInfoBean.msgCmdPerSec;
+			++RemoteWebSocket.botInfoBean.msgCmdPerSec;
 			if (msg.contains("setConnect")) {
 				try {
 					configManager.setOgg(CC.getAt(msg));
@@ -383,7 +383,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 			}
 		}
         if (adminMessageProcessor.check(fromGroup, fromQQ, msg)) {
-			++remoteWebSocket.botInfoBean.msgCmdPerSec;
+			++RemoteWebSocket.botInfoBean.msgCmdPerSec;
             return MSG_IGNORE;
         }
         if (configManager.isNotReplyGroup(fromGroup)) {
@@ -641,12 +641,12 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         }
 		int value=-1;
         // 处理词库中为特殊消息做的标记
-		++remoteWebSocket.botInfoBean.msgSendPerSec;
+		++RemoteWebSocket.botInfoBean.msgSendPerSec;
         Tools.CQ.setRandomPop();
         try {
             if (msg.startsWith("red:")) {
                 msg = msg.substring(4);
-				++remoteWebSocket.botInfoBean.msgSendPerSec;
+				++RemoteWebSocket.botInfoBean.msgSendPerSec;
                 if (dicReplyManager.check(fromGroup, fromQQ, msg)) {
                     return -1;
                 }

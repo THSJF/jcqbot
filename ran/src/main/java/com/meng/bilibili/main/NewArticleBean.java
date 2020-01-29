@@ -1,7 +1,6 @@
 package com.meng.bilibili.main;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class NewArticleBean {
     public String status;

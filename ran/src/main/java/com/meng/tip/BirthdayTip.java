@@ -1,5 +1,5 @@
 package com.meng.tip;
-import com.google.gson.*;
+
 import com.google.gson.reflect.*;
 import com.meng.*;
 import com.meng.tools.*;
@@ -8,7 +8,6 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.nio.charset.*;
 import java.util.*;
-import java.util.concurrent.*;
 
 import com.sobte.cqp.jcq.entity.Member;
 

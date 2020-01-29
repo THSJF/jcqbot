@@ -47,9 +47,9 @@ public class DanmakuListener extends WebSocketClient {
 
 	@Override
 	public void onMessage(ByteBuffer bs) {	
-		Iterator it=peopleMap.entrySet().iterator();
+		Iterator<Map.Entry<Long,Long>> it=peopleMap.entrySet().iterator();
 		while (it.hasNext()) {
-			Map.Entry<Long,Long> entry= (Map.Entry<Long, Long>) it.next();
+			Map.Entry<Long,Long> entry= it.next();
 			if (System.currentTimeMillis() - entry.getValue() > 60 * 60 * 1000) {
 				it.remove(); 
 			}
@@ -86,7 +86,7 @@ public class DanmakuListener extends WebSocketClient {
 				String speakerName=jaar2.get(1).getAsString();
 				long speakerUid=jaar2.get(0).getAsLong();
 				PersonInfo speakerPersonInfo=Autoreply.instence.configManager.getPersonInfoFromBid(speakerUid);
-				PersonInfo roomMasterPersonInfo=Autoreply.instence.configManager.getPersonInfoFromLiveId(roomMaster.bliveRoom);
+				//PersonInfo roomMasterPersonInfo=Autoreply.instence.configManager.getPersonInfoFromLiveId(roomMaster.bliveRoom);
 				String finallySpeakerName=speakerPersonInfo == null ?speakerName: speakerPersonInfo.name;
 				peopleMap.put(speakerUid, System.currentTimeMillis());
 				//	Autoreply.instence.sendMessage(666247478, 0,  pi2.name + roomMaster.bliveRoom + " " + n1 + ":" + text);

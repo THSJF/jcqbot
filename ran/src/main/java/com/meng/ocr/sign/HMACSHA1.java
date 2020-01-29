@@ -1,7 +1,7 @@
 package com.meng.ocr.sign;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
+import javax.crypto.*;
+import javax.crypto.spec.*;
 
 public class HMACSHA1 {
 

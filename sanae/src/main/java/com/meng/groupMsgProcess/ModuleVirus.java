@@ -30,8 +30,9 @@ public class ModuleVirus extends BaseModule {
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (msg.startsWith("-病毒 ")) {
 			Autoreply.sendMessage(fromGroup, 0, getV(msg.substring(4)));
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	public String getV(String placeName) {

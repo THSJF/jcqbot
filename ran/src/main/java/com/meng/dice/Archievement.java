@@ -1,4 +1,5 @@
 package com.meng.dice;
+
 import java.util.*;
 
 public class Archievement {

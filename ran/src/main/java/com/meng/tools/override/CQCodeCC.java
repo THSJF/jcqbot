@@ -1,14 +1,10 @@
 package com.meng.tools.override;
 
-import java.io.File;
-import java.io.IOException;
-
-import com.meng.Autoreply;
-import com.sobte.cqp.jcq.entity.CQImage;
-import com.sobte.cqp.jcq.entity.IniFile;
-import com.sobte.cqp.jcq.message.CQCode;
-import com.sobte.cqp.jcq.message.CoolQCode;
-import com.sobte.cqp.jcq.util.StringHelper;
+import com.meng.*;
+import com.sobte.cqp.jcq.entity.*;
+import com.sobte.cqp.jcq.message.*;
+import com.sobte.cqp.jcq.util.*;
+import java.io.*;
 
 public class CQCodeCC extends CQCode {
 

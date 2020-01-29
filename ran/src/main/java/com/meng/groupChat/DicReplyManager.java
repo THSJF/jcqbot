@@ -52,10 +52,8 @@ public class DicReplyManager {
     }
 
 	private class DicReplyGroup {
-		private long groupNum;
 		private HashMap<String, ArrayList<String>> dic = new HashMap<>();
 		public DicReplyGroup(long group) {
-			groupNum = group;
 			File dicFile = new File(Autoreply.appDirectory + "dic\\dic" + group + ".json");
 			if (!dicFile.exists()) {
 				saveDic(dicFile, dic);

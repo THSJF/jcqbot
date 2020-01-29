@@ -67,7 +67,7 @@ public class Banner {
                     }
                     HashMap<Long, BanType> targetQQAndType = banMap.get(fromGroup);
 					if (targetQQAndType == null) {
-						targetQQAndType = new HashMap();
+						targetQQAndType = new HashMap<>();
 					}
                     BanType lastOp = targetQQAndType.get(targetQQ);
 					if (lastOp == null) {
@@ -118,7 +118,7 @@ public class Banner {
                     }
                     HashMap<Long, BanType> targetQQAndType = banMap.get(fromGroup);
 					if (targetQQAndType == null) {
-						targetQQAndType = new HashMap();
+						targetQQAndType = new HashMap<>();
 					}
                     BanType lastOp = targetQQAndType.get(targetQQ);
 					if (lastOp == null) {

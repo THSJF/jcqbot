@@ -1,7 +1,6 @@
 package com.meng.bilibili;
 
 import com.google.gson.*;
-import com.meng.bilibili.*;
 import java.io.*;
 import java.net.*;
 import java.nio.*;
@@ -84,9 +83,9 @@ public class DanmakuListenerManager {
 				if (jobj.get("cmd").getAsString().equals("DANMU_MSG")) {
 					JsonArray jaar=jobj.get("info").getAsJsonArray();
 					JsonArray jaar2=jaar.get(2).getAsJsonArray();
-					String danmakuText=jaar.get(1).getAsString();
+				/*	String danmakuText=jaar.get(1).getAsString();
 					String speakerName=jaar2.get(1).getAsString();
-					long speakerUid=jaar2.get(0).getAsLong();
+					long speakerUid=jaar2.get(0).getAsLong();*/
 					//	Autoreply.instence.sendMessage(666247478, 0,  pi2.name + roomMaster.bliveRoom + " " + n1 + ":" + text);
 				} 
 			} catch (JsonSyntaxException je) {

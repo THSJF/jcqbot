@@ -1,6 +1,5 @@
 package com.meng.groupMsgProcess;
 
-import com.meng.Autoreply;
 import com.meng.*;
 
 public class ModuleCQCode extends BaseModule {

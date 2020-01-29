@@ -1,6 +1,6 @@
 package com.meng.groupChat;
 
-import com.meng.Autoreply;
+import com.meng.*;
 
 public class CQCodeManager {
 

@@ -1,6 +1,6 @@
 package com.meng;
 
-import java.io.File;
+import java.io.*;
 
 public class MessageSender {
     public int subType = 0;

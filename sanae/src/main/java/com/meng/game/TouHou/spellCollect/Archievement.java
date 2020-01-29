@@ -3,7 +3,6 @@ package com.meng.game.TouHou.spellCollect;
 import com.meng.game.TouHou.*;
 import com.meng.groupMsgProcess.*;
 import java.util.*;
-import com.meng.*;
 
 public class Archievement {
 	public String name;

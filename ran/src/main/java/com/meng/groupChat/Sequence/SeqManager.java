@@ -1,4 +1,5 @@
 package com.meng.groupChat.Sequence;
+
 import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;

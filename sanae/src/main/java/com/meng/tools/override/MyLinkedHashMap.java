@@ -1,7 +1,9 @@
 package com.meng.tools.override;
 import java.util.*;
 
-public class MyLinkedHashMap<K,V> extends LinkedHashMap {
+public class MyLinkedHashMap<K,V> extends LinkedHashMap<K,V> {
+
+	public static final long serialVersionUID=9760996100330037L;
 
 	@Override
 	public String toString() {
@@ -9,7 +11,7 @@ public class MyLinkedHashMap<K,V> extends LinkedHashMap {
         Iterator<Map.Entry<K, V>> i = keyset.iterator();
         if (!i.hasNext()) {
 			return "";
-		  }
+		}
         StringBuffer buffer = new StringBuffer();
         while (true) {
             Map.Entry<K, V> me = i.next();
@@ -19,7 +21,7 @@ public class MyLinkedHashMap<K,V> extends LinkedHashMap {
             buffer.append(value.toString() + "\n");
             if (!i.hasNext()) {
 				return buffer.toString();
-			  }
-		  }
-	  }
-  }
+			}
+		}
+	}
+}
