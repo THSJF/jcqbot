@@ -52,17 +52,25 @@ public class Tools {
 	}
 
 	public static class Hash {
-		public static String toMD5(String str) {
+		public static String MD5(String str) {
 			try {
-				byte[] strTemp = str.getBytes();
-				MessageDigest mdTemp = MessageDigest.getInstance("MD5");
-				mdTemp.update(strTemp);
-				return toHexString(mdTemp.digest());
+				return MD5(str.getBytes(DEFAULT_ENCODING));
 			} catch (Exception e) {
 				return null;
 			}
 		}
-		public static String toMD5(java.io.File file) {
+
+		public static String MD5(byte[] bs) {
+			try {
+				MessageDigest mdTemp = MessageDigest.getInstance("MD5");
+				mdTemp.update(bs);
+				return toHexString(mdTemp.digest()).toUpperCase();
+			} catch (Exception e) {
+				return null;
+			}
+		}
+
+		public static String toMD5(File file) {
 			InputStream inputStream = null;
 			try {
 				inputStream = new FileInputStream(file);

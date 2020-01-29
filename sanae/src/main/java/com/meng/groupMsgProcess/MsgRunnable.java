@@ -18,8 +18,8 @@ public class MsgRunnable implements Runnable {
 
     @Override
     public synchronized void run() {
-       if(ModuleManager.instence.processMsg(fromGroup, fromQQ, msg, msgId)){
-		   ++RemoteWebSocket.botInfoBean.msgCmdPerSec;
-	   }
+		if (ModuleManager.instence.onMsg(fromGroup, fromQQ, msg, msgId)) {
+			++RemoteWebSocket.botInfoBean.msgCmdPerSec;
+		}
     }
 }

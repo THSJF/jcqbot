@@ -16,7 +16,7 @@ import org.jfree.chart.axis.*;
 import org.jfree.chart.plot.*;  
 import org.jfree.data.time.*;   
 
-public class GroupCounter extends BaseModule {
+public class ModuleGroupCounter extends BaseModule {
 
 	public HashMap<Long,GroupSpeak> groupsMap = new HashMap<>(32);
 	private File file;
@@ -57,7 +57,7 @@ public class GroupCounter extends BaseModule {
 	}
 
 	@Override
-	public boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
 		GroupSpeak gs=groupsMap.get(fromGroup);
 		if (gs == null) {
 			gs = new GroupSpeak();
@@ -112,7 +112,7 @@ public class GroupCounter extends BaseModule {
 		public DayChart() {  
 
 		}
-		public File check(GroupCounter.GroupSpeak gs) {
+		public File check(ModuleGroupCounter.GroupSpeak gs) {
 			TimeSeries timeseries = new TimeSeries("你群发言");
 			Calendar c = Calendar.getInstance();
 			c.add(Calendar.HOUR_OF_DAY, -24);
@@ -154,7 +154,7 @@ public class GroupCounter extends BaseModule {
 		public MonthChart() {  
 
 		}
-		public File check(GroupCounter.GroupSpeak gs) {
+		public File check(ModuleGroupCounter.GroupSpeak gs) {
 			TimeSeries timeseries = new TimeSeries("你群发言");
 			Calendar cal = Calendar.getInstance();
 			cal.add(Calendar.DAY_OF_MONTH, -30);

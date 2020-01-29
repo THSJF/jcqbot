@@ -58,7 +58,7 @@ public class NetConfig extends WebSocketClient {
 				Type type = new TypeToken<RanConfigBean>() {
 				}.getType();
 				ConfigManager.instence.RanConfig = Autoreply.gson.fromJson(dataRec.readString(), type);
-				ModuleManager.instence.getModule(SeqManager.class.getSimpleName()).load();
+				ModuleManager.instence.getModule(ModuleSeq.class.getSimpleName()).load();
 				break;
 			case SanaeDataPack.opGameOverSpell:
 				resultMap.put(dataRec.getOpCode(), new TaskResult(dataRec.readString()));

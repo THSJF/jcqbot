@@ -12,7 +12,7 @@ import java.nio.charset.*;
 import java.util.*;
 import java.util.concurrent.*;
 
-public class SpellCollect extends BaseModule {
+public class ModuleSpellCollect extends BaseModule {
 
 	private SpellCollectBean spelbean=new SpellCollectBean();
 	private File beanF;
@@ -65,7 +65,7 @@ public class SpellCollect extends BaseModule {
 	}
 
 	@Override
-	public boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (msg.equals("-签到")) {
 			if (spelbean.todaySign.contains(fromQQ)) {
 				Autoreply.sendMessage(fromGroup, 0, "你今天签到过啦");
@@ -75,7 +75,7 @@ public class SpellCollect extends BaseModule {
 			addSpell(fromQQ, sc);
 			Autoreply.sendMessage(fromGroup, 0, String.format("%s获得了10信仰和 %s", ConfigManager.instence.getNickName(fromQQ), sc.n));
 			checkArchievement(fromGroup, fromQQ);
-			((FaithManager)ModuleManager.instence.getModule(FaithManager.class)).addFaith(fromQQ, 10);
+			((ModuleFaith)ModuleManager.instence.getModule(ModuleFaith.class)).addFaith(fromQQ, 10);
 			spelbean.todaySign.add(fromQQ);
 			saveBeanConfig();
 			return true;
@@ -94,7 +94,7 @@ public class SpellCollect extends BaseModule {
 			sb.append(ConfigManager.instence.getNickName(fromQQ));
 			sb.append("获得了:");
 			int i=0;
-			for (SpellCard s:DiceImitate.spells) {
+			for (SpellCard s:ModuleDiceImitate.spells) {
 				if (gotSpells.contains(s)) {
 					sb.append("\n").append(s.n);
 					++i;
@@ -109,7 +109,7 @@ public class SpellCollect extends BaseModule {
 			return true;	
 		}
 		if (msg.equals("-faith")) {
-			Autoreply.sendMessage(fromGroup, 0, "你的信仰是:" + ((FaithManager)ModuleManager.instence.getModule(FaithManager.class)).getFaith(fromQQ));
+			Autoreply.sendMessage(fromGroup, 0, "你的信仰是:" + ((ModuleFaith)ModuleManager.instence.getModule(ModuleFaith.class)).getFaith(fromQQ));
 			return true;
 		}
 		return false;
@@ -126,7 +126,7 @@ public class SpellCollect extends BaseModule {
 			if (ac.getNewArchievement(ab, gotSpell)) {
 				ab.addArchievement(ac.archNum);
 				Autoreply.sendMessage(fromGroup, toQQ, "获得成就:" + ac.name + "\n获得奖励:" + ac.faith + "\n条件:" + ac.describe);	
-				((FaithManager)ModuleManager.instence.getModule(FaithManager.class)).addFaith(toQQ, ac.faith);
+				((ModuleFaith)ModuleManager.instence.getModule(ModuleFaith.class)).addFaith(toQQ, ac.faith);
 			}
 		}
 		saveBeanConfig();
@@ -149,7 +149,7 @@ public class SpellCollect extends BaseModule {
     }
 
 	public SpellCard getRandomSpell() {
-		SpellCard sc=DiceImitate.spells[new Random().nextInt(DiceImitate.spells.length)];
+		SpellCard sc=ModuleDiceImitate.spells[new Random().nextInt(ModuleDiceImitate.spells.length)];
 		ArrayList<Integer> ali=new ArrayList<>();
 		if ((sc.d & SpellCard.E) == SpellCard.E) {
 			ali.add(SpellCard.E);

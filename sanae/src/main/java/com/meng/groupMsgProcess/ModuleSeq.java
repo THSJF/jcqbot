@@ -7,7 +7,7 @@ import com.meng.config.*;
 import java.lang.reflect.*;
 import java.util.*;
 
-public class SeqManager extends BaseModule {
+public class ModuleSeq extends BaseModule {
 
 	private ArrayList<SeqBean> seqs=new ArrayList<>();
 	private HashMap<String, ArrayList<String>> jsonData = new HashMap<>();
@@ -33,7 +33,7 @@ public class SeqManager extends BaseModule {
 	}
 
 	@Override
-	public boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
 		for (SeqBean sb:seqs) {
 			if (msg.equals(sb.content[0])) {
 				sb.pos = 0;

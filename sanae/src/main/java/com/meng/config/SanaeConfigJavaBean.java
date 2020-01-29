@@ -14,7 +14,7 @@ public class SanaeConfigJavaBean {
 	public ArrayList<ReportBean> reportList=new ArrayList<>();
 	public ArrayList<BugReportBean> bugReportList=new ArrayList<>();
 	public HashMap<Long,Boolean> dicRegex = new HashMap<>();
-	public ArrayList<MessageWaitManager.MessageWait> delayMsg=new ArrayList<>();
+	public ArrayList<ModuleMsgDelaySend.MessageWait> delayMsg=new ArrayList<>();
 	public ConcurrentHashMap<Integer,BiliUser> biliMaster = new ConcurrentHashMap<>();
 
 	void addReport(long fromGroup, long fromQQ, String content) {

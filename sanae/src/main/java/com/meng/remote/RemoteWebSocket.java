@@ -2,6 +2,7 @@ package com.meng.remote;
 import com.meng.*;
 import com.meng.config.*;
 import com.meng.game.TouHou.*;
+import com.meng.groupMsgProcess.*;
 import com.sobte.cqp.jcq.entity.*;
 import java.io.*;
 import java.net.*;
@@ -191,14 +192,14 @@ public class RemoteWebSocket extends WebSocketServer {
 					qa40.r = null;
 				}
 				if (rec.hasNext()) {
-					qa40.l = (int)rec.readFile(new File(((TouHouKnowledge)ModuleManager.instence.getModule(TouHouKnowledge.class)).imagePath + ((TouHouKnowledge)ModuleManager.instence.getModule(TouHouKnowledge.class)).qaList.size() + ".jpg")).length();
+					qa40.l = (int)rec.readFile(new File(((ModuleQA)ModuleManager.instence.getModule(ModuleQA.class)).imagePath + ((ModuleQA)ModuleManager.instence.getModule(ModuleQA.class)).qaList.size() + ".jpg")).length();
 				}
-				((TouHouKnowledge)ModuleManager.instence.getModule(TouHouKnowledge.class)).addQA(qa40);
+				((ModuleQA)ModuleManager.instence.getModule(ModuleQA.class)).addQA(qa40);
 				toSend = BotDataPack.encode(BotDataPack.opTextNotify);
 				toSend.write("添加成功");
 				break;
 			case BotDataPack.opAllQuestion:
-				toSend = writeQA(((TouHouKnowledge)ModuleManager.instence.getModule(TouHouKnowledge.class)).qaList);
+				toSend = writeQA(((ModuleQA)ModuleManager.instence.getModule(ModuleQA.class)).qaList);
 				break;
 			case BotDataPack.opSetQuestion:
 				QA qa43= new QA();
@@ -214,16 +215,16 @@ public class RemoteWebSocket extends WebSocketServer {
 					qa43.r = null;
 				}
 				if (rec.hasNext()) {
-					qa43.l = (int)rec.readFile(new File(((TouHouKnowledge)ModuleManager.instence.getModule(TouHouKnowledge.class)).imagePath + qa43.getId() + ".jpg")).length();
+					qa43.l = (int)rec.readFile(new File(((ModuleQA)ModuleManager.instence.getModule(ModuleQA.class)).imagePath + qa43.getId() + ".jpg")).length();
 				}
-				((TouHouKnowledge)ModuleManager.instence.getModule(TouHouKnowledge.class)).setQA(qa43);
+				((ModuleQA)ModuleManager.instence.getModule(ModuleQA.class)).setQA(qa43);
 				toSend = BotDataPack.encode(BotDataPack.opTextNotify);
 				toSend.write("修改成功");
 				break;
 			case BotDataPack.opQuestionPic:
 				toSend = BotDataPack.encode(BotDataPack.opQuestionPic);
 				int id = rec.readInt();
-				File img = new File(((TouHouKnowledge)ModuleManager.instence.getModule(TouHouKnowledge.class)).imagePath + id + ".jpg");
+				File img = new File(((ModuleQA)ModuleManager.instence.getModule(ModuleQA.class)).imagePath + id + ".jpg");
 				toSend.write(id);
 				toSend.write(img);
 				break;

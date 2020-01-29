@@ -4,7 +4,7 @@ import com.meng.*;
 import com.meng.config.*;
 import java.util.*;
 
-public class MessageWaitManager extends BaseModule {
+public class ModuleMsgDelaySend extends BaseModule {
 
 	private boolean noTip=true;
 
@@ -15,7 +15,7 @@ public class MessageWaitManager extends BaseModule {
 	}
 
 	@Override
-	public boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (noTip) {
 			return false;
 		}

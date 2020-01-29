@@ -3,7 +3,7 @@ package com.meng.groupMsgProcess;
 import com.meng.*;
 import com.meng.config.*;
 
-public class DiceCommand extends BaseModule {
+public class ModuleDiceCmd extends BaseModule {
 
 	private String[] cmdMsg;
 	private int pos=0;
@@ -15,7 +15,7 @@ public class DiceCommand extends BaseModule {
 	}
 
 	@Override
-	public boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (msg.charAt(0) != '.') {
 			return false;
 		}
@@ -56,7 +56,7 @@ public class DiceCommand extends BaseModule {
 						Autoreply.sendMessage(fromGroup, 0, "我以后会称呼你为" + name);
 						return true;
 					case ".help":
-						Autoreply.sendMessage(fromGroup, 0, Autoreply.ins.adminMessageProcessor.userPermission.toString());
+						Autoreply.sendMessage(fromGroup, 0, ((ModuleAdminMsg)ModuleManager.instence.getModule(ModuleAdminMsg.class)).userPermission.toString());
 						return true;
 				}
 			} catch (NumberFormatException ne) {

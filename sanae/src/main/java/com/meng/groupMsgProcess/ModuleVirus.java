@@ -4,7 +4,7 @@ import com.meng.*;
 import com.meng.tools.*;
 import java.util.*;
 
-public class VirusModule extends BaseModule {
+public class ModuleVirus extends BaseModule {
 
 	private ArrayList<VirusBean> vb=new ArrayList<>();
 	@Override
@@ -27,7 +27,7 @@ public class VirusModule extends BaseModule {
 	}
 
 	@Override
-	public boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (msg.startsWith("-病毒 ")) {
 			Autoreply.sendMessage(fromGroup, 0, getV(msg.substring(4)));
 		}

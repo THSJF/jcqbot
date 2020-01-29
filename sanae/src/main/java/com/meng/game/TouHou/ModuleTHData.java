@@ -4,7 +4,7 @@ import com.meng.*;
 import com.meng.groupMsgProcess.*;
 import java.util.*;
 
-public class TouHouDataManager extends BaseModule{
+public class ModuleTHData extends BaseModule{
 	
 	private HashMap<String,String> spellCardInfoMap=new HashMap<>();
 	
@@ -18,16 +18,16 @@ public class TouHouDataManager extends BaseModule{
 	@Override
 	public boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (msg.startsWith("-符卡查询 ")) {
-			SpellCard sc = ((TouHouDataManager)ModuleManager.instence.getModule(TouHouDataManager.class)).getSpellCard(msg.substring(6));
+			SpellCard sc = ((ModuleTHData)ModuleManager.instence.getModule(ModuleTHData.class)).getSpellCard(msg.substring(6));
 			if (sc == null) {
 				Autoreply.sendMessage(fromGroup, 0, "没有找到这张符卡");
 				return true;
 			}
-			Autoreply.sendMessage(fromGroup, 0, ((TouHouDataManager)ModuleManager.instence.getModule(TouHouDataManager.class)).getSpellCardPs(sc));
+			Autoreply.sendMessage(fromGroup, 0, ((ModuleTHData)ModuleManager.instence.getModule(ModuleTHData.class)).getSpellCardPs(sc));
 			return true;
 		}
 		if (msg.startsWith("-角色查询 ")) {
-			Autoreply.sendMessage(fromGroup, 0, ((TouHouDataManager)ModuleManager.instence.getModule(TouHouDataManager.class)).getCharaNick(msg.substring(6)));
+			Autoreply.sendMessage(fromGroup, 0, ((ModuleTHData)ModuleManager.instence.getModule(ModuleTHData.class)).getCharaNick(msg.substring(6)));
 			return true;
 		}
 		return false;
@@ -74,7 +74,7 @@ public class TouHouDataManager extends BaseModule{
 
 	public String getCharaNick(String charaName) {
 		String fullName=null;
-		for (TouhouCharacter s:DiceImitate.name) {
+		for (TouhouCharacter s:ModuleDiceImitate.name) {
 			if (s.charaName.contains(charaName)) {
 				fullName = s.charaName;
 				break;
@@ -85,7 +85,7 @@ public class TouHouDataManager extends BaseModule{
 		}
 		StringBuilder sb=new StringBuilder();
 		sb.append(fullName).append("有以下称号:\n");
-		for (TouhouCharacter thc:DiceImitate.name) {
+		for (TouhouCharacter thc:ModuleDiceImitate.name) {
 			if (thc.charaName.equals(fullName)) {
 				if (thc.nick.equals("该角色信息未填坑")) {
 					continue;
@@ -101,7 +101,7 @@ public class TouHouDataManager extends BaseModule{
 	}
 
 	public SpellCard getSpellCard(String spellName) {
-		for (SpellCard sc:DiceImitate.spells) {
+		for (SpellCard sc:ModuleDiceImitate.spells) {
 			if (sc.n.contains(spellName)) {
 				return sc;
 			}
@@ -110,7 +110,7 @@ public class TouHouDataManager extends BaseModule{
 	}
 
 	public SpellCard getSpellCard(String spellName, int diff) {
-		for (SpellCard sc:DiceImitate.spells) {
+		for (SpellCard sc:ModuleDiceImitate.spells) {
 			if (sc.n.contains(spellName) && sc.d == diff) {
 				return sc;
 			}
@@ -120,7 +120,7 @@ public class TouHouDataManager extends BaseModule{
 
 	public HashSet<SpellCard> getCharaSpellCard(String name) {
 		HashSet<SpellCard> scs=new HashSet<>();
-		for (SpellCard sc:DiceImitate.spells) {
+		for (SpellCard sc:ModuleDiceImitate.spells) {
 			if (sc.m.equals(name)) {
 				scs.add(sc);
 			}
@@ -130,7 +130,7 @@ public class TouHouDataManager extends BaseModule{
 
 	public HashSet<SpellCard> getCharaSpellCard(String name, int diff) {
 		HashSet<SpellCard> scs=new HashSet<>();
-		for (SpellCard sc:DiceImitate.spells) {
+		for (SpellCard sc:ModuleDiceImitate.spells) {
 			if (sc.m.equals(name) && sc.d == diff) {
 				scs.add(sc);
 			}
@@ -140,7 +140,7 @@ public class TouHouDataManager extends BaseModule{
 
 	public HashSet<SpellCard> getCharaSpellCard(String name, String... spellExcept) {
 		HashSet<SpellCard> scs=new HashSet<>();
-		for (SpellCard sc:DiceImitate.spells) {
+		for (SpellCard sc:ModuleDiceImitate.spells) {
 			if (sc.m.equals(name)) {
 				for (String necx:spellExcept) {
 					if (!sc.n.equals(necx)) {

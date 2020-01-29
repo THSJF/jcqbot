@@ -1,7 +1,7 @@
-package com.meng;
+package com.meng.groupMsgProcess;
 
+import com.meng.*;
 import com.meng.game.TouHou.*;
-import com.meng.groupMsgProcess.*;
 import java.util.*;
 
 public class ModuleManager extends BaseModule {
@@ -10,29 +10,30 @@ public class ModuleManager extends BaseModule {
 
 	@Override
 	public BaseModule load() {
-		modules.add(new GroupCounter().load());
-		modules.add(new MessageRefuse().load());
-		modules.add(new ReportManager().load());
-		modules.add(new MessageWaitManager().load());
-		modules.add(new DiceCommand().load());
-		modules.add(new FaithManager().load());
-		modules.add(new ContainsAtManager().load());
-		modules.add(new TouHouDataManager().load());
-		modules.add(new SpellCollect().load());
-		modules.add(new TouHouKnowledge().load());
-		modules.add(new RepeaterManager().load());
-		modules.add(new CQCodeManager().load());
-		modules.add(new VirusModule().load());
-		modules.add(new DiceImitate().load());
-		modules.add(new SeqManager());
-		modules.add(new DicReply().load());
+		modules.add(new ModuleAdminMsg().load());
+		modules.add(new ModuleGroupCounter().load());
+		modules.add(new ModuleMsgRefuse().load());
+		modules.add(new ModuleReport().load());
+		modules.add(new ModuleMsgDelaySend().load());
+		modules.add(new ModuleDiceCmd().load());
+		modules.add(new ModuleFaith().load());
+		modules.add(new ModuleMsgAt().load());
+		modules.add(new ModuleTHData().load());
+		modules.add(new ModuleSpellCollect().load());
+		modules.add(new ModuleQA().load());
+		modules.add(new ModuleRepeater().load());
+		modules.add(new ModuleCQCode().load());
+		modules.add(new ModuleVirus().load());
+		modules.add(new ModuleDiceImitate().load());
+		modules.add(new ModuleSeq());
+		modules.add(new ModuleGroupDic().load());
 		instence = this;
 		enable = true;
 		return this;
 	}
 
 	@Override
-	public boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (msg.equals("查看活跃数据")) {
 			Autoreply.sendMessage(fromGroup, fromQQ, "https://qqweb.qq.com/m/qun/activedata/active.html?gc=" + fromGroup);
 			return true;

@@ -4,7 +4,7 @@ import com.meng.*;
 import com.meng.config.*;
 import java.util.concurrent.*;
 
-public class MessageRefuse extends BaseModule {
+public class ModuleMsgRefuse extends BaseModule {
 
 	public ConcurrentHashMap<Long,FireWallBean> msgMap=new ConcurrentHashMap<>();
 
@@ -29,7 +29,7 @@ public class MessageRefuse extends BaseModule {
 	}
 
 	@Override
-	public boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
 		ConfigManager cm=ConfigManager.instence;
 		if (cm.SanaeConfig.botOff.contains(fromGroup) || cm.isNotReplyQQ(fromQQ) || cm.isNotReplyWord(msg)) {
             return true;

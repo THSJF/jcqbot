@@ -2,7 +2,7 @@ package com.meng.groupMsgProcess;
 import com.meng.*;
 import com.meng.tools.*;
 
-public class ContainsAtManager extends BaseModule {
+public class ModuleMsgAt extends BaseModule {
 
 	@Override
 	public BaseModule load() {
@@ -11,7 +11,7 @@ public class ContainsAtManager extends BaseModule {
 	}
 
 	@Override
-	public boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (Tools.CQ.isAtme(msg)) {
 			Autoreply.sendMessage(fromGroup, 0, msg.replace("[CQ:at,qq=" + Autoreply.CQ.getLoginQQ() + "]", "[CQ:at,qq=" + fromQQ + "]"));
 			return true;

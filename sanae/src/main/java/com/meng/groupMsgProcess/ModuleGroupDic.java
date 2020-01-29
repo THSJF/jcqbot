@@ -10,7 +10,7 @@ import java.nio.charset.*;
 import java.util.*;
 import java.util.regex.*;
 
-public class DicReply extends BaseModule{
+public class ModuleGroupDic extends BaseModule{
 	
 	private HashMap<Long, DicReplyGroup> groupMap = new HashMap<>();
 	private HashMap<String, ArrayList<String>> dic = new HashMap<>();
@@ -78,7 +78,7 @@ public class DicReply extends BaseModule{
 	}
 
 	@Override
-	public boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
 			if (checkPublicDic(fromGroup, fromQQ, msg)) {
 			return true;
 		}

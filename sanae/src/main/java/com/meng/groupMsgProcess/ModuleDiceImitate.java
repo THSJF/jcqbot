@@ -7,7 +7,7 @@ import com.meng.game.TouHou.zun.*;
 import com.meng.tools.*;
 import java.util.*;
 
-public class DiceImitate extends BaseModule {
+public class ModuleDiceImitate extends BaseModule {
 
 	public static SpellCard[] spells;
 	public static String[] neta;
@@ -110,18 +110,18 @@ public class DiceImitate extends BaseModule {
 											  new TouhouCharacter("依神女苑", "东方凭依华")},
 										  TH16GameData.charaName,
 										  TH17GameData.charaName);
-		cat.addAll(((TouHouDataManager)ModuleManager.instence.getModule(TouHouDataManager.class)).getCharaSpellCard("橙"));
-		cat.addAll(((TouHouDataManager)ModuleManager.instence.getModule(TouHouDataManager.class)).getCharaSpellCard("火焰猫燐"));
-		memory.addAll(((TouHouDataManager)ModuleManager.instence.getModule(TouHouDataManager.class)).getCharaSpellCard("古明地觉", "想起「恐怖的回忆」", "想起「恐怖催眠术」"));
-		pachouli.addAll(((TouHouDataManager)ModuleManager.instence.getModule(TouHouDataManager.class)).getCharaSpellCard("帕秋莉·诺蕾姬"));
+		cat.addAll(((ModuleTHData)ModuleManager.instence.getModule(ModuleTHData.class)).getCharaSpellCard("橙"));
+		cat.addAll(((ModuleTHData)ModuleManager.instence.getModule(ModuleTHData.class)).getCharaSpellCard("火焰猫燐"));
+		memory.addAll(((ModuleTHData)ModuleManager.instence.getModule(ModuleTHData.class)).getCharaSpellCard("古明地觉", "想起「恐怖的回忆」", "想起「恐怖催眠术」"));
+		pachouli.addAll(((ModuleTHData)ModuleManager.instence.getModule(ModuleTHData.class)).getCharaSpellCard("帕秋莉·诺蕾姬"));
 		enable = true;
 		return this;
 	}
 
 	@Override
-	public boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
 		String pname=ConfigManager.instence.getNickName(fromGroup, fromQQ);
-		String md5=Tools.Hash.toMD5(String.valueOf(fromQQ + System.currentTimeMillis() / (24 * 60 * 60 * 1000)));
+		String md5=Tools.Hash.MD5(String.valueOf(fromQQ + System.currentTimeMillis() / (24 * 60 * 60 * 1000)));
 		char c=md5.charAt(0);
 		switch (msg) {
 			case ".jrrp":
@@ -159,7 +159,7 @@ public class DiceImitate extends BaseModule {
 					Autoreply.sendMessage(fromGroup, 0, String.format("%s今天宜听%s", pname, md5RanStr(fromQQ, music)));
 					return true;
 				case "grandma":
-					if (Tools.Hash.toMD5(String.valueOf(fromQQ + System.currentTimeMillis() / (24 * 60 * 60 * 1000))).charAt(0) == '0') {
+					if (Tools.Hash.MD5(String.valueOf(fromQQ + System.currentTimeMillis() / (24 * 60 * 60 * 1000))).charAt(0) == '0') {
 						Autoreply.sendMessage(fromGroup, 0, String.format("%s今天宜认八云紫当奶奶", pname));
 						return true;
 					}
@@ -195,7 +195,7 @@ public class DiceImitate extends BaseModule {
 	}
 
 	private int md5Random(long fromQQ) {
-		String md5=Tools.Hash.toMD5(String.valueOf(fromQQ + System.currentTimeMillis() / (24 * 60 * 60 * 1000)));
+		String md5=Tools.Hash.MD5(String.valueOf(fromQQ + System.currentTimeMillis() / (24 * 60 * 60 * 1000)));
 		return Integer.parseInt(md5.substring(26), 16);
 	}
 

@@ -101,7 +101,7 @@ public class ConfigManager {
 	}
 
 	private TaskResult getTaskResult(int opCode) {
-		int time=3000;
+		int time=5000;
 		while (resultMap.get(opCode) == null && time-- > 0) {
 			try {
 				Thread.sleep(1);

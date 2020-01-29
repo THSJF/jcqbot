@@ -4,7 +4,7 @@ import com.meng.*;
 import com.meng.config.*;
 import java.util.*;
 
-public class RepeaterManager extends BaseModule {
+public class ModuleRepeater extends BaseModule {
 	
 	private HashMap<Long, Repeater> repeaters = new HashMap<>();
 
@@ -15,7 +15,7 @@ public class RepeaterManager extends BaseModule {
 	} 
 
 	@Override
-	public boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
 		Repeater rp=repeaters.get(fromGroup);
 		if (rp == null) {
 			rp = new Repeater(fromGroup);

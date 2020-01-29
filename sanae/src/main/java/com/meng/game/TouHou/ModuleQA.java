@@ -4,13 +4,14 @@ import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
 import com.meng.config.*;
+import com.meng.groupMsgProcess.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.nio.charset.*;
 import java.util.*;
 
-public class TouHouKnowledge extends BaseModule {
+public class ModuleQA extends BaseModule {
 
 	public HashMap<Long,QA> qaMap=new HashMap<>();
 	public String imagePath;

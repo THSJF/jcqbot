@@ -3,7 +3,7 @@ package com.meng.groupMsgProcess;
 import com.meng.Autoreply;
 import com.meng.*;
 
-public class CQCodeManager extends BaseModule {
+public class ModuleCQCode extends BaseModule {
 
 	@Override
 	public BaseModule load() {
@@ -12,7 +12,7 @@ public class CQCodeManager extends BaseModule {
 	}
 
 	@Override
-	public boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
 	  /*    if (msg.startsWith("[CQ:share,url=")) {
 			String picture = msg.substring(msg.lastIndexOf("http"), msg.lastIndexOf("]"));
 			Autoreply.sendMessage(fromGroup, 0, "封面图:" + picture);

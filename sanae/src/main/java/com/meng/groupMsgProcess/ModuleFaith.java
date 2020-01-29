@@ -12,7 +12,7 @@ import java.lang.reflect.*;
 import java.nio.charset.*;
 import java.util.*;
 
-public class FaithManager extends BaseModule {
+public class ModuleFaith extends BaseModule {
 
 	private HashMap<Long, Integer> faithMap = new HashMap<>();
 	private MyLinkedHashMap<String,String> store=new MyLinkedHashMap<>();
@@ -41,7 +41,7 @@ public class FaithManager extends BaseModule {
 	}
 
 	@Override
-	public boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (msg.equals("-信仰商店")) {
 			Autoreply.sendMessage(fromGroup, 0, store.toString());
 			return true;

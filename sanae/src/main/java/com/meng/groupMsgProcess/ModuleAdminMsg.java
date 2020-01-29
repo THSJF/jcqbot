@@ -10,12 +10,13 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
 
-public class AdminMessageProcessor {
+public class ModuleAdminMsg extends BaseModule {
 	private MyLinkedHashMap<String,String> masterPermission=new MyLinkedHashMap<>();
 	private MyLinkedHashMap<String,String> adminPermission=new MyLinkedHashMap<>();
 	public MyLinkedHashMap<String,String> userPermission=new MyLinkedHashMap<>();
 
-    public AdminMessageProcessor() {
+	@Override
+    public BaseModule load() {
 		masterPermission.put("-start|-stop", "总开关");
 		masterPermission.put("find:[QQ号]", "在配置文件中查找此人");
 		masterPermission.put("-留言查看|-反馈查看", "查看留言或bug反馈");
@@ -37,9 +38,12 @@ public class AdminMessageProcessor {
 		masterPermission.putAll(adminPermission);
 		masterPermission.putAll(userPermission);
 		adminPermission.putAll(userPermission);
+		enable = true;
+		return this;
 	}
 
-    public boolean check(final long fromGroup, final long fromQQ, final String msg) {
+	@Override
+	protected boolean processMsg(final long fromGroup, long fromQQ, String msg, int msgId) {
 		Member m=Autoreply.CQ.getGroupMemberInfo(fromGroup, fromQQ);
 		boolean isGroupAdmin=m == null ?false: m.getAuthority() > 1;
 		if (ConfigManager.instence.isMaster(fromQQ)) {
@@ -153,12 +157,12 @@ public class AdminMessageProcessor {
 				for (int i=0;i < arr.length;++i) {
 					arr[i] = array[i + 2];
 				}
-				((DicReply)ModuleManager.instence.getModule(DicReply.class)).addKV(fromGroup, array[1], arr);
+				((ModuleGroupDic)ModuleManager.instence.getModule(ModuleGroupDic.class)).addKV(fromGroup, array[1], arr);
 				Autoreply.sendMessage(fromGroup, fromQQ, "KV已添加");
 				return true;
 			}
 			if (msg.startsWith("-removeDic ")) {
-				((DicReply)ModuleManager.instence.getModule(DicReply.class)).removeK(fromGroup, msg.substring(11));
+				((ModuleGroupDic)ModuleManager.instence.getModule(ModuleGroupDic.class)).removeK(fromGroup, msg.substring(11));
 				Autoreply.sendMessage(fromGroup, fromQQ, "Key已移除");
 				return true;
 			}
@@ -177,12 +181,12 @@ public class AdminMessageProcessor {
 				}
 			}
 			if (msg.equals("-发言数据")) {
-				HashMap<Integer,Integer> hashMap = ((GroupCounter)ModuleManager.instence.getModule(GroupCounter.class)).getSpeak(fromGroup, Tools.CQ.getDate());
+				HashMap<Integer,Integer> hashMap = ((ModuleGroupCounter)ModuleManager.instence.getModule(ModuleGroupCounter.class)).getSpeak(fromGroup, Tools.CQ.getDate());
 				if (hashMap == null || hashMap.size() == 0) {
 					Autoreply.sendMessage(fromGroup, 0, "无数据");
 					return true;
 				}
-				StringBuilder sb=new StringBuilder(String.format("群内共有%d条消息,今日消息情况:\n", ((GroupCounter)ModuleManager.instence.getModule(GroupCounter.class)).groupsMap.get(fromGroup).all));
+				StringBuilder sb=new StringBuilder(String.format("群内共有%d条消息,今日消息情况:\n", ((ModuleGroupCounter)ModuleManager.instence.getModule(ModuleGroupCounter.class)).groupsMap.get(fromGroup).all));
 				for (int i=0;i < 24;++i) {
 					if (hashMap.get(i) == null) {
 						continue;
@@ -191,14 +195,14 @@ public class AdminMessageProcessor {
 				}
 				Autoreply.sendMessage(fromGroup, 0, sb.toString());
 				try {
-					File pic=((GroupCounter)ModuleManager.instence.getModule(GroupCounter.class)).dchart.check(((GroupCounter)ModuleManager.instence.getModule(GroupCounter.class)).groupsMap.get(fromGroup));
+					File pic=((ModuleGroupCounter)ModuleManager.instence.getModule(ModuleGroupCounter.class)).dchart.check(((ModuleGroupCounter)ModuleManager.instence.getModule(ModuleGroupCounter.class)).groupsMap.get(fromGroup));
 					Autoreply.sendMessage(fromGroup, 0, Autoreply.ins.CC.image(pic));
 					pic.delete();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 				try {
-					File pic=((GroupCounter)ModuleManager.instence.getModule(GroupCounter.class)).mchart.check(((GroupCounter)ModuleManager.instence.getModule(GroupCounter.class)).groupsMap.get(fromGroup));
+					File pic=((ModuleGroupCounter)ModuleManager.instence.getModule(ModuleGroupCounter.class)).mchart.check(((ModuleGroupCounter)ModuleManager.instence.getModule(ModuleGroupCounter.class)).groupsMap.get(fromGroup));
 					Autoreply.sendMessage(fromGroup, 0, Autoreply.ins.CC.image(pic));
 					pic.delete();
 				} catch (IOException e) {
@@ -211,12 +215,12 @@ public class AdminMessageProcessor {
 					Autoreply.sendMessage(fromGroup, 0, "日期格式错误");
 					return true;
 				}
-				HashMap<Integer,Integer> hashMap = ((GroupCounter)ModuleManager.instence.getModule(GroupCounter.class)).getSpeak(fromGroup, msg.substring(6));
+				HashMap<Integer,Integer> hashMap = ((ModuleGroupCounter)ModuleManager.instence.getModule(ModuleGroupCounter.class)).getSpeak(fromGroup, msg.substring(6));
 				if (hashMap == null || hashMap.size() == 0) {
 					Autoreply.sendMessage(fromGroup, 0, "无数据");
 					return true;
 				}
-				StringBuilder sb=new StringBuilder(String.format("群内共有%d条消息,今日消息情况:\n", ((GroupCounter)ModuleManager.instence.getModule(GroupCounter.class)).groupsMap.get(fromGroup).all));
+				StringBuilder sb=new StringBuilder(String.format("群内共有%d条消息,今日消息情况:\n", ((ModuleGroupCounter)ModuleManager.instence.getModule(ModuleGroupCounter.class)).groupsMap.get(fromGroup).all));
 				for (int i=0;i < 24;++i) {
 					if (hashMap.get(i) == null) {
 						continue;

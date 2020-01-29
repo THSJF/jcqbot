@@ -42,7 +42,7 @@ public class Archievement {
 		this.describe = describe;
 		this.judge = judge;
 		for (String s:spells) {
-			spellsNeed.add(((TouHouDataManager)ModuleManager.instence.getModule(TouHouDataManager.class)).getSpellCard(s));
+			spellsNeed.add(((ModuleTHData)ModuleManager.instence.getModule(ModuleTHData.class)).getSpellCard(s));
 		}
 	}
 
@@ -92,7 +92,7 @@ public class Archievement {
 	}
 
 	private boolean isPachouliSpell(SpellCard s) {
-		for (SpellCard spell:DiceImitate.pachouli) {
+		for (SpellCard spell:ModuleDiceImitate.pachouli) {
 			if (s.equals(spell)) {
 				return true;
 			}

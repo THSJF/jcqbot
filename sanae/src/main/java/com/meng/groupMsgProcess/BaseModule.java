@@ -1,4 +1,4 @@
-package com.meng;
+package com.meng.groupMsgProcess;
 
 public abstract class BaseModule {
 
@@ -18,5 +18,5 @@ public abstract class BaseModule {
 		return moduleName;
 	}
 	public abstract BaseModule load();
-	public abstract boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId);
+	protected abstract boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId);
 }
