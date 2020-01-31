@@ -25,7 +25,7 @@ public class CQCodeCC extends CQCode {
         try {
             image = new CQImage(path, false);
             path = image.download("data/image/", image.getMd5());
-            path = Autoreply.instence.fileTypeUtil.checkFormat(path);
+            path = Autoreply.instance.fileTypeUtil.checkFormat(path);
             path.deleteOnExit();
         } catch (IOException e) {
             e.printStackTrace();

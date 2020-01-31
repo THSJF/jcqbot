@@ -1,12 +1,14 @@
 package com.meng.tip;
 
 import com.meng.*;
+import com.meng.config.*;
 import com.meng.config.javabeans.*;
+import com.meng.modules.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.util.*;
 
-public class TimeTip implements Runnable {
+public class MTimeTip extends BaseModule implements Runnable {
     private final long groupYuTang = 617745343L;
     private final long groupDNFmoDao = 424838564L;
     private final long groupXueXi = 312342896L;
@@ -15,8 +17,11 @@ public class TimeTip implements Runnable {
     private boolean tipedYYS = true;
     private boolean tipedAlice = true;
 
-    public TimeTip() {
-    }
+	@Override
+	public BaseModule load() {
+		enable = true;
+		return this;
+	}
 
     @Override
     public void run() {
@@ -25,10 +30,10 @@ public class TimeTip implements Runnable {
             if (c.get(Calendar.MINUTE) == 0) {
                 tipedAlice = false;
                 if (c.get(Calendar.HOUR_OF_DAY) == 23) {
-                    Autoreply.instence.threadPool.execute(new Runnable() {
+                    Autoreply.instance.threadPool.execute(new Runnable() {
 							@Override
 							public void run() {
-								for (GroupConfig groupConfig : Autoreply.instence.configManager.configJavaBean.groupConfigs) {
+								for (GroupConfig groupConfig : ConfigManager.instance.configJavaBean.groupConfigs) {
 									if (groupConfig.reply) {
 										if (Autoreply.sendMessage(groupConfig.groupNumber, 0, "少女休息中...", true) < 0) {
 											continue;
@@ -51,7 +56,7 @@ public class TimeTip implements Runnable {
                     tipedYYS = false;
                 }
                 if ((c.get(Calendar.HOUR_OF_DAY) == 11) && c.get(Calendar.MINUTE) == 0) {
-                    Autoreply.instence.zanManager.sendZan();
+                    Autoreply.instance.zanManager.sendZan();
                 }
                 if (getTipHour(c)) {
                     if (c.getActualMaximum(Calendar.DAY_OF_MONTH) == c.get(Calendar.DATE)) {
@@ -77,16 +82,17 @@ public class TimeTip implements Runnable {
         return (c.get(Calendar.HOUR_OF_DAY) == 12 || c.get(Calendar.HOUR_OF_DAY) == 16 || c.get(Calendar.HOUR_OF_DAY) == 22);
     }
 
-    public boolean check(long fromGroup, long fromQQ) {
-        if (!tipedYYS && fromGroup == groupYuTang && fromQQ == YYS) {
-            String[] strings = new String[]{"想吃YYS", "想食YYS", "想上YYS", Autoreply.instence.CC.at(1418780411L) + "老婆"};
+	@Override
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+		if (!tipedYYS && fromGroup == groupYuTang && fromQQ == YYS) {
+            String[] strings = new String[]{"想吃YYS", "想食YYS", "想上YYS", Autoreply.instance.CC.at(1418780411L) + "老婆"};
             Autoreply.sendMessage(groupYuTang, 0, (String) Tools.ArrayTool.rfa(strings));
             tipedYYS = true;
             return true;
         }
         if (!tipedAlice && fromQQ == alice) {
             Autoreply.sendMessage(fromGroup, 0,
-								  Autoreply.instence.CC.image(new File(Autoreply.appDirectory + "pic\\alice.jpg")));
+								  Autoreply.instance.CC.image(new File(Autoreply.appDirectory + "pic\\alice.jpg")));
             tipedAlice = true;
             return true;
         }

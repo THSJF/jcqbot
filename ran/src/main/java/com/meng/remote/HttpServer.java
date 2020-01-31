@@ -17,8 +17,8 @@ public class HttpServer implements Runnable {
 				}
 				Socket s=serverSocket.accept();
 				sr=new SendRunnable(s);
-				Autoreply.instence.threadPool.execute(sr);
-				Autoreply.instence.threadPool.execute(new ReceiveRunnable(s,sr));
+				Autoreply.instance.threadPool.execute(sr);
+				Autoreply.instance.threadPool.execute(new ReceiveRunnable(s,sr));
 				Thread.sleep(10);
             }
         } catch (Exception e) {

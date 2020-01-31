@@ -9,8 +9,10 @@ import java.lang.reflect.*;
 import java.nio.charset.*;
 import java.util.*;
 import java.util.concurrent.*;
+import com.meng.modules.*;
+import com.meng.config.*;
 
-public class SpellCollect {
+public class MSpellCollect extends BaseModule {
 	public ConcurrentHashMap<Long,HashSet<String>> userSpellsMap=new ConcurrentHashMap<>();
 	public ConcurrentHashMap<Long,ArchievementBean> archiMap=new ConcurrentHashMap<>();
 	private HashSet<Long> todayCard=new HashSet<>();
@@ -18,23 +20,19 @@ public class SpellCollect {
 	private File archiFile;
 	private File spellFile;
 	public ArrayList<Archievement> archList=new ArrayList<>();
-	public SpellCollect() {
+
+	@Override
+	public BaseModule load() {
 		spellFile = new File(Autoreply.appDirectory + "/properties/spells.json");
         if (!spellFile.exists()) {
             saveConfig();
         }
-        Type type = new TypeToken<ConcurrentHashMap<Long,HashSet<String>>>() {
-        }.getType();
-        userSpellsMap = Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "/properties/spells.json"), type);
-
+        userSpellsMap = Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "/properties/spells.json"), new TypeToken<ConcurrentHashMap<Long,HashSet<String>>>() {}.getType());
 		archiFile = new File(Autoreply.appDirectory + "/properties/archievement.json");
         if (!archiFile.exists()) {
             saveArchiConfig();
         }
-        Type type2 = new TypeToken<ConcurrentHashMap<Long,ArchievementBean>>() {
-        }.getType();
-        archiMap = Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "/properties/archievement.json"), type2);
-
+        archiMap = Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "/properties/archievement.json"), new TypeToken<ConcurrentHashMap<Long,ArchievementBean>>() {}.getType());
 		archList.add(new Archievement("恶魔领地", "收集东方红魔乡全部符卡", ArchievementBean.th6All, TH06GameData.spells.length, TH06GameData.spells));
 		archList.add(new Archievement("完美樱花", "收集东方妖妖梦全部符卡",  ArchievementBean.th7All, TH07GameData.spells.length, TH07GameData.spells));
 		archList.add(new Archievement("永恒之夜", "收集东方永夜抄lastspell和lastword外全部符卡",  ArchievementBean.th8All, TH08GameData.spells.length, TH08GameData.spells));
@@ -58,7 +56,7 @@ public class SpellCollect {
 		archList.add(new Archievement("星光爆裂", "获得雾雨魔理沙lastspell和lastword外所有符卡", ArchievementBean.marisa, 20, "魔符「银河」", "魔空「小行星带」", "魔符「星尘幻想」", "黑魔「黑洞边缘」", "恋符「非定向光线」", "恋风「星光台风」", "恋符「极限火花」", "恋心「二重火花」", "光符「地球光」", "光击「击月」"));
 		archList.add(new Archievement("春之岸边", "获得棒符「忙碌探知棒」", ArchievementBean.spring, 5, "棒符「忙碌探知棒」"));
 		archList.add(new Archievement("神绮的影子", "获得大魔法「魔神复诵」", ArchievementBean.moshenfusong, 5, "大魔法「魔神复诵」"));
-		archList.add(new Archievement("撸猫", "获得橙和燐的所有符卡", ArchievementBean.cat, 27, DiceImitate.cat));
+		archList.add(new Archievement("撸猫", "获得橙和燐的所有符卡", ArchievementBean.cat, 27, MDiceImitate.cat));
 		archList.add(new Archievement("时间都去哪了", "获得十六夜咲夜的所有符卡", ArchievementBean.time, 9, "奇术「误导」", "奇术「幻惑误导」", "幻在「钟表的残骸」", "幻幽「迷幻杰克」", "幻象「月神之钟」", "幻世「世界」", "女仆秘技「操弄玩偶」", "女仆秘技「杀人玩偶」", "奇术「永恒的温柔」"));
 		archList.add(new Archievement("漂移轮椅", "获得「里·Crazy Fall Wind」", ArchievementBean.piaoyilunyi, 9, "「里·Crazy Fall Wind」"));
 		archList.add(new Archievement("四个季节", "获得「里·Breeze Cherry Blossom」,「里·Perfect Summer Ice」,「里·Crazy Fall Wind」,「里·Extreme Winter」", ArchievementBean.fourSeasons, 9, "「里·Breeze Cherry Blossom」", "「里·Perfect Summer Ice」", "「里·Crazy Fall Wind」", "「里·Extreme Winter」"));
@@ -69,7 +67,7 @@ public class SpellCollect {
 		archList.add(new Archievement("辉光之针的小人族", "获得少名针妙丸的所有Lunatic符卡", ArchievementBean.shimiyomaru, 16, "小弹「小人的荆棘路」", "小槌「变得更大吧」", "妖剑「辉针剑」", "小槌「你给我变大吧」", "「进击的小人」", "「一寸之壁」", "「七个一寸法师」"));
 		archList.add(new Archievement("信仰是为了虚幻之人", "获得东方风神录中东风谷早苗Lunatic所有符卡", ArchievementBean.sanae, 16, "秘术「一脉相传的弹幕」", "奇迹「客星辉煌之夜」", "开海「摩西之奇迹」", "准备「召请建御名方神」", "大奇迹「八坂之神风」"));
 		archList.add(new Archievement("赏月", "获得狱符「地狱之蚀」,「阿波罗捏造说」,月「月狂冲击」", ArchievementBean.moon, 8, "狱符「地狱之蚀」", "「阿波罗捏造说」", "月「月狂冲击」"));
-		archList.add(new Archievement("恐怖的回忆", "获得古明地觉所有复制卡", ArchievementBean.memory, 32, DiceImitate.memory));
+		archList.add(new Archievement("恐怖的回忆", "获得古明地觉所有复制卡", ArchievementBean.memory, 32, MDiceImitate.memory));
 		archList.add(new Archievement(" ", "获得    所有符卡", ArchievementBean.koishi, 20, "表象「先祖托梦」", "表象「弹幕偏执症」", "本能「本我的解放」", "抑制「超我」", "反应「妖怪测谎机」", "潜意识「弹幕的墨迹测验」", "复燃「恋爱的埋火」", "深层「潜意识的基因」", "「被厌恶者的哲学」", "「Subterranean Rose」"));
 		archList.add(new Archievement("■■■", "获得■■■所有符卡", ArchievementBean.rumia, 16, "月符「月光」", "夜符「夜雀」", "暗符「境界线」"));
 		archList.add(new Archievement("隐藏的弹幕:瞄准", "获得结界「生与死的境界」", ArchievementBean.hideTH7Ex, 8, "结界「生与死的境界」"));
@@ -109,13 +107,13 @@ public class SpellCollect {
 		//郭敬明 七个一寸法师
 		// 轻工业( 
 
-		Autoreply.instence.threadPool.execute(new Runnable() {
+		Autoreply.instance.threadPool.execute(new Runnable() {
 				@Override
 				public void run() {
 					backupData();
 				}
 			});
-		Autoreply.instence.threadPool.execute(new Runnable(){
+		Autoreply.instance.threadPool.execute(new Runnable(){
 
 				@Override
 				public void run() {
@@ -133,12 +131,15 @@ public class SpellCollect {
 					}
 				}
 			});
+		enable = true;
+		return this;
 	}
 
-	public boolean check(long fromGroup, long fromQQ, String msg) {
-		if (msg.startsWith("#幻币转账") && fromQQ == Autoreply.instence.configManager.configJavaBean.ogg) {
-			List<Long> chan=Autoreply.instence.CC.getAts(msg);
-			if (!Autoreply.instence.configManager.isMaster(chan.get(1))) {
+	@Override
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+		if (msg.startsWith("#幻币转账") && fromQQ == ConfigManager.instance.configJavaBean.ogg) {
+			List<Long> chan=Autoreply.instance.CC.getAts(msg);
+			if (!ConfigManager.instance.isMaster(chan.get(1))) {
 				return false;
 			}
 			int coins=0;
@@ -154,7 +155,7 @@ public class SpellCollect {
 			}
 			Random r=new Random();
 			StringBuilder sb=new StringBuilder();
-			sb.append(Autoreply.instence.configManager.getNickName(fromQQ));
+			sb.append(ConfigManager.instance.getNickName(fromQQ));
 			sb.append("获得了:");
 			for (int i=0;i < coins * 3;++i) {
 				String s;
@@ -163,7 +164,7 @@ public class SpellCollect {
 				} else if (r.nextInt(300) == 25) {
 					s = TH13GameData.overdrive[r.nextInt(TH13GameData.overdrive.length)];
 				} else {
-					s = DiceImitate.spells[r.nextInt(DiceImitate.spells.length)];
+					s = MDiceImitate.spells[r.nextInt(MDiceImitate.spells.length)];
 				}
 				tmpSet.add(s);
 				sb.append("\n").append(s);
@@ -179,7 +180,7 @@ public class SpellCollect {
 
 		if (msg.startsWith("幻币抽卡 ")) {
 			try {
-				int restCoins=Autoreply.instence.coinManager.getCoinsCount(fromQQ);
+				int restCoins=ModuleManager.instance.getModule(MCoinManager.class).getCoinsCount(fromQQ);
 				int useCoins=Integer.parseInt(msg.substring(5));
 				if (useCoins > restCoins) {
 					Autoreply.sendMessage(fromGroup, 0, "本地幻币不足");
@@ -192,7 +193,7 @@ public class SpellCollect {
 				}
 				Random r=new Random();
 				StringBuilder sb=new StringBuilder();
-				sb.append(Autoreply.instence.configManager.getNickName(fromQQ));
+				sb.append(ConfigManager.instance.getNickName(fromQQ));
 				sb.append("获得了:");
 				for (int i=0;i < useCoins * 3;++i) {
 					String s;
@@ -201,13 +202,13 @@ public class SpellCollect {
 					} else if (r.nextInt(300) == 25) {
 						s = TH13GameData.overdrive[r.nextInt(TH13GameData.overdrive.length)];
 					} else  {
-						s = DiceImitate.spells[r.nextInt(DiceImitate.spells.length)];
+						s = MDiceImitate.spells[r.nextInt(MDiceImitate.spells.length)];
 					}
 					gotSpellsSet.add(s);
 					sb.append("\n").append(s);
 				}
 				saveConfig();
-				Autoreply.instence.coinManager.subCoins(fromQQ, useCoins);
+				ModuleManager.instance.getModule(MCoinManager.class).subCoins(fromQQ, useCoins);
 				checkArchievement(fromGroup, fromQQ, gotSpellsSet);
 				if (sb.toString().length() > 200) {
 					Autoreply.sendMessage(fromGroup, fromQQ, "内容过长,不详细说明获得的符卡，但记录已保存");
@@ -227,7 +228,7 @@ public class SpellCollect {
 				return true;
 			}
 			Autoreply.sendMessage(fromGroup, 0, "签到成功,获得1幻币");
-			Autoreply.instence.coinManager.addCoins(fromQQ, 1);
+			ModuleManager.instance.getModule(MCoinManager.class).addCoins(fromQQ, 1);
 			todaySign.add(fromQQ);
 			return true;
 		}
@@ -244,7 +245,7 @@ public class SpellCollect {
 			}
 			Random r=new Random();
 			StringBuilder sb=new StringBuilder();
-			sb.append(Autoreply.instence.configManager.getNickName(fromQQ));
+			sb.append(ConfigManager.instance.getNickName(fromQQ));
 			sb.append("获得了:");
 			for (int i=0;i < 5;++i) {
 				String s;
@@ -253,7 +254,7 @@ public class SpellCollect {
 				} else if (r.nextInt(300) == 25) {
 					s = TH13GameData.overdrive[r.nextInt(TH13GameData.overdrive.length)];
 				} else {	
-					s = DiceImitate.spells[r.nextInt(DiceImitate.spells.length)];
+					s = MDiceImitate.spells[r.nextInt(MDiceImitate.spells.length)];
 				}
 				tmpSet.add(s);
 				sb.append("\n").append(s);
@@ -267,7 +268,7 @@ public class SpellCollect {
 
 		if (msg.startsWith("购买符卡 ")) {
 			String spellName=msg.substring(5);
-			if (Autoreply.instence.coinManager.getCoinsCount(fromQQ) < 40) {
+			if (ModuleManager.instance.getModule(MCoinManager.class).getCoinsCount(fromQQ) < 40) {
 				Autoreply.sendMessage(fromGroup, 0, "幻币不足,需要40幻币");
 				return true;
 			}
@@ -278,10 +279,10 @@ public class SpellCollect {
 					userSpellsMap.put(fromQQ, gotSpellSet);
 				}
 				gotSpellSet.add(spellName);
-				Autoreply.sendMessage(fromGroup, 0, Autoreply.instence.configManager.getNickName(fromQQ) + "获得了:" + spellName);
+				Autoreply.sendMessage(fromGroup, 0, ConfigManager.instance.getNickName(fromQQ) + "获得了:" + spellName);
 				saveConfig();
 				checkArchievement(fromGroup, fromQQ, gotSpellSet);	
-				Autoreply.instence.coinManager.subCoins(fromQQ, 40);
+				ModuleManager.instance.getModule(MCoinManager.class).subCoins(fromQQ, 40);
 			} else {
 				Autoreply.sendMessage(fromGroup, 0, "符卡名错误");
 			}
@@ -295,10 +296,10 @@ public class SpellCollect {
 				Autoreply.sendMessage(fromGroup, 0, "你没有参加过抽卡");
 				return true;
 			}
-			sb.append(Autoreply.instence.configManager.getNickName(fromQQ));
+			sb.append(ConfigManager.instance.getNickName(fromQQ));
 			sb.append("获得了:");
 			int i=0;
-			for (String s:DiceImitate.spells) {
+			for (String s:MDiceImitate.spells) {
 				if (gotSpells.contains(s)) {
 					sb.append("\n").append(s);
 					++i;
@@ -364,7 +365,7 @@ public class SpellCollect {
 
 		if (msg.startsWith("幻币兑换 ")) {
 			try {
-				Autoreply.instence.coinManager.exchangeCoins(fromGroup, fromQQ, Integer.parseInt(msg.substring(5)));
+				ModuleManager.instance.getModule(MCoinManager.class).exchangeCoins(fromGroup, fromQQ, Integer.parseInt(msg.substring(5)));
 			} catch (Exception e) {
 				Autoreply.sendMessage(fromGroup, 0, e.toString());
 			}
@@ -372,9 +373,71 @@ public class SpellCollect {
 		}
 
 		if (msg.equals("~coins")) {
-			Autoreply.sendMessage(fromGroup, 0, "你有" + Autoreply.instence.coinManager.getCoinsCount(fromQQ) + "个幻币");
+			Autoreply.sendMessage(fromGroup, 0, "你有" + ModuleManager.instance.getModule(MCoinManager.class).getCoinsCount(fromQQ) + "个幻币");
 			return true;
 		}
+		
+		if(!ConfigManager.instance.isAdmin(fromQQ)){
+			return false;
+		}
+		if (msg.startsWith("移除成就 ")) {
+			String arch=msg.substring(5, msg.indexOf("[") - 1);
+			long toQQ=Autoreply.instance.CC.getAt(msg);
+			ArchievementBean ab=archiMap.get(toQQ);
+			if (ab == null) {
+				ab = new ArchievementBean();
+			archiMap.put(toQQ, ab);
+			}
+			for (Archievement ac:archList) {
+				if (ac.name.equals(arch)) {
+					ab.deleteArchievment(ac.archNum);
+					Autoreply.sendMessage(fromGroup, toQQ, "为" + toQQ + "移除成就" + arch);
+					saveArchiConfig();
+					return true;
+				}
+			}
+			return true;
+		}
+		if (msg.startsWith("移除符卡 ")) {
+			String arch=msg.substring(5, msg.indexOf("[") - 1);
+			long toQQ=Autoreply.instance.CC.getAt(msg);
+			HashSet<String> spells=userSpellsMap.get(toQQ);
+			if (spells == null) {
+				spells = new HashSet<>();
+				userSpellsMap.put(toQQ, spells);
+			}
+			for (String ac:MDiceImitate.spells) {
+				if (ac.equals(arch)) {
+					spells.remove(ac);
+					Autoreply.sendMessage(fromGroup, toQQ, "为" + toQQ + "移除符卡" + arch);
+					saveConfig();
+					return true;
+				}
+			}
+			return true;
+		}
+		if (msg.startsWith("添加符卡 ")) {
+			String arch=msg.substring(5, msg.indexOf("[") - 1);
+			long toQQ=Autoreply.instance.CC.getAt(msg);
+			HashSet<String> spells=userSpellsMap.get(toQQ);
+			if (spells == null) {
+				spells = new HashSet<>();
+				userSpellsMap.put(toQQ, spells);
+			}
+			for (String ac:MDiceImitate.spells) {
+				if (ac.equals(arch)) {
+					spells.add(ac);
+					Autoreply.sendMessage(fromGroup, toQQ, "为" + toQQ + "添加符卡" + arch);
+					saveConfig();
+					checkArchievement(fromGroup, fromQQ, spells);
+					return true;
+				}
+			}
+			return true;
+		}
+		
+		
+		
 		return false;
 	}
 
@@ -388,21 +451,20 @@ public class SpellCollect {
 			if (ac.getNewArchievement(ab, gotSpell)) {
 				ab.addArchievement(ac.archNum);
 				Autoreply.sendMessage(fromGroup, toQQ, "获得成就:" + ac.name + "\n获得奖励:" + ac.coins + "\n条件:" + ac.describe);	
-				Autoreply.instence.coinManager.addCoins(toQQ, ac.coins);
+				ModuleManager.instance.getModule(MCoinManager.class).addCoins(toQQ, ac.coins);
 			}
 		}
 		saveArchiConfig();
 	}
 
 	private boolean isCointains(String name) {
-		for (String s:DiceImitate.spells) {
+		for (String s:MDiceImitate.spells) {
 			if (s.equals(name)) {
 				return true;
 			}
 		}
 		return false;
 	}
-
 
 	private void backupData() {
         while (true) {

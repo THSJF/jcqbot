@@ -2,23 +2,30 @@ package com.meng.groupChat;
 
 import com.meng.*;
 import com.meng.config.*;
+import com.meng.modules.*;
 import com.meng.tools.*;
 import com.sobte.cqp.jcq.entity.*;
+import java.io.*;
 import java.util.*;
 
-public class Banner {
-    private ConfigManager configManager;
+public class MBanner extends BaseModule {
     public HashMap<Long, HashMap<Long, BanType>> banMap = new HashMap<>();
 
-    public Banner(ConfigManager configManager) {
-        this.configManager = configManager;
-    }
+	@Override
+	public BaseModule load() {
+		enable = true;
+		return this;
+	}
 
-    public boolean checkBan(long fromGroup, long fromQQ, String msg) {
-        String[] strs = msg.split("\\.");
-        switch (strs.length) {
+	@Override
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+		if(!ConfigManager.instance.isAdmin(fromQQ)){
+			return false;
+		}
+		String[] strs = msg.split("\\.");
+		switch (strs.length) {
             case 1:
-                if (configManager.isAdmin(fromQQ)) {
+                if (ConfigManager.instance.isAdmin(fromQQ)) {
                     if (msg.equalsIgnoreCase("allban")) {
                         Autoreply.CQ.setGroupWholeBan(fromGroup, true);
                         return true;
@@ -30,7 +37,7 @@ public class Banner {
                 }
                 break;
             case 2:
-                if (configManager.isAdmin(fromQQ)) {
+                if (ConfigManager.instance.isAdmin(fromQQ)) {
                     try {
                         if (strs[0].equalsIgnoreCase("allban")) {
                             Autoreply.CQ.setGroupWholeBan(Long.parseLong(strs[1]), true);
@@ -53,7 +60,7 @@ public class Banner {
                         targetQQ = Long.parseLong(strs[1]);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        targetQQ = Autoreply.instence.CC.getAt(strs[1]);
+                        targetQQ = Autoreply.instance.CC.getAt(strs[1]);
                         if (targetQQ == -1) {
                             return false;
                         }
@@ -104,7 +111,7 @@ public class Banner {
                         targetQQ = Long.parseLong(strs[2]);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        targetQQ = Autoreply.instence.CC.getAt(strs[2]);
+                        targetQQ = Autoreply.instance.CC.getAt(strs[2]);
                         if (targetQQ == -1) {
                             return false;
                         }
@@ -144,7 +151,7 @@ public class Banner {
 
     private boolean checkSleep(long fromGroup, long fromQQ, String[] str) {
         if (str.length == 3 && str[0].equals("sleep")) {
-            if (configManager.isAdmin(fromQQ)) {
+            if (ConfigManager.instance.isAdmin(fromQQ)) {
                 return true;
             }
             int time;
@@ -200,7 +207,7 @@ public class Banner {
 
     private boolean checkBan(long targetGroup, long targetQQ, long fromQQ, int time) {
         try {
-            if (configManager.isAdmin(fromQQ)) {
+            if (ConfigManager.instance.isAdmin(fromQQ)) {
                 if (time > 2592000) {
                     time = 2592000;
                 }
@@ -216,8 +223,8 @@ public class Banner {
             time = 2592000;
             targetQQ = fromQQ;
         }
-        if (configManager.isMaster(targetQQ)) {
-            if (!configManager.isMaster(fromQQ)) {
+        if (ConfigManager.instance.isMaster(targetQQ)) {
+            if (!ConfigManager.instance.isMaster(fromQQ)) {
                 Tools.CQ.ban(targetGroup, fromQQ, time);
                 return true;
             }
@@ -228,15 +235,15 @@ public class Banner {
         return false;
     }
 
-    public BanType getType(long fromGroup, long fromQQ) {
-        if (configManager.isMaster(fromQQ)) {
+    private BanType getType(long fromGroup, long fromQQ) {
+        if (ConfigManager.instance.isMaster(fromQQ)) {
             return BanType.ByMaster;
         }
         Member member = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, fromQQ);
         if (member.getAuthority() == 3) {
             return BanType.ByGroupMaster;
         }
-        if (configManager.isAdmin(fromQQ)) {
+        if (ConfigManager.instance.isAdmin(fromQQ)) {
             return BanType.ByAdmin;
         }
         if (member.getAuthority() == 2) {

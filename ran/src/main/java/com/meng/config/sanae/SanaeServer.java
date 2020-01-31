@@ -1,7 +1,9 @@
 package com.meng.config.sanae;
 
 import com.meng.*;
+import com.meng.config.*;
 import com.meng.dice.*;
+import com.meng.modules.*;
 import com.meng.remote.*;
 import com.meng.tools.*;
 import java.io.*;
@@ -38,10 +40,10 @@ public class SanaeServer extends WebSocketServer {
 		SanaeDataPack sdp = SanaeDataPack.encode(rsdp);
 		switch (rsdp.getOpCode()) {
 			case SanaeDataPack.opConfigFile:
-				sdp.write(Autoreply.gson.toJson(Autoreply.instence.configManager.configJavaBean));
+				sdp.write(Autoreply.gson.toJson(ConfigManager.instance.configJavaBean));
 				break;
 			case SanaeDataPack.opGameOverSpell:
-				sdp.write(Autoreply.instence.diceImitate.md5RanStr(rsdp.readLong(), DiceImitate.spells));
+				sdp.write(ModuleManager.instance.getModule(MDiceImitate.class).md5RanStr(rsdp.readLong(), MDiceImitate.spells));
 				break;
 			case SanaeDataPack.opGameOverPersent:
 				String md5=Tools.Hash.MD5(String.valueOf(rsdp.readLong() + System.currentTimeMillis() / (24 * 60 * 60 * 1000)));
@@ -55,29 +57,29 @@ public class SanaeServer extends WebSocketServer {
 				}
 				break;
 			case SanaeDataPack.opIncSpeak:
-				Autoreply.instence.groupCount.incSpeak(rsdp.readLong());
-				Autoreply.instence.useCount.incSpeak(rsdp.readLong());
+				ModuleManager.instance.getModule(MGroupCounter.class).incSpeak(rsdp.readLong());
+				ModuleManager.instance.getModule(UserCounter.class).incSpeak(rsdp.readLong());
 				break;
 			case SanaeDataPack.opIncRepeat:
-				Autoreply.instence.groupCount.incFudu(rsdp.readLong());
-				Autoreply.instence.useCount.incFudu(rsdp.readLong());
+				ModuleManager.instance.getModule(MGroupCounter.class).incFudu(rsdp.readLong());
+				ModuleManager.instance.getModule(UserCounter.class).incFudu(rsdp.readLong());
 				break;
 			case SanaeDataPack.opIncRepeatStart:
-				Autoreply.instence.useCount.incFudujiguanjia(rsdp.readLong());
+				ModuleManager.instance.getModule(UserCounter.class).incFudujiguanjia(rsdp.readLong());
 				break;
 			case SanaeDataPack.opIncRepeatBreak:
-				Autoreply.instence.groupCount.incRepeatBreaker(rsdp.readLong());
-				Autoreply.instence.useCount.incRepeatBreaker(rsdp.readLong());
+				ModuleManager.instance.getModule(MGroupCounter.class).incRepeatBreaker(rsdp.readLong());
+				ModuleManager.instance.getModule(UserCounter.class).incRepeatBreaker(rsdp.readLong());
 				break;
 			case SanaeDataPack.opSetNick:
-				Autoreply.instence.configManager.setNickName(rsdp.readLong(), rsdp.readString());
+				ConfigManager.instance.setNickName(rsdp.readLong(), rsdp.readString());
 				break;
 			case SanaeDataPack.opSeqContent:
 				File jsonFile = new File(Autoreply.appDirectory + "seq.json");
 				sdp.write(Tools.FileTool.readString(jsonFile));
 				break;
 			case SanaeDataPack.opAddBlack:
-				Autoreply.instence.configManager.addBlack(rsdp.readLong(), rsdp.readLong());
+				ConfigManager.instance.addBlack(rsdp.readLong(), rsdp.readLong());
 				Autoreply.sendMessage(Autoreply.mainGroup, 0, "添加成功");
 				break;
 		}
@@ -102,7 +104,7 @@ public class SanaeServer extends WebSocketServer {
 	}
 
 	public void send(final SanaeDataPack sdp) {
-		Autoreply.instence.threadPool.execute(new Runnable(){
+		Autoreply.instance.threadPool.execute(new Runnable(){
 
 				@Override
 				public void run() {

@@ -6,12 +6,14 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.nio.charset.*;
 import java.util.*;
+import com.meng.modules.*;
 
-public class CoinManager {
+public class MCoinManager extends BaseModule {
 	private HashMap<Long, Integer> countMap = new HashMap<>();
 	private File file;
 
-	public CoinManager() {
+	@Override
+	public BaseModule load() {
 		file = new File(Autoreply.appDirectory + "properties\\coins.json");
 		if (!file.exists()) {
 			saveData();
@@ -19,12 +21,19 @@ public class CoinManager {
 		Type type = new TypeToken<HashMap<Long, Integer>>() {
 		}.getType();
 		countMap = Autoreply.gson.fromJson(Tools.FileTool.readString(file), type);
-		Autoreply.instence.threadPool.execute(new Runnable() {
+		Autoreply.instance.threadPool.execute(new Runnable() {
 				@Override
 				public void run() {
 					backupData();
 				}
 			});
+		enable = true;
+		return this;
+	}
+
+	@Override
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+		return false;
 	}
 
 	public void addCoins(long fromQQ, int coins) {

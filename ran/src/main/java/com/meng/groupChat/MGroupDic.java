@@ -3,6 +3,7 @@ package com.meng.groupChat;
 import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
+import com.meng.modules.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.lang.reflect.*;
@@ -10,12 +11,13 @@ import java.nio.charset.*;
 import java.util.*;
 import java.util.regex.*;
 
-public class DicReplyManager {
+public class MGroupDic extends BaseModule {
 
     private HashMap<Long, DicReplyGroup> groupMap = new HashMap<>();
     private HashMap<String, ArrayList<String>> dic = new HashMap<>();
 
-    public DicReplyManager() {
+	@Override
+	public BaseModule load() {
         File dicFile = new File(Autoreply.appDirectory + "dic\\dic.json");
         if (!dicFile.exists()) {
             saveDic(dicFile, dic);
@@ -23,7 +25,9 @@ public class DicReplyManager {
         Type type = new TypeToken<HashMap<String, HashSet<String>>>() {
         }.getType();
         dic = new Gson().fromJson(Tools.FileTool.readString(dicFile), type);
-    }
+		enable = true;
+		return this;
+	}
 
     public void clear() {
         groupMap.clear();
@@ -33,18 +37,19 @@ public class DicReplyManager {
         groupMap.put(group, new DicReplyGroup(group));
     }
 
-    public boolean check(long group, long qq, String msg) {
-        if (checkPublicDic(group, qq, msg)) {
+	@Override
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+		if (checkPublicDic(fromGroup, fromQQ, msg)) {
             return true;
         }
-        return groupMap.get(group).checkMsg(group, qq, msg);
+        return groupMap.get(fromGroup).checkMsg(fromGroup, fromQQ, msg);
     }
 
     private boolean checkPublicDic(long group, long qq, String msg) {
         for (String key : dic.keySet()) {
             if (key.equals(msg)) {
 				ArrayList<String> ans=dic.get(key);
-                Autoreply.sendMessage(group, qq, ans.get(Autoreply.instence.random.nextInt(ans.size())));
+                Autoreply.sendMessage(group, qq, ans.get(Autoreply.instance.random.nextInt(ans.size())));
                 return true;
             }
         }
@@ -66,7 +71,7 @@ public class DicReplyManager {
 			for (String key : dic.keySet()) {
 				if (Pattern.matches(".*" + key + ".*", msg.replace(" ", "").trim())) {
 					ArrayList<String> ans=dic.get(key);
-					Autoreply.sendMessage(group, qq, ans.get(Autoreply.instence.random.nextInt(ans.size())));
+					Autoreply.sendMessage(group, qq, ans.get(Autoreply.instance.random.nextInt(ans.size())));
 					return true;
 				}
 			}

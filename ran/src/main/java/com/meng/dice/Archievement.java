@@ -114,7 +114,7 @@ public class Archievement {
 	}
 
 	private boolean isPachouliSpell(String s) {
-		for (String spell:DiceImitate.pachouli) {
+		for (String spell:MDiceImitate.pachouli) {
 			if (s.equals(spell)) {
 				return true;
 			}

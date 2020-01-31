@@ -23,11 +23,11 @@ public class LiveListener implements Runnable {
     private boolean loadFinish = false;
     private ConcurrentHashMap<String, Long> liveTimeMap = new ConcurrentHashMap<>();
 
-    public LiveListener(final ConfigManager configManager) {
-		Autoreply.instence.threadPool.execute(new Runnable() {
+    public LiveListener() {
+		Autoreply.instance.threadPool.execute(new Runnable() {
 				@Override
 				public void run() {
-					for (PersonInfo cb : configManager.configJavaBean.personInfo) {
+					for (PersonInfo cb : ConfigManager.instance.configJavaBean.personInfo) {
 						checkPerson(cb);
 					}
 					loadFinish = true;
@@ -38,9 +38,7 @@ public class LiveListener implements Runnable {
             saveLiveTime();
 		}
         try {
-            Type token = new TypeToken<ConcurrentHashMap<String, Long>>() {
-			}.getType();
-            liveTimeMap = new Gson().fromJson(Tools.FileTool.readString(liveTimeFile), token);
+            liveTimeMap = new Gson().fromJson(Tools.FileTool.readString(liveTimeFile), new TypeToken<ConcurrentHashMap<String, Long>>() {}.getType());
 		} catch (Exception e) {
             e.printStackTrace();
 		}
@@ -55,11 +53,11 @@ public class LiveListener implements Runnable {
                 SpaceToLiveJavaBean sjb = new Gson().fromJson(Tools.Network.getSourceCode("https://api.live.bilibili.com/room/v1/Room/getRoomInfoOld?mid=" + personInfo.bid), SpaceToLiveJavaBean.class);
                 if (sjb.data.roomid == 0) {
                     personInfo.bliveRoom = -1;
-                    Autoreply.instence.configManager.saveConfig();
+                    ConfigManager.instance.saveConfig();
                     return;
 				}
                 personInfo.bliveRoom = sjb.data.roomid;
-                Autoreply.instence.configManager.saveConfig();
+                ConfigManager.instance.saveConfig();
                 System.out.println("检测到用户" + personInfo.name + "(" + personInfo.bid + ")的直播间" + personInfo.bliveRoom);
                 try {
                     Thread.sleep(100);
@@ -78,20 +76,20 @@ public class LiveListener implements Runnable {
                     Thread.sleep(1000);
                     continue;
 				}
-                for (PersonInfo personInfo : Autoreply.instence.configManager.configJavaBean.personInfo) {
+                for (PersonInfo personInfo : ConfigManager.instance.configJavaBean.personInfo) {
                     if (personInfo.bliveRoom == 0 || personInfo.bliveRoom == -1) {
                         continue;
 					}
                     SpaceToLiveJavaBean sjb = new Gson().fromJson(Tools.Network.getSourceCode("https://api.live.bilibili.com/room/v1/Room/getRoomInfoOld?mid=" + personInfo.bid), SpaceToLiveJavaBean.class);
                     boolean living = sjb.data.liveStatus == 1;
 					if (living) {
-						if (Autoreply.instence.danmakuListenerManager.getListener(personInfo.bliveRoom) == null) {
+						if (Autoreply.instance.danmakuListenerManager.getListener(personInfo.bliveRoom) == null) {
 							DanmakuListener dl=new DanmakuListener(new URI("wss://broadcastlv.chat.bilibili.com:2245/sub"), personInfo);
 							dl.connect();
-							Autoreply.instence.danmakuListenerManager.listener.add(dl);
+							Autoreply.instance.danmakuListenerManager.listener.add(dl);
 						}
 					} else {
-						DanmakuListener dl=Autoreply.instence.danmakuListenerManager.getListener(personInfo.bliveRoom);
+						DanmakuListener dl=Autoreply.instance.danmakuListenerManager.getListener(personInfo.bliveRoom);
 						if (dl != null) {
 							dl.close();
 						} 
@@ -143,7 +141,7 @@ public class LiveListener implements Runnable {
 
 	public void setBan(long fromGroup, String roomId, String blockId, String hour) {
 		if (Integer.parseInt(hour) == 0) {  
-			String jsonStr=Tools.Network.getSourceCode("https://api.live.bilibili.com/liveact/ajaxGetBlockList?roomid=" + roomId + "&page=1", Autoreply.instence.cookieManager.cookie.grzx);
+			String jsonStr=Tools.Network.getSourceCode("https://api.live.bilibili.com/liveact/ajaxGetBlockList?roomid=" + roomId + "&page=1", Autoreply.instance.cookieManager.cookie.grzx);
 			BanBean bb=new Gson().fromJson(jsonStr, BanBean.class);
 			long bid=Integer.parseInt(blockId);
 			String eventId="";
@@ -162,12 +160,12 @@ public class LiveListener implements Runnable {
 				liveHead.put("Connection", "keep-alive");
 				liveHead.put("Origin", "https://live.bilibili.com");
 				Connection connection = Jsoup.connect("https://api.live.bilibili.com/banned_service/v1/Silent/del_room_block_user");
-				String csrf = Tools.Network.cookieToMap(Autoreply.instence.cookieManager.cookie.grzx).get("bili_jct");
-				connection.userAgent(Autoreply.instence.userAgent)
+				String csrf = Tools.Network.cookieToMap(Autoreply.instance.cookieManager.cookie.grzx).get("bili_jct");
+				connection.userAgent(Autoreply.instance.userAgent)
 					.headers(liveHead)
 					.ignoreContentType(true)
 					.referrer("https://live.bilibili.com/" + roomId)
-					.cookies(Tools.Network.cookieToMap(Autoreply.instence.cookieManager.cookie.grzx))
+					.cookies(Tools.Network.cookieToMap(Autoreply.instance.cookieManager.cookie.grzx))
 					.method(Connection.Method.POST)
 					.data("roomid", roomId)
 					.data("id", eventId)
@@ -207,12 +205,12 @@ public class LiveListener implements Runnable {
 				liveHead.put("Connection", "keep-alive");
 				liveHead.put("Origin", "https://live.bilibili.com");
 				Connection connection = Jsoup.connect("https://api.live.bilibili.com/banned_service/v2/Silent/add_block_user");
-				String csrf = Tools.Network.cookieToMap(Autoreply.instence.cookieManager.cookie.grzx).get("bili_jct");
-				connection.userAgent(Autoreply.instence.userAgent)
+				String csrf = Tools.Network.cookieToMap(Autoreply.instance.cookieManager.cookie.grzx).get("bili_jct");
+				connection.userAgent(Autoreply.instance.userAgent)
 					.headers(liveHead)
 					.ignoreContentType(true)
 					.referrer("https://live.bilibili.com/" + roomId)
-					.cookies(Tools.Network.cookieToMap(Autoreply.instence.cookieManager.cookie.grzx))
+					.cookies(Tools.Network.cookieToMap(Autoreply.instance.cookieManager.cookie.grzx))
 					.method(Connection.Method.POST)
 					.data("hour", hour)
 					.data("roomid", roomId)
@@ -249,15 +247,15 @@ public class LiveListener implements Runnable {
 		RitsukageDataPack dp=RitsukageDataPack.encode(RitsukageDataPack._4liveStart, System.currentTimeMillis());
 		dp.write(1, p.bliveRoom);
 		dp.write(1, p.name);
-		Autoreply.instence.connectServer.broadcast(dp.getData());
+		Autoreply.instance.connectServer.broadcast(dp.getData());
 		SanaeDataPack sdp=SanaeDataPack.encode(SanaeDataPack.opLiveStart);
 		sdp.write(p.name).write(p.bliveRoom);
-		Autoreply.instence.sanaeServer.send(sdp);
+		Autoreply.instance.sanaeServer.send(sdp);
 		if (!p.isTipLive()) {
             return;
 		}
         Autoreply.sendMessage(Autoreply.mainGroup, 0, p.name + "开始直播" + p.bliveRoom, true);
-        ArrayList<Long> groupList = Autoreply.instence.configManager.getPersonInfoFromName(p.name).tipIn;
+        ArrayList<Long> groupList = ConfigManager.instance.getPersonInfoFromName(p.name).tipIn;
         for (int i = 0, groupListSize = groupList.size(); i < groupListSize; i++) {
             long group = groupList.get(i);
             Autoreply.sendMessage(group, 0, p.name + "开始直播" + p.bliveRoom, true);
@@ -268,15 +266,15 @@ public class LiveListener implements Runnable {
 		RitsukageDataPack dp=RitsukageDataPack.encode(RitsukageDataPack._5liveStop, System.currentTimeMillis());
 		dp.write(1, p.bliveRoom);
 		dp.write(1, p.name);
-		Autoreply.instence.connectServer.broadcast(dp.getData());
+		Autoreply.instance.connectServer.broadcast(dp.getData());
 		SanaeDataPack sdp=SanaeDataPack.encode(SanaeDataPack.opLiveStop);
 		sdp.write(p.name).write(p.bliveRoom);
-		Autoreply.instence.sanaeServer.send(sdp);
+		Autoreply.instance.sanaeServer.send(sdp);
 		if (!p.isTipLive()) {
             return;
 		}
         Autoreply.sendMessage(Autoreply.mainGroup, 0, p.name + "直播结束" + p.bliveRoom, true);
-        ArrayList<Long> groupList = Autoreply.instence.configManager.getPersonInfoFromName(p.name).tipIn;
+        ArrayList<Long> groupList = ConfigManager.instance.getPersonInfoFromName(p.name).tipIn;
         for (int i = 0, groupListSize = groupList.size(); i < groupListSize; i++) {
             long group = groupList.get(i);
             Autoreply.sendMessage(group, 0, p.name + "直播结束" + p.bliveRoom, true);

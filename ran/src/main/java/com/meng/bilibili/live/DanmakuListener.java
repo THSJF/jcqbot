@@ -2,6 +2,7 @@ package com.meng.bilibili.live;
 
 import com.google.gson.*;
 import com.meng.*;
+import com.meng.config.*;
 import com.meng.config.javabeans.*;
 import java.io.*;
 import java.net.*;
@@ -85,7 +86,7 @@ public class DanmakuListener extends WebSocketClient {
 				String danmakuText=jaar.get(1).getAsString();
 				String speakerName=jaar2.get(1).getAsString();
 				long speakerUid=jaar2.get(0).getAsLong();
-				PersonInfo speakerPersonInfo=Autoreply.instence.configManager.getPersonInfoFromBid(speakerUid);
+				PersonInfo speakerPersonInfo=ConfigManager.instance.getPersonInfoFromBid(speakerUid);
 				//PersonInfo roomMasterPersonInfo=Autoreply.instence.configManager.getPersonInfoFromLiveId(roomMaster.bliveRoom);
 				String finallySpeakerName=speakerPersonInfo == null ?speakerName: speakerPersonInfo.name;
 				peopleMap.put(speakerUid, System.currentTimeMillis());
@@ -96,12 +97,12 @@ public class DanmakuListener extends WebSocketClient {
 				dataToSend.write(2, finallySpeakerName);
 				dataToSend.write(2, speakerUid);
 				dataToSend.write(3, danmakuText);
-				Autoreply.instence.connectServer.broadcast(dataToSend.getData());
-				if (Autoreply.instence.danmakuListenerManager.containsMother(danmakuText) && danmakuText.startsWith("点歌")) {
+				Autoreply.instance.connectServer.broadcast(dataToSend.getData());
+				if (Autoreply.instance.danmakuListenerManager.containsMother(danmakuText) && danmakuText.startsWith("点歌")) {
 					try {
-						Autoreply.instence.naiManager.sendDanmaku(roomMaster.bliveRoom + "", Autoreply.instence.cookieManager.cookie.Sunny, "您点您妈呢");
-						Autoreply.instence.naiManager.sendDanmaku(roomMaster.bliveRoom + "", Autoreply.instence.cookieManager.cookie.Luna, "您点您妈呢");
-						Autoreply.instence.naiManager.sendDanmaku(roomMaster.bliveRoom + "", Autoreply.instence.cookieManager.cookie.Star, "您点您妈呢");				
+						Autoreply.instance.naiManager.sendDanmaku(roomMaster.bliveRoom + "", Autoreply.instance.cookieManager.cookie.Sunny, "您点您妈呢");
+						Autoreply.instance.naiManager.sendDanmaku(roomMaster.bliveRoom + "", Autoreply.instance.cookieManager.cookie.Luna, "您点您妈呢");
+						Autoreply.instance.naiManager.sendDanmaku(roomMaster.bliveRoom + "", Autoreply.instance.cookieManager.cookie.Star, "您点您妈呢");				
 					} catch (Exception e) {
 
 					}
@@ -110,16 +111,16 @@ public class DanmakuListener extends WebSocketClient {
 				if (speakerUid == 64483321 && danmakuText.startsWith("ban.")) {
 					String ss[]=danmakuText.split("\\.");
 					String blockid=ss[1];
-					PersonInfo pi=Autoreply.instence.configManager.getPersonInfoFromName(blockid);
+					PersonInfo pi=ConfigManager.instance.getPersonInfoFromName(blockid);
 					if (pi != null) {
 						blockid = pi.bid + "";
 					}
-					Autoreply.instence.liveListener.setBan(Autoreply.mainGroup, roomMaster.bliveRoom + "", blockid, ss[2]);
+					Autoreply.instance.liveListener.setBan(Autoreply.mainGroup, roomMaster.bliveRoom + "", blockid, ss[2]);
 					return;
 				}
 				String s=dealMsg(roomMaster.bliveRoom, speakerUid, danmakuText);
 				if (s != null) {
-					Autoreply.instence.naiManager.grzxMsg(roomMaster.bliveRoom + "", s);
+					Autoreply.instance.naiManager.grzxMsg(roomMaster.bliveRoom + "", s);
 				}
 			} 
 		} catch (JsonSyntaxException je) {
@@ -147,7 +148,7 @@ public class DanmakuListener extends WebSocketClient {
 
 	@Override
 	public void close() {
-		Autoreply.instence.danmakuListenerManager.listener.remove(this);
+		Autoreply.instance.danmakuListenerManager.listener.remove(this);
 		super.close();
 	}
 
@@ -155,10 +156,6 @@ public class DanmakuListener extends WebSocketClient {
 		String r=repeater.dealMsg(msg);
 		if (r != null) {
 			return r;
-		}
-		String r1=Autoreply.instence.seqManager.dealMsg(0, 0, msg);
-		if (r1 != null) {
-			return r1;
 		}
 		return null;
 	}

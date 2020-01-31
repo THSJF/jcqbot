@@ -4,6 +4,7 @@ import com.meng.*;
 import com.meng.bilibili.live.*;
 import com.meng.config.javabeans.*;
 import com.meng.dice.*;
+import com.meng.modules.*;
 import com.meng.remote.*;
 import com.meng.tools.*;
 import com.sobte.cqp.jcq.entity.*;
@@ -35,12 +36,12 @@ public class RitsukageServer extends WebSocketServer {
 	public void onMessage(WebSocket conn, String message) {
 		++RemoteWebSocket.botInfoBean.recFrom;
 	}
-	
+
 	@Override
 	public void onMessage(WebSocket conn, ByteBuffer message) {
 		++RemoteWebSocket.botInfoBean.recFrom;
 		RitsukageDataPack dp=RitsukageDataPack.decode(message.array());
-		if (dp.getTarget() == Autoreply.instence.configManager.configJavaBean.ogg) {
+		if (dp.getTarget() == ConfigManager.instance.configJavaBean.ogg) {
 			oggProcess(conn, dp);
 		}
 	}
@@ -54,9 +55,9 @@ public class RitsukageServer extends WebSocketServer {
 				break;
 			case RitsukageDataPack._2getLiveList:
 				HashSet<PersonInfo> hashSet=new HashSet<>();
-				for (LivePerson lp:Autoreply.instence.liveListener.livePersonMap.values()) {
+				for (LivePerson lp:Autoreply.instance.liveListener.livePersonMap.values()) {
 					if (lp.lastStatus) {
-						hashSet.add(Autoreply.instence.configManager.getPersonInfoFromLiveId(Long.parseLong(lp.roomID)));
+						hashSet.add(ConfigManager.instance.getPersonInfoFromLiveId(Long.parseLong(lp.roomID)));
 					}		
 				}
 				dataToSend = RitsukageDataPack.encode(RitsukageDataPack._3returnLiveList, recievedDataPack.getTimeStamp());
@@ -75,7 +76,7 @@ public class RitsukageServer extends WebSocketServer {
 			case RitsukageDataPack._8newArtical:
 				break;
 			case RitsukageDataPack._9getPersonInfoByName:
-				PersonInfo pi=Autoreply.instence.configManager.getPersonInfoFromName(recievedDataPack.readString(1));
+				PersonInfo pi=ConfigManager.instance.getPersonInfoFromName(recievedDataPack.readString(1));
 				if (pi != null) {
 					dataToSend = RitsukageDataPack.encode(RitsukageDataPack._13returnPersonInfo, recievedDataPack.getTimeStamp());
 					dataToSend.write(pi);
@@ -85,7 +86,7 @@ public class RitsukageServer extends WebSocketServer {
 				}
 				break;
 			case RitsukageDataPack._10getPersonInfoByQQ:
-				PersonInfo pi10=Autoreply.instence.configManager.getPersonInfoFromQQ(recievedDataPack.readNum(1));
+				PersonInfo pi10=ConfigManager.instance.getPersonInfoFromQQ(recievedDataPack.readNum(1));
 				if (pi10 != null) {
 					dataToSend = RitsukageDataPack.encode(RitsukageDataPack._13returnPersonInfo, recievedDataPack.getTimeStamp());
 					dataToSend.write(pi10);
@@ -95,7 +96,7 @@ public class RitsukageServer extends WebSocketServer {
 				}
 				break;
 			case RitsukageDataPack._11getPersonInfoByBid:
-				PersonInfo pi11=Autoreply.instence.configManager.getPersonInfoFromBid(recievedDataPack.readNum(1));
+				PersonInfo pi11=ConfigManager.instance.getPersonInfoFromBid(recievedDataPack.readNum(1));
 				if (pi11 != null) {
 					dataToSend = RitsukageDataPack.encode(RitsukageDataPack._13returnPersonInfo, recievedDataPack.getTimeStamp());
 					dataToSend.write(pi11);
@@ -105,7 +106,7 @@ public class RitsukageServer extends WebSocketServer {
 				}
 				break;
 			case RitsukageDataPack._12getPersonInfoByBiliLive:
-				PersonInfo pi12=Autoreply.instence.configManager.getPersonInfoFromLiveId(recievedDataPack.readNum(1));
+				PersonInfo pi12=ConfigManager.instance.getPersonInfoFromLiveId(recievedDataPack.readNum(1));
 				if (pi12 != null) {
 					dataToSend = RitsukageDataPack.encode(RitsukageDataPack._13returnPersonInfo, recievedDataPack.getTimeStamp());
 					dataToSend.write(pi12);
@@ -158,7 +159,7 @@ public class RitsukageServer extends WebSocketServer {
 			case RitsukageDataPack._20pic:
 				dataToSend = RitsukageDataPack.encode(RitsukageDataPack._21returnPic, recievedDataPack.getTimeStamp());
 				try { 
-					File jpg=Autoreply.instence.picEditManager.jingShenZhiZhuByAt(-1, -1, Autoreply.instence.CC.at(recievedDataPack.readNum(1)));
+					File jpg=ModuleManager.instance.getModule(MPicEdit.class).jingShenZhiZhuByAt(-1, -1, Autoreply.instance.CC.at(recievedDataPack.readNum(1)));
 					long filelength = jpg.length();
 					byte[] filecontent = new byte[(int) filelength];
 					FileInputStream in = new FileInputStream(jpg);
@@ -174,7 +175,7 @@ public class RitsukageServer extends WebSocketServer {
 			case RitsukageDataPack._22pic2:
 				dataToSend = RitsukageDataPack.encode(RitsukageDataPack._21returnPic, recievedDataPack.getTimeStamp());
 				try { 
-					File jpg=Autoreply.instence.picEditManager.shenChuByAt(-1, -1, Autoreply.instence.CC.at(recievedDataPack.readNum(1)));
+					File jpg=ModuleManager.instance.getModule(MPicEdit.class).shenChuByAt(-1, -1, Autoreply.instance.CC.at(recievedDataPack.readNum(1)));
 					long filelength = jpg.length();
 					byte[] filecontent = new byte[(int) filelength];
 					FileInputStream in = new FileInputStream(jpg);
@@ -203,13 +204,13 @@ public class RitsukageServer extends WebSocketServer {
 				break;
 			case RitsukageDataPack._26MD5neta:
 				dataToSend = RitsukageDataPack.encode(RitsukageDataPack._27returnMD5neta, recievedDataPack.getTimeStamp());
-				dataToSend.write(1, Autoreply.instence.diceImitate.md5RanStr(recievedDataPack.readNum(1), DiceImitate.neta));
+				dataToSend.write(1, ModuleManager.instance.getModule(MDiceImitate.class).md5RanStr(recievedDataPack.readNum(1), MDiceImitate.neta));
 				break;
 			case RitsukageDataPack._27returnMD5neta:
 				break;
 			case RitsukageDataPack._28MD5music:
 				dataToSend = RitsukageDataPack.encode(RitsukageDataPack._29returnMD5music, recievedDataPack.getTimeStamp());
-				dataToSend.write(1, Autoreply.instence.diceImitate.md5RanStr(recievedDataPack.readNum(1), DiceImitate.music));
+				dataToSend.write(1, ModuleManager.instance.getModule(MDiceImitate.class).md5RanStr(recievedDataPack.readNum(1), MDiceImitate.music));
 				break;
 			case RitsukageDataPack._29returnMD5music:
 				break;
@@ -218,20 +219,20 @@ public class RitsukageServer extends WebSocketServer {
 				if (Tools.Hash.MD5(String.valueOf(recievedDataPack.readNum(1) + System.currentTimeMillis() / (24 * 60 * 60 * 1000))).charAt(0) == '0') {
 					dataToSend.write(1, "八云紫");
 				} else {
-					dataToSend.write(1, Autoreply.instence.diceImitate.md5RanStr(recievedDataPack.readNum(1), DiceImitate.name));
+					dataToSend.write(1, ModuleManager.instance.getModule(MDiceImitate.class).md5RanStr(recievedDataPack.readNum(1), MDiceImitate.name));
 				}
 				break;
 			case RitsukageDataPack._31returnMD5grandma:
 				break;
 			case RitsukageDataPack._32MD5overSpell:
 				dataToSend = RitsukageDataPack.encode(RitsukageDataPack._33returnMD5overSpell, recievedDataPack.getTimeStamp());
-				dataToSend.write(1, Autoreply.instence.diceImitate.md5RanStr(recievedDataPack.readNum(1), DiceImitate.spells));
+				dataToSend.write(1, ModuleManager.instance.getModule(MDiceImitate.class).md5RanStr(recievedDataPack.readNum(1), MDiceImitate.spells));
 				break;
 			case RitsukageDataPack._33returnMD5overSpell:
 				break;
 			case RitsukageDataPack._34sendDanmaku:
 				try {
-					Autoreply.instence.naiManager.sendDanmaku(recievedDataPack.readNum(1) + "", recievedDataPack.readString(2), recievedDataPack.readString(1));
+					Autoreply.instance.naiManager.sendDanmaku(recievedDataPack.readNum(1) + "", recievedDataPack.readString(2), recievedDataPack.readString(1));
 					dataToSend = RitsukageDataPack.encode(RitsukageDataPack._0notification, recievedDataPack.getTimeStamp());
 					dataToSend.write(1, "发送完成");
 				} catch (IOException e) {
@@ -240,7 +241,7 @@ public class RitsukageServer extends WebSocketServer {
 				}
 				break;
 			case RitsukageDataPack._35groupAdd:
-				PersonInfo pi35=Autoreply.instence.configManager.getPersonInfoFromQQ(recievedDataPack.readNum(3));
+				PersonInfo pi35=ConfigManager.instance.getPersonInfoFromQQ(recievedDataPack.readNum(3));
 				long addId=recievedDataPack.readNum(1);
 				long addgroup=recievedDataPack.readNum(2);
 				long addQq=recievedDataPack.readNum(3);
@@ -249,19 +250,19 @@ public class RitsukageServer extends WebSocketServer {
 					dataToSend.write(1, addId);
 					dataToSend.write(2, 1);
 					dataToSend.write(1, "此帐号为飞机佬账号");
-					dataToSend.write(2, Autoreply.instence.configManager.getNickName(addQq));
-				} else if (Autoreply.instence.configManager.isGroupAutoAllow(addQq)) {
+					dataToSend.write(2, ConfigManager.instance.getNickName(addQq));
+				} else if (ConfigManager.instance.isGroupAutoAllow(addQq)) {
 					dataToSend = RitsukageDataPack.encode(RitsukageDataPack._36returnGroupAdd, recievedDataPack.getTimeStamp());
 					dataToSend.write(1, addId);
 					dataToSend.write(2, 1);
 					dataToSend.write(1, "此帐号在自动同意列表中");
-					dataToSend.write(2, Autoreply.instence.configManager.getNickName(addQq));
-				} else if (Autoreply.instence.configManager.isBlackQQ(addQq)) {
+					dataToSend.write(2, ConfigManager.instance.getNickName(addQq));
+				} else if (ConfigManager.instance.isBlackQQ(addQq)) {
 					dataToSend = RitsukageDataPack.encode(RitsukageDataPack._36returnGroupAdd, recievedDataPack.getTimeStamp());
 					dataToSend.write(1, addId);
 					dataToSend.write(2, 0);
 					dataToSend.write(1, "黑名单用户");
-					dataToSend.write(2, Autoreply.instence.configManager.getNickName(addQq));	
+					dataToSend.write(2, ConfigManager.instance.getNickName(addQq));	
 				}	
 				break;
 			case RitsukageDataPack._37setGroupName:

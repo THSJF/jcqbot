@@ -11,11 +11,13 @@ import java.lang.reflect.*;
 import java.nio.charset.*;
 
 public class ConfigManager {
+	public static ConfigManager instance;
     public ConfigJavaBean configJavaBean = new ConfigJavaBean();
     public Gson gson = new Gson();
     public PortConfig portConfig = new PortConfig();
 
     public ConfigManager() {
+		instance=this;
         portConfig = gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "grzxEditConfig.json"), PortConfig.class);
         File jsonBaseConfigFile = new File(Autoreply.appDirectory + "configV3.json");
         if (!jsonBaseConfigFile.exists()) {
@@ -24,8 +26,8 @@ public class ConfigManager {
         Type type = new TypeToken<ConfigJavaBean>() {
         }.getType();
         configJavaBean = gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "configV3.json"), type);
-        Autoreply.instence.threadPool.execute(new SocketConfigManager(this));
-        Autoreply.instence.threadPool.execute(new SocketDicManager(this));
+        Autoreply.instance.threadPool.execute(new SocketConfigManager(this));
+        Autoreply.instance.threadPool.execute(new SocketDicManager(this));
     }
 
 	public boolean containsGroup(long group) {
@@ -179,7 +181,7 @@ public class ConfigManager {
             }
         }
         saveConfig();
-        Autoreply.instence.threadPool.execute(new Runnable() {
+        Autoreply.instance.threadPool.execute(new Runnable() {
 				@Override
 				public void run() {
 					//    HashSet<Group> groups = Tools.CQ.findQQInAllGroup(qq);
@@ -206,8 +208,8 @@ public class ConfigManager {
 
     public void saveConfig() {
 		SanaeDataPack sdp = SanaeDataPack.encode(SanaeDataPack.opConfigFile);
-		sdp.write(Autoreply.gson.toJson(Autoreply.instence.configManager.configJavaBean));
-		Autoreply.instence.sanaeServer.send(sdp);
+		sdp.write(Autoreply.gson.toJson(ConfigManager.instance.configJavaBean));
+		Autoreply.instance.sanaeServer.send(sdp);
         try {
             File file = new File(Autoreply.appDirectory + "configV3.json");
             FileOutputStream fos = new FileOutputStream(file);

@@ -1,5 +1,7 @@
 package com.meng;
 
+import com.meng.*;
+import com.meng.modules.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.net.*;
@@ -9,15 +11,19 @@ import org.jsoup.helper.*;
 import org.jsoup.nodes.*;
 import org.jsoup.select.*;
 
-public class PicSearchManager {
+public class MPicSearch extends BaseModule {
 
     private HashMap<Long, String> userNotSendPicture = new HashMap<>();
 
-    public PicSearchManager() {
-    }
+	@Override
+	public BaseModule load() {
+		enable = true;
+		return this;
+	}
 
-    public boolean check(long fromGroup, long fromQQ, String msg, File[] imageFiles) {
-        if (msg.equalsIgnoreCase("sp.help")) {
+	@Override
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+		if (msg.equalsIgnoreCase("sp.help")) {
             if (fromGroup != 0) {
                 sendMsg(fromGroup, fromQQ, "使用方式已私聊发送");
             }
@@ -27,14 +33,14 @@ public class PicSearchManager {
             return true;
         }
         File imageFile = null;
-        if (imageFiles != null && imageFiles.length > 0) {
-            imageFile = imageFiles[0];
+        if (imgs != null && imgs.length > 0) {
+            imageFile = imgs[0];
         }
         if (imageFile != null && (msg.toLowerCase().startsWith("sp"))) {
             try {
-                Autoreply.instence.useCount.incSearchPicture(fromQQ);
-                Autoreply.instence.groupCount.incSearchPicture(fromGroup);
-                Autoreply.instence.useCount.incSearchPicture(Autoreply.CQ.getLoginQQ());
+                ModuleManager.instance.getModule(UserCounter.class).incSearchPicture(fromQQ);
+                ModuleManager.instance.getModule(MGroupCounter.class).incSearchPicture(fromGroup);
+                ModuleManager.instance.getModule(UserCounter.class).incSearchPicture(Autoreply.CQ.getLoginQQ());
                 sendMsg(fromGroup, fromQQ, "土豆折寿中……");
                 int needPic = 1;
                 int database = 999;
@@ -43,7 +49,7 @@ public class PicSearchManager {
                     needPic = Integer.parseInt(ss[1]);
                     database = ss.length >= 3 ? Integer.parseInt(ss[2]) : 999;
                 }
-                Autoreply.instence.threadPool.execute(new SearchThread(fromGroup, fromQQ, imageFile, needPic, database));
+                Autoreply.instance.threadPool.execute(new SearchThread(fromGroup, fromQQ, imageFile, needPic, database));
             } catch (Exception e) {
                 sendMsg(fromGroup, fromQQ, e.toString());
             }
@@ -55,9 +61,9 @@ public class PicSearchManager {
         } else if (imageFile != null && userNotSendPicture.get(fromQQ) != null) {
             try {
                 sendMsg(fromGroup, fromQQ, "土豆折寿中……");
-                Autoreply.instence.useCount.incSearchPicture(fromQQ);
-                Autoreply.instence.groupCount.incSearchPicture(fromGroup);
-                Autoreply.instence.useCount.incSearchPicture(Autoreply.CQ.getLoginQQ());
+                ModuleManager.instance.getModule(UserCounter.class).incSearchPicture(fromQQ);
+                ModuleManager.instance.getModule(MGroupCounter.class).incSearchPicture(fromGroup);
+                ModuleManager.instance.getModule(UserCounter.class).incSearchPicture(Autoreply.CQ.getLoginQQ());
                 int needPic = 1;
                 int database = 999;
                 if (userNotSendPicture.get(fromQQ).startsWith("sp.")) {
@@ -65,7 +71,7 @@ public class PicSearchManager {
                     needPic = Integer.parseInt(ss[1]);
                     database = ss.length >= 3 ? Integer.parseInt(ss[2]) : 999;
                 }
-                Autoreply.instence.threadPool.execute(new SearchThread(fromGroup, fromQQ, imageFile, needPic, database));
+                Autoreply.instance.threadPool.execute(new SearchThread(fromGroup, fromQQ, imageFile, needPic, database));
             } catch (Exception e) {
                 sendMsg(fromGroup, fromQQ, e.toString());
             }
@@ -79,7 +85,7 @@ public class PicSearchManager {
         if (fromGroup == 0) {
             return Autoreply.sendMessage(0, fromQQ, msg);
         } else {
-            return Autoreply.sendMessage(fromGroup, 0, Autoreply.instence.CC.at(fromQQ) + msg);
+            return Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.at(fromQQ) + msg);
         }
     }
 
@@ -116,18 +122,18 @@ public class PicSearchManager {
 				fInputStream = new FileInputStream(picF);
 				Connection.Response response = Jsoup.connect("https://saucenao.com/search.php?db=" + database).timeout(60000).data("file", "image.jpg", fInputStream).method(Connection.Method.POST).execute();
 				if (response.statusCode() != 200) {
-					Autoreply.instence.threadPool.execute(new DeleteMessageRunnable(Autoreply.instence.picSearchManager.sendMsg(fromGroup, fromQQ, "statusCode" + response.statusCode())));
+					Autoreply.instance.threadPool.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, "statusCode" + response.statusCode())));
 				}
 				mResults = new PicResults(Jsoup.parse(response.body()));
 			} catch (Exception e) {
-				Autoreply.instence.picSearchManager.sendMsg(fromGroup, fromQQ, e.toString());
+				sendMsg(fromGroup, fromQQ, e.toString());
 				picF.delete();
 				return;
 			}
 			picF.delete();
 			int size = mResults.getResults().size();
 			if (size < 1) {
-				Autoreply.instence.picSearchManager.sendMsg(fromGroup, fromQQ, "没有相似度较高的图片");
+				sendMsg(fromGroup, fromQQ, "没有相似度较高的图片");
 			}
 			if (fromGroup != -1) {
 				resultCount = resultCount > 3 ? 3 : resultCount;
@@ -146,7 +152,7 @@ public class PicSearchManager {
 					HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 					connection.setConnectTimeout(60000);
 					InputStream is = connection.getInputStream();
-					dFile = new File(Autoreply.appDirectory + "picSearch\\tmp\\", Autoreply.instence.random.nextInt() + picNumFlag++ + "pic.jpg");
+					dFile = new File(Autoreply.appDirectory + "picSearch\\tmp\\", Autoreply.instance.random.nextInt() + picNumFlag++ + "pic.jpg");
 					FileOutputStream out = new FileOutputStream(dFile);
 					int ii = 0;
 					while ((ii = is.read()) != -1) {
@@ -155,7 +161,7 @@ public class PicSearchManager {
 					out.close();
 					is.close();
 				} catch (Exception e) {
-					Autoreply.instence.picSearchManager.sendMsg(fromGroup, fromQQ, e.toString());
+					sendMsg(fromGroup, fromQQ, e.toString());
 				}
 				String[] titleAndMetadata = tmpr.mTitle.split("\n", 2);
 				if (titleAndMetadata.length > 0) {
@@ -167,7 +173,7 @@ public class PicSearchManager {
 						sBuilder.append(string).append("\n");
 					}
 				}
-				sBuilder.append(Autoreply.instence.CC.image(dFile)).append("\n");
+				sBuilder.append(Autoreply.instance.CC.image(dFile)).append("\n");
 				if (tmpr.mExtUrls.size() == 2) {
 					sBuilder.append("图片&画师:").append(tmpr.mExtUrls.get(1)).append("\n");
 					sBuilder.append(tmpr.mExtUrls.get(0)).append("\n");
@@ -178,7 +184,7 @@ public class PicSearchManager {
 					sBuilder.append("相似度:").append(tmpr.mSimilarity);
 				}
 				String tmp = sBuilder.toString().isEmpty() ? "没有相似度较高的图片" : sBuilder.toString();
-				Autoreply.instence.picSearchManager.sendMsg(fromGroup, fromQQ, tmp.contains("sankakucomplex") ? tmp + "\n小哥哥注意身体哦" : tmp);
+				sendMsg(fromGroup, fromQQ, tmp.contains("sankakucomplex") ? tmp + "\n小哥哥注意身体哦" : tmp);
 				dFile.delete();
 			}
 		}
@@ -289,7 +295,7 @@ public class PicSearchManager {
 		}
 	}
 
-	class HtmlToPlainText {
+	private class HtmlToPlainText {
 
 		public String getPlainText(Element element) {
 			FormattingVisitor formatter = new FormattingVisitor();

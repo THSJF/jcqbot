@@ -17,7 +17,7 @@ public class FileInfoManager {
             return;
         }
         String url1 = "http://qun.qzone.qq.com/cgi-bin/group_share_list?uin=" + Autoreply.CQ.getLoginQQ() + "&groupid="
-			+ fromGroup + "&bussinessid=0&" + "r=" + (Autoreply.instence.random.nextInt() / 100000000000000L)
+			+ fromGroup + "&bussinessid=0&" + "r=" + (Autoreply.instance.random.nextInt() / 100000000000000L)
 			+ "&charset=utf-8&g_tk=" + Autoreply.CQ.getCsrfToken();
         String json1 = Tools.Network.getSourceCode(url1, Autoreply.CQ.getCookies());
         FileList fileList = new Gson().fromJson(
@@ -25,15 +25,15 @@ public class FileInfoManager {
         // FileItem fileItem = fileList.getFileItemByName(com.meng.groupFile.getName());
         FileList.FileListData.FileItem fileItem = fileList.data.item.get(0);
         String url2 = "http://qun.qzone.qq.com/cgi-bin/group_share_get_downurl?uin=" + Autoreply.CQ.getLoginQQ()
-			+ "&groupid=" + fromGroup + "&pa=" + Autoreply.instence.naiManager.encode(fileItem.filepath) + "&r="
-			+ (Autoreply.instence.random.nextInt() / 100000000000000L) + "&charset=utf-8&g_tk=" + Autoreply.CQ.getCsrfToken();
+			+ "&groupid=" + fromGroup + "&pa=" + Autoreply.instance.naiManager.encode(fileItem.filepath) + "&r="
+			+ (Autoreply.instance.random.nextInt() / 100000000000000L) + "&charset=utf-8&g_tk=" + Autoreply.CQ.getCsrfToken();
         String json2 = Tools.Network.getSourceCode(url2, Autoreply.CQ.getCookies());
         JsonObject jsonObject = new JsonParser()
 			.parse(json2.substring(json2.indexOf("{"), json2.lastIndexOf("}") + 1).replace("\\", ""))
 			.getAsJsonObject();
         String downloadUrl = jsonObject.get("data").getAsJsonObject().get("url").getAsString();
         Autoreply.sendMessage(fromGroup, 0,
-							  "可通过" + downloadUrl + "/" + Autoreply.instence.naiManager.encode(groupFile.getName()) + "下载文件");
+							  "可通过" + downloadUrl + "/" + Autoreply.instance.naiManager.encode(groupFile.getName()) + "下载文件");
     }
 
 	public class FileList {

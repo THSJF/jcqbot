@@ -11,13 +11,13 @@ public class TimeTipManager implements Runnable {
         hashSet.add(new TimeTipItem(233861874L, -1, 1, new Runnable() {
 							@Override
 							public void run() {
-								Autoreply.sendMessage(233861874L, 0, Autoreply.instence.CC.image(new File(Autoreply.appDirectory + "pic\\提醒\\jiemo.jpg")));
+								Autoreply.sendMessage(233861874L, 0, Autoreply.instance.CC.image(new File(Autoreply.appDirectory + "pic\\提醒\\jiemo.jpg")));
 							}
 						}));
         hashSet.add(new TimeTipItem(233861874L, -1, 1, new Runnable() {
 							@Override
 							public void run() {
-								Autoreply.sendMessage(233861874L, 0, Autoreply.instence.CC.image(new File(Autoreply.appDirectory + "pic\\提醒\\jieli.jpg")));
+								Autoreply.sendMessage(233861874L, 0, Autoreply.instance.CC.image(new File(Autoreply.appDirectory + "pic\\提醒\\jieli.jpg")));
 							}
 						}));
     }

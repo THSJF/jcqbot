@@ -32,7 +32,7 @@ public class IPGetter implements Runnable {
             System.out.println("***服务器即将启动，等待客户端的链接***");
             while (running) {
                 socket = serverSocket.accept();
-                Autoreply.instence.threadPool.execute(new ServerRunnable(socket));
+                Autoreply.instance.threadPool.execute(new ServerRunnable(socket));
                 InetAddress address = socket.getInetAddress();
                 System.out.println("当前客户端的IP ： " + address.getHostAddress());
                 hSet.add(address.getHostAddress());

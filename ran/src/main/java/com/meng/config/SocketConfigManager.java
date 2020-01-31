@@ -26,7 +26,7 @@ public class SocketConfigManager implements Runnable {
         try {
             ServerSocket serverSocket = new ServerSocket(configManager.portConfig.configPort);
 			while (true) {
-                Autoreply.instence.threadPool.execute(new SocketConfigRunnable(configManager, serverSocket));
+                Autoreply.instance.threadPool.execute(new SocketConfigRunnable(configManager, serverSocket));
                 Thread.sleep(10);
             }
         } catch (Exception e) {

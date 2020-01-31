@@ -17,7 +17,7 @@ public class MsgRunnable implements Runnable {
     }
 
     @Override
-    public synchronized void run() {
+    public void run() {
 		if (ModuleManager.instence.onMsg(fromGroup, fromQQ, msg, msgId)) {
 			++RemoteWebSocket.botInfoBean.msgCmdPerSec;
 		}

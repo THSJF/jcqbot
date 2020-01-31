@@ -3,24 +3,24 @@ package com.meng.groupChat.Sequence;
 import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
+import com.meng.modules.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.nio.charset.*;
 import java.util.*;
 
-public class SeqManager {
+public class MSeq extends BaseModule {
     private ArrayList<SeqBean> seqs=new ArrayList<>();
 	private HashMap<String, ArrayList<String>> jsonData = new HashMap<>();
 
-	public SeqManager() {
+	@Override
+	public BaseModule load() {
 		File jsonFile = new File(Autoreply.appDirectory + "seq.json");
         if (!jsonFile.exists()) {
             saveData();
 		}
-		Type type = new TypeToken<HashMap<String, ArrayList<String>>>() {
-		}.getType();
-        jsonData = new Gson().fromJson(Tools.FileTool.readString(jsonFile), type);
+        jsonData = new Gson().fromJson(Tools.FileTool.readString(jsonFile), new TypeToken<HashMap<String, ArrayList<String>>>() {}.getType());
    		for (String key : jsonData.keySet()) {
 			ArrayList<String> al=jsonData.get(key);
 			String[] content=al.toArray(new String[al.size()]);
@@ -32,29 +32,23 @@ public class SeqManager {
 			}
 			seqs.add(new SeqBean(content, flag));
 		}
+		enable = true;
+		return this;
 	}
 
-	public boolean check(long fromGroup, long fromQQ, String msg) {
-		String s=null;
-		s = dealMsg(fromGroup, fromQQ, msg);
-		if (s != null) {
-			Autoreply.sendMessage(fromGroup, 0, s);
-		}
-		return false;
-	}
-
-	public String dealMsg(long fromGroup, long fromQQ, String msg) {
+	@Override
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
 		for (SeqBean sb:seqs) {
 			if (msg.equals(sb.content[0])) {
 				sb.pos = 0;
 			}
 			if (msg.equals(sb.content[sb.pos])) {
 				if (sb.flag == 1) {
-					Autoreply.instence.useCount.decLife(fromQQ);
-					Autoreply.instence.groupCount.decLife(fromGroup);
+					ModuleManager.instance.getModule(UserCounter.class).decLife(fromQQ);
+					ModuleManager.instance.getModule(MGroupCounter.class).decLife(fromGroup);
 				} else if (sb.flag == 2) {
-					Autoreply.instence.useCount.incMengEr(fromQQ);
-					Autoreply.instence.groupCount.incMengEr(fromGroup);
+					ModuleManager.instance.getModule(UserCounter.class).incMengEr(fromQQ);
+					ModuleManager.instance.getModule(MGroupCounter.class).incMengEr(fromGroup);
 				}
 				++sb.pos;			
 				if (sb.pos < sb.content.length) {
@@ -63,15 +57,16 @@ public class SeqManager {
 						sb.pos = 0;
 					}
 					if (sb.pos == 0) {
-						return sb.content[sb.content.length - 1];
+						Autoreply.sendMessage(fromGroup, 0, sb.content[sb.content.length - 1]);
 					} else {
-						return sb.content[sb.pos - 1];
+						Autoreply.sendMessage(fromGroup, 0, sb.content[sb.pos - 1]);
 					}
+					return true;
 				}
 				break;
 			}
 		}
-		return null;
+		return false;
 	}
 
 	private void saveData() {
@@ -87,7 +82,7 @@ public class SeqManager {
 		}
 	}
 
-	class SeqBean {
+	private class SeqBean {
 		public String[] content;
 		public int pos=0;
 		public int flag=0;

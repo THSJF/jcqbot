@@ -8,13 +8,14 @@ import java.util.*;
 import org.java_websocket.*;
 import org.java_websocket.handshake.*;
 import org.java_websocket.server.*;
+import com.meng.config.*;
 
 public class RemoteWebSocket extends WebSocketServer {
 	BotDataPack msgPack;
 	public static BotMsgInfo botInfoBean=new BotMsgInfo();
 	public RemoteWebSocket() {
 		super(new InetSocketAddress(8888));
-		Autoreply.instence.threadPool.execute(new Runnable(){
+		Autoreply.instance.threadPool.execute(new Runnable(){
 
 				@Override
 				public void run() {
@@ -117,7 +118,7 @@ public class RemoteWebSocket extends WebSocketServer {
 				break;
 			case BotDataPack.opGroupMemberInfo:
 				toSend = BotDataPack.encode(rec.getOpCode());
-				Member m=Autoreply.instence.CQ.getGroupMemberInfo(rec.readLong(), rec.readLong());
+				Member m=Autoreply.instance.CQ.getGroupMemberInfo(rec.readLong(), rec.readLong());
 				toSend.
 					write(m.getGroupId()).
 					write(m.getQqId()).
@@ -173,7 +174,7 @@ public class RemoteWebSocket extends WebSocketServer {
 				break;
 			case BotDataPack.getConfig:
 				toSend = BotDataPack.encode(rec.getOpCode());
-				toSend.write(Autoreply.gson.toJson(Autoreply.instence.configManager.configJavaBean));
+				toSend.write(Autoreply.gson.toJson(ConfigManager.instance.configJavaBean));
 				break;
 				/*	case BotDataPack.opGroupInfo:
 				 toSend = BotDataPack.encode(rec.getOpCode());

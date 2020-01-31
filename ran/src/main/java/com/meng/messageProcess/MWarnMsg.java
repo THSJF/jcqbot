@@ -1,13 +1,16 @@
 package com.meng.messageProcess;
 
 import com.meng.*;
+import com.meng.config.*;
+import com.meng.modules.*;
 import com.meng.tools.*;
 import com.sobte.cqp.jcq.entity.*;
+import java.io.*;
 import java.util.*;
 
 import static com.meng.Autoreply.sendMessage;
 
-public class WarnMessageProcessor {
+public class MWarnMsg extends BaseModule {
     private String lastMsg = "  ";
     private long lastSender = 2;
     private String[] warningMsgs = new String[]{
@@ -68,11 +71,15 @@ public class WarnMessageProcessor {
 		"转账"
 	};
 
-    public WarnMessageProcessor() {
+	@Override
+    public BaseModule load() {
+		enable = true;
+		return this;
     }
 
-    public boolean check(long fromGroup, long fromQQ, String msg) {
-        boolean b = false;
+	@Override
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+		boolean b = false;
         if (lastMsg.equals(msg) && isConmandMessage(msg)) {
             b = processRepeat(fromGroup, fromQQ, msg);
         } else if (isConmandMessage(msg) && !isExceptMsg(msg) && isAtme(msg)) {
@@ -85,22 +92,21 @@ public class WarnMessageProcessor {
     }
 
     private void onMsgHighWarinig(long fromGroup, long fromQQ) {
-        Autoreply.instence.banListener.addSummerSleep(fromGroup, 2856986197L, fromQQ);
-        try {
+		try {
             Member m = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, Autoreply.CQ.getLoginQQ());
             Member m2 = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, fromQQ);
             if (m.getAuthority() - m2.getAuthority() > 1) {
                 sendMessage(fromGroup, fromQQ, "你的行为被判定为危险行为,请联系管理员解除夏眠");
             }
         } catch (Exception e) {
-            Autoreply.instence.configManager.configJavaBean.blackListQQ.add(fromQQ);
+			ConfigManager.instance .configJavaBean.blackListQQ.add(fromQQ);
             Tools.CQ.ban(fromGroup, fromQQ, 2592000);
             sendMessage(fromGroup, fromQQ, "你的行为被判定为危险行为");
         }
     }
 
     private boolean isAtme(String msg) {
-        List<Long> list = Autoreply.instence.CC.getAts(msg);
+        List<Long> list = Autoreply.instance.CC.getAts(msg);
         long me = Autoreply.CQ.getLoginQQ();
         for (long l : list) {
             if (l == me) {

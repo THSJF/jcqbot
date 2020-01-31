@@ -6,8 +6,8 @@ import com.meng.bilibili.live.*;
 import com.meng.bilibili.main.*;
 import com.meng.config.*;
 import com.meng.config.javabeans.*;
-import com.meng.dice.*;
-import com.meng.groupChat.*;
+import com.meng.modules.*;
+import com.meng.remote.*;
 import com.meng.tools.*;
 import com.meng.tools.override.*;
 import com.sobte.cqp.jcq.entity.*;
@@ -15,15 +15,15 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
 import org.jsoup.*;
+import com.meng.bilibili.*;
 
-public class AdminMessageProcessor {
-    private ConfigManager configManager;
+public class MAdminMsg extends BaseModule {
 	private MyLinkedHashMap<String,String> masterPermission=new MyLinkedHashMap<>();
 	private MyLinkedHashMap<String,String> adminPermission=new MyLinkedHashMap<>();
 	public MyLinkedHashMap<String,String> userPermission=new MyLinkedHashMap<>();
 
-    public AdminMessageProcessor(ConfigManager configManager) {
-        this.configManager = configManager;
+	@Override
+    public BaseModule load() {
 		masterPermission.put("小律影专用指令:setconnect", "");
 		masterPermission.put(".start|.stop", "总开关");
 		masterPermission.put("find:[QQ号]", "在配置文件中查找此人");
@@ -55,7 +55,6 @@ public class AdminMessageProcessor {
 		masterPermission.put("lban.[直播间号|直播间主人].[被禁言UID|被禁言者称呼].[时间]", "直播间禁言,单位为小时");
 		masterPermission.put("移除成就 [成就名] [艾特一人]", "移除此人的该成就");
 
-
 		adminPermission.put("findInAll:[QQ号]", "查找共同群");
 		adminPermission.put("ban.[QQ号|艾特].[时间]|ban.[群号].[QQ号].[时间]", "禁言,单位为秒");
 		adminPermission.put("加图指令懒得写了", "色图迫害图女装");
@@ -83,18 +82,36 @@ public class AdminMessageProcessor {
 		masterPermission.putAll(adminPermission);
 		masterPermission.putAll(userPermission);
 		adminPermission.putAll(userPermission);
+		enable = true;
+		return this;
 	}
 
-    public boolean check(final long fromGroup, final long fromQQ, final String msg) {
+	@Override
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+		if (msg.equals(".on") && (Autoreply.CQ.getGroupMemberInfoV2(fromGroup, fromQQ).getAuthority() > 1 || ConfigManager.instance.isAdmin(fromQQ))) {
+            if (Autoreply.instance.botOff.contains(fromGroup)) {
+                Autoreply.instance.botOff.remove(fromGroup);
+				Autoreply.sendMessage(fromGroup, 0, "已启用");
+				++RemoteWebSocket.botInfoBean.msgCmdPerSec;
+                return true;
+            }
+        }
+        if (msg.equals(".off") && (Autoreply.CQ.getGroupMemberInfoV2(fromGroup, fromQQ).getAuthority() > 1 || ConfigManager.instance.isAdmin(fromQQ))) {
+            Autoreply.instance.botOff.add(fromGroup);
+			Autoreply.sendMessage(fromGroup, 0, "已停用");
+			++RemoteWebSocket.botInfoBean.msgCmdPerSec;
+            return true;
+        }
+
 		if (fromQQ == 2856986197L || fromQQ == 2528419891L) {
 			if (msg.startsWith("bchat.")) {
 				String[] strs=msg.split("\\.", 3);
-				PersonInfo pi=Autoreply.instence.configManager.getPersonInfoFromName(strs[1]);
+				PersonInfo pi=ConfigManager.instance.getPersonInfoFromName(strs[1]);
 				String resu;
 				if (pi == null) {
-					resu = Autoreply.instence.naiManager.sendChat(strs[1], strs[2]);
+					resu = Autoreply.instance.naiManager.sendChat(strs[1], strs[2]);
 				} else {
-					resu = Autoreply.instence.naiManager.sendChat(pi.bliveRoom + "", strs[2]);
+					resu = Autoreply.instance.naiManager.sendChat(pi.bliveRoom + "", strs[2]);
 				}	
 				if (!resu.equals("")) {
 					Autoreply.sendMessage(fromGroup, 0, resu);
@@ -103,7 +120,7 @@ public class AdminMessageProcessor {
 			}
 			if (msg.startsWith("blink.")) {
 				String[] strs=msg.split("\\.", 2);
-				PersonInfo pi=Autoreply.instence.configManager.getPersonInfoFromName(strs[1]);
+				PersonInfo pi=ConfigManager.instance.getPersonInfoFromName(strs[1]);
 				if (pi == null) {	  
 					JsonParser parser = new JsonParser();
 					JsonObject obj = parser.parse(Tools.Network.getSourceCode("https://api.live.bilibili.com/room/v1/Room/playUrl?cid=" + strs[1] + "&quality=4&platform=web")).getAsJsonObject();
@@ -116,85 +133,23 @@ public class AdminMessageProcessor {
 					Autoreply.sendMessage(fromGroup, 0, ja.get(0).getAsJsonObject().get("url").getAsString());			  
 				}	
 				return true;
-			} 
-			if (msg.equals("检查头像")) {
-				Autoreply.instence.threeManager.debug();
-				return true;
 			}
 		}
 
-        if (configManager.isMaster(fromQQ)) {
-			if (msg.equals("-help")) {
-				Autoreply.sendMessage(fromGroup, 0, masterPermission.toString());
-				return true;
-			}
-			if (msg.startsWith("移除成就 ")) {
-				String arch=msg.substring(5, msg.indexOf("[") - 1);
-				long toQQ=Autoreply.instence.CC.getAt(msg);
-				ArchievementBean ab=Autoreply.instence.spellCollect.archiMap.get(toQQ);
-				if (ab == null) {
-					ab = new ArchievementBean();
-					Autoreply.instence.spellCollect.archiMap.put(toQQ, ab);
-				}
-				for (Archievement ac:Autoreply.instence.spellCollect.archList) {
-					if (ac.name.equals(arch)) {
-						ab.deleteArchievment(ac.archNum);
-						Autoreply.sendMessage(fromGroup, toQQ, "为" + toQQ + "移除成就" + arch);
-						Autoreply.instence.spellCollect.saveArchiConfig();
-						return true;
-					}
-				}
-				return true;
-			}
-			if (msg.startsWith("移除符卡 ")) {
-				String arch=msg.substring(5, msg.indexOf("[") - 1);
-				long toQQ=Autoreply.instence.CC.getAt(msg);
-				HashSet<String> spells=Autoreply.instence.spellCollect.userSpellsMap.get(toQQ);
-				if (spells == null) {
-					spells = new HashSet<>();
-					Autoreply.instence.spellCollect.userSpellsMap.put(toQQ, spells);
-				}
-				for (String ac:DiceImitate.spells) {
-					if (ac.equals(arch)) {
-						spells.remove(ac);
-						Autoreply.sendMessage(fromGroup, toQQ, "为" + toQQ + "移除符卡" + arch);
-						Autoreply.instence.spellCollect.saveConfig();
-						return true;
-					}
-				}
-				return true;
-			}
-			if (msg.startsWith("添加符卡 ")) {
-				String arch=msg.substring(5, msg.indexOf("[") - 1);
-				long toQQ=Autoreply.instence.CC.getAt(msg);
-				HashSet<String> spells=Autoreply.instence.spellCollect.userSpellsMap.get(toQQ);
-				if (spells == null) {
-					spells = new HashSet<>();
-					Autoreply.instence.spellCollect.userSpellsMap.put(toQQ, spells);
-				}
-				for (String ac:DiceImitate.spells) {
-					if (ac.equals(arch)) {
-						spells.add(ac);
-						Autoreply.sendMessage(fromGroup, toQQ, "为" + toQQ + "添加符卡" + arch);
-						Autoreply.instence.spellCollect.saveConfig();
-						Autoreply.instence.spellCollect.checkArchievement(fromGroup, fromQQ, spells);
-						return true;
-					}
-				}
-				return true;
-			}
+        if (ConfigManager.instance.isMaster(fromQQ)) {
+
 			if (msg.startsWith("&#91;接收到新的加群申请&#93")) {
 				String num=msg.substring(msg.indexOf("申请编号：") + 5, msg.indexOf("已注册快捷") - 2);
 				long qqNum=Long.parseLong(msg.substring(msg.indexOf("用户：") + 3, msg.indexOf("验证消息") - 2));
-				PersonInfo pi=Autoreply.instence.configManager.getPersonInfoFromQQ(qqNum);
+				PersonInfo pi=ConfigManager.instance.getPersonInfoFromQQ(qqNum);
 				if (pi != null) {
 					Autoreply.sendMessage(Autoreply.mainGroup, 0, "~申请审核 " + num + " True");
-					Autoreply.sendMessage(fromGroup, 0, "欢迎" + Autoreply.instence.configManager.getNickName(qqNum));
-				} else if (Autoreply.instence.configManager.isGroupAutoAllow(qqNum)) {
+					Autoreply.sendMessage(fromGroup, 0, "欢迎" + ConfigManager.instance.getNickName(qqNum));
+				} else if (ConfigManager.instance.isGroupAutoAllow(qqNum)) {
 					Autoreply.sendMessage(Autoreply.mainGroup, 0,  "~申请审核 " + num + " True");
 					Autoreply.sendMessage(fromGroup, 0, "此账号在自动同意列表中，已同意进群");
-					Autoreply.sendMessage(fromGroup, 0, "欢迎" + Autoreply.instence.configManager.getNickName(qqNum));
-				} else if (Autoreply.instence.configManager.isBlackQQ(qqNum)) {
+					Autoreply.sendMessage(fromGroup, 0, "欢迎" + ConfigManager.instance.getNickName(qqNum));
+				} else if (ConfigManager.instance.isBlackQQ(qqNum)) {
 					Autoreply.sendMessage(fromGroup, 0, "~申请审核 " + num + " False 黑名单用户");
 				}
 				return true;
@@ -208,7 +163,7 @@ public class AdminMessageProcessor {
 				HashSet<Group> hs=new HashSet<>();
 				List<Group> glist=Autoreply.CQ.getGroupList();
 				for (Group g:glist) {
-					GroupConfig gc=Autoreply.instence.configManager.getGroupConfig(g.getId());
+					GroupConfig gc=ConfigManager.instance.getGroupConfig(g.getId());
 					if (gc == null || !gc.reply) {
 						continue;
 					}
@@ -240,7 +195,7 @@ public class AdminMessageProcessor {
 			}
 			if (msg.startsWith("-live")) {
 				String[] str=msg.split("\\.");
-				PersonInfo pi=Autoreply.instence.configManager.getPersonInfoFromQQ(fromQQ);
+				PersonInfo pi=ConfigManager.instance.getPersonInfoFromQQ(fromQQ);
 				String name;
 				if (pi == null) {
 					name = "" + fromQQ;
@@ -250,19 +205,19 @@ public class AdminMessageProcessor {
 				switch (str[1]) {
 					case "start":
 						try {
-							Autoreply.sendMessage(fromGroup, 0, start(9721948, Autoreply.instence.cookieManager.cookie.Hina));
+							Autoreply.sendMessage(fromGroup, 0, start(9721948, Autoreply.instance.cookieManager.cookie.Hina));
 							Autoreply.sendMessage(Autoreply.mainGroup, 0, name + "开启了直播");
 						} catch (IOException e) {}
 						break;
 					case "stop":
 						try {
-							Autoreply.sendMessage(fromGroup, 0, stop(9721948, Autoreply.instence.cookieManager.cookie.Hina));
+							Autoreply.sendMessage(fromGroup, 0, stop(9721948, Autoreply.instance.cookieManager.cookie.Hina));
 							Autoreply.sendMessage(Autoreply.mainGroup, 0, name + "关闭了直播");
 						} catch (IOException e) {}
 						break;
 					case "rename":
 						try {
-							Autoreply.sendMessage(fromGroup, 0, rename(9721948, Autoreply.instence.cookieManager.cookie.Hina, str[2]));
+							Autoreply.sendMessage(fromGroup, 0, rename(9721948, Autoreply.instance.cookieManager.cookie.Hina, str[2]));
 							Autoreply.sendMessage(Autoreply.mainGroup, 0, name + "为直播改了名:" + str[2]);
 						} catch (IOException e) {}
 				}	
@@ -272,20 +227,20 @@ public class AdminMessageProcessor {
 				String[] ss=msg.split("\\.");
 				String rid=ss[1];
 				String uid=ss[2];
-				PersonInfo mas=Autoreply.instence.configManager.getPersonInfoFromName(ss[1]);
+				PersonInfo mas=ConfigManager.instance.getPersonInfoFromName(ss[1]);
 				if (mas != null) {
 					rid = mas.bliveRoom + "";
 				}
-				PersonInfo ban=Autoreply.instence.configManager.getPersonInfoFromName(ss[2]);
+				PersonInfo ban=ConfigManager.instance.getPersonInfoFromName(ss[2]);
 				if (ban != null) {
 					uid = ban.bid + "";
 				}
-				Autoreply.instence.liveListener.setBan(fromGroup, rid, uid, ss[3]);
+				Autoreply.instance.liveListener.setBan(fromGroup, rid, uid, ss[3]);
 				return true;
 			}
 			if (msg.startsWith("mother.")) {
 				if (msg.length() > 7) {
-					if (Autoreply.instence.danmakuListenerManager.addMotherWord(msg.substring(7))) {
+					if (Autoreply.instance.danmakuListenerManager.addMotherWord(msg.substring(7))) {
 						Autoreply.sendMessage(fromGroup, 0, msg.substring(7) + "已添加");
 					} else {
 						Autoreply.sendMessage(fromGroup, 0, "添加失败");
@@ -297,27 +252,27 @@ public class AdminMessageProcessor {
 			}
             if (msg.startsWith("block[CQ:at")) {
                 StringBuilder sb = new StringBuilder();
-                List<Long> qqs = Autoreply.instence.CC.getAts(msg);
+                List<Long> qqs = Autoreply.instance.CC.getAts(msg);
                 sb.append("屏蔽列表添加:");
                 for (int i = 0, qqsSize = qqs.size(); i < qqsSize; i++) {
                     long qq = qqs.get(i);
                     sb.append(qq).append(" ");
 				}
-                configManager.configJavaBean.QQNotReply.addAll(qqs);
-                configManager.saveConfig();
+                ConfigManager.instance.configJavaBean.QQNotReply.addAll(qqs);
+                ConfigManager.instance.saveConfig();
                 Autoreply.sendMessage(fromGroup, fromQQ, sb.toString());
                 return true;
 			}
             if (msg.startsWith("black[CQ:at")) {
                 StringBuilder sb = new StringBuilder();
-                List<Long> qqs = Autoreply.instence.CC.getAts(msg);
+                List<Long> qqs = Autoreply.instance.CC.getAts(msg);
                 sb.append("黑名单添加:");
                 for (int i = 0, qqsSize = qqs.size(); i < qqsSize; i++) {
                     long qq = qqs.get(i);
                     sb.append(qq).append(" ");
 				}
-                configManager.configJavaBean.blackListQQ.addAll(qqs);
-                configManager.saveConfig();
+                ConfigManager.instance.configJavaBean.blackListQQ.addAll(qqs);
+                ConfigManager.instance.saveConfig();
                 Autoreply.sendMessage(fromGroup, fromQQ, sb.toString());
                 return true;
 			}
@@ -328,36 +283,31 @@ public class AdminMessageProcessor {
                 int le = groups.length;
                 for (int i = 1; i < le; ++i) {
                     sb.append(groups[i]).append(" ");
-                    configManager.configJavaBean.blackListGroup.add(Long.parseLong(groups[i]));
+                    ConfigManager.instance.configJavaBean.blackListGroup.add(Long.parseLong(groups[i]));
 				}
-                configManager.saveConfig();
+                ConfigManager.instance.saveConfig();
                 Autoreply.sendMessage(fromGroup, fromQQ, sb.toString());
                 return true;
 			}
             if (msg.startsWith("findInAll:")) {
-                Autoreply.instence.threadPool.execute(new Runnable() {
-						@Override
-						public void run() {
-							Tools.CQ.findQQInAllGroup(fromGroup, fromQQ, msg);
-						}
-					});
+              	Tools.CQ.findQQInAllGroup(fromGroup, fromQQ, msg);
                 return true;
 			}
 
             if (msg.startsWith("av更新时间:")) {
-                Autoreply.sendMessage(fromGroup, fromQQ, String.valueOf(Autoreply.instence.updateManager.getAVLastUpdateTime(msg.substring(7))));
+                Autoreply.sendMessage(fromGroup, fromQQ, String.valueOf(ModuleManager.instance.getModule(NewUpdateManager.class).getAVLastUpdateTime(msg.substring(7))));
                 return true;
 			}
             if (msg.startsWith("avJson:")) {
-                Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instence.updateManager.getAVJson(msg.substring(7)));
+                Autoreply.sendMessage(fromGroup, fromQQ, ModuleManager.instance.getModule(NewUpdateManager.class).getAVJson(msg.substring(7)));
                 return true;
 			}
             if (msg.startsWith("cv更新时间:")) {
-                Autoreply.sendMessage(fromGroup, fromQQ, String.valueOf(Autoreply.instence.updateManager.getCVLastUpdateTime(msg.substring(7))));
+                Autoreply.sendMessage(fromGroup, fromQQ, String.valueOf(ModuleManager.instance.getModule(NewUpdateManager.class).getCVLastUpdateTime(msg.substring(7))));
                 return true;
 			}
             if (msg.startsWith("cvJson:")) {
-                Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instence.updateManager.getCVJson(msg.substring(7)));
+                Autoreply.sendMessage(fromGroup, fromQQ, ModuleManager.instance.getModule(NewUpdateManager.class).getCVJson(msg.substring(7)));
                 return true;
 			}
             if (msg.startsWith("直播状态lid:")) {
@@ -367,7 +317,7 @@ public class AdminMessageProcessor {
                 Autoreply.sendMessage(fromGroup, fromQQ, data.get("live_status").getAsInt() == 1 ? "true" : "false");
                 return true;
 			}
-            if (Autoreply.instence.biliLinkInfo.checkOgg(fromGroup, fromQQ, msg)) {
+            if (ModuleManager.instance.getModule(MBiliLinkInfo.class).checkOgg(fromGroup, fromQQ, msg)) {
                 return true;
 			}
             if (msg.startsWith("直播状态bid:")) {
@@ -388,8 +338,8 @@ public class AdminMessageProcessor {
                     return true;
 				}
                 if (personInfo != null) {
-                    Autoreply.instence.configManager.configJavaBean.personInfo.add(personInfo);
-                    Autoreply.instence.configManager.saveConfig();
+                    ConfigManager.instance.configJavaBean.personInfo.add(personInfo);
+                    ConfigManager.instance.saveConfig();
                     Autoreply.sendMessage(fromGroup, fromQQ, msg + "成功");
 				} else {
                     Autoreply.sendMessage(fromGroup, fromQQ, "一个玄学问题导致了失败");
@@ -405,8 +355,8 @@ public class AdminMessageProcessor {
                     return true;
 				}
                 if (p != null) {
-                    Autoreply.instence.configManager.configJavaBean.personInfo.remove(p);
-                    Autoreply.instence.configManager.saveConfig();
+                    ConfigManager.instance.configJavaBean.personInfo.remove(p);
+                    ConfigManager.instance.saveConfig();
                     Autoreply.sendMessage(fromGroup, fromQQ, msg + "成功");
 				} else {
                     Autoreply.sendMessage(fromGroup, fromQQ, "一个玄学问题导致了失败");
@@ -416,7 +366,7 @@ public class AdminMessageProcessor {
             if (msg.startsWith("find:")) {
                 String name = msg.substring(5);
                 HashSet<PersonInfo> hashSet = new HashSet<>();
-                for (PersonInfo personInfo : Autoreply.instence.configManager.configJavaBean.personInfo) {
+                for (PersonInfo personInfo : ConfigManager.instance.configJavaBean.personInfo) {
                     if (personInfo.name.contains(name)) {
                         hashSet.add(personInfo);
 					}
@@ -434,11 +384,11 @@ public class AdminMessageProcessor {
                 return true;
 			}
             if (msg.equals("saveconfig")) {
-                Autoreply.instence.configManager.saveConfig();
+                ConfigManager.instance.saveConfig();
                 return true;
 			}
             if (msg.equals("线程数")) {
-                ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Autoreply.instence.threadPool;
+                ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Autoreply.instance.threadPool;
                 String s = "taskCount：" + threadPoolExecutor.getTaskCount() + "\n" +
 					"completedTaskCount：" + threadPoolExecutor.getCompletedTaskCount() + "\n" +
 					"largestPoolSize：" + threadPoolExecutor.getLargestPoolSize() + "\n" +
@@ -454,34 +404,29 @@ public class AdminMessageProcessor {
 			}
             if (msg.equals("zan-now")) {
 				Autoreply.sendMessage(fromGroup, fromQQ, "start");
-                Autoreply.instence.threadPool.execute(new Runnable() {
-						@Override
-						public void run() {
-							Autoreply.instence.zanManager.sendZan();
-							Autoreply.sendMessage(fromGroup, fromQQ, "finish");
-						}
-					});
+				Autoreply.instance.zanManager.sendZan();
+				Autoreply.sendMessage(fromGroup, fromQQ, "finish");
                 return true;
 			}
-            if (Autoreply.instence.zanManager.checkAdd(fromGroup, fromQQ, msg)) {
+            if (Autoreply.instance.zanManager.checkAdd(fromGroup, fromQQ, msg)) {
                 return true;
 			}
             if (msg.equals("直播时间统计")) {
-				Autoreply.sendMessage(fromGroup, 0, Autoreply.instence.liveListener.getLiveTimeCount());
+				Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.liveListener.getLiveTimeCount());
                 return true;
 			}
             if (msg.startsWith("nai.")) {
                 String[] sarr = msg.split("\\.", 3);
-                PersonInfo pInfo = configManager.getPersonInfoFromName(sarr[1]);
+                PersonInfo pInfo = ConfigManager.instance.getPersonInfoFromName(sarr[1]);
                 if (pInfo != null) {
-                    Autoreply.instence.naiManager.check(fromGroup, pInfo.bliveRoom + "", fromQQ, sarr[2]);
+                    Autoreply.instance.naiManager.check(fromGroup, pInfo.bliveRoom + "", fromQQ, sarr[2]);
 				} else {
-                    Autoreply.instence.naiManager.check(fromGroup, sarr[1], fromQQ, sarr[2]);
+                    Autoreply.instance.naiManager.check(fromGroup, sarr[1], fromQQ, sarr[2]);
 				}
                 return true;
 			}
             if (msg.equals("精神支柱")) {
-				Autoreply.sendMessage(fromGroup, 0, Autoreply.instence.CC.image(new File(Autoreply.appDirectory + "pic\\alice.png")));
+				Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.image(new File(Autoreply.appDirectory + "pic\\alice.png")));
                 return true;
 			}
             if (msg.startsWith("生成位置")) {
@@ -489,7 +434,7 @@ public class AdminMessageProcessor {
                 if (args.length == 6) {
                     try {
 						Autoreply.sendMessage(fromGroup, 0,
-											  Autoreply.instence.CC.location(
+											  Autoreply.instance.CC.location(
 												  Double.parseDouble(args[2]),
 												  Double.parseDouble(args[1]),
 												  Integer.parseInt(args[3]),
@@ -502,10 +447,7 @@ public class AdminMessageProcessor {
 					}
 				}
 			}
-            if (msg.equals("大芳法 芳神复诵")) {
-                Autoreply.instence.threadPool.execute(new MoShenFuSong(fromGroup, fromQQ, 6));
-                return true;
-			}
+
             String[] strings = msg.split("\\.", 3);
             if (strings[0].equals("send")) {
 				if (msg.contains("~") || msg.contains("～")) {
@@ -514,10 +456,10 @@ public class AdminMessageProcessor {
 				}
                 switch (strings[2]) {
                     case "喵":
-						Autoreply.instence.threadPool.execute(new DeleteMessageRunnable(Autoreply.sendMessage(Long.parseLong(strings[1]), 0, Autoreply.instence.CC.record("miao.mp3"))));
+						Autoreply.instance.threadPool.execute(new DeleteMessageRunnable(Autoreply.sendMessage(Long.parseLong(strings[1]), 0, Autoreply.instance.CC.record("miao.mp3"))));
 						break;
                     case "娇喘":
-						Autoreply.instence.threadPool.execute(new DeleteMessageRunnable(Autoreply.sendMessage(Long.parseLong(strings[1]), 0, Autoreply.instence.CC.record("mmm.mp3"))));
+						Autoreply.instance.threadPool.execute(new DeleteMessageRunnable(Autoreply.sendMessage(Long.parseLong(strings[1]), 0, Autoreply.instance.CC.record("mmm.mp3"))));
 						break;
                     default:
 						Autoreply.sendMessage(Long.parseLong(strings[1]), 0, strings[2]);
@@ -526,7 +468,7 @@ public class AdminMessageProcessor {
                 return true;
 			}
 			if (strings[0].equals("cookie")) {
-				if (!Autoreply.instence.cookieManager.setCookie(strings[1], strings[2])) {
+				if (!Autoreply.instance.cookieManager.setCookie(strings[1], strings[2])) {
 					Autoreply.sendMessage(fromGroup, 0, "添加失败");
 					return true;
 				}
@@ -534,152 +476,46 @@ public class AdminMessageProcessor {
                 return true;
 			}
             if (msg.startsWith("精神支柱[CQ:image") || msg.startsWith("神触[CQ:image")) {
-                Autoreply.instence.picEditManager.check(fromGroup, fromQQ, msg);
+                ModuleManager.instance.getModule(MPicEdit.class).jingShenZhiZhuByPic(fromGroup, fromQQ, msg);
                 return true;
 			}
             if (msg.startsWith("设置群头衔[CQ:at")) {
                 String title = msg.substring(msg.indexOf("]") + 1);
-                System.out.println(Autoreply.CQ.setGroupSpecialTitle(fromGroup, Autoreply.instence.CC.getAt(msg), title, -1));
+                System.out.println(Autoreply.CQ.setGroupSpecialTitle(fromGroup, Autoreply.instance.CC.getAt(msg), title, -1));
                 return true;
 			}
             if (msg.startsWith("设置群名片[CQ:at")) {
                 String title = msg.substring(msg.indexOf("]") + 1);
-                System.out.println(Autoreply.CQ.setGroupCard(fromGroup, Autoreply.instence.CC.getAt(msg), title));
+                System.out.println(Autoreply.CQ.setGroupCard(fromGroup, Autoreply.instance.CC.getAt(msg), title));
                 return true;
 			}
 		}
-        if (configManager.isAdmin(fromQQ)) {
+        if (ConfigManager.instance.isAdmin(fromQQ)) {
 			if (msg.equals("-help")) {
 				Autoreply.sendMessage(fromGroup, 0, adminPermission.toString());
 				return true;
 			}
-			if (msg.equals("-发言统计")) {
-				HashMap<Integer,Integer> hashMap = GroupCounterChart.ins.getSpeak(fromGroup, Tools.CQ.getDate());
-				if (hashMap == null || hashMap.size() == 0) {
-					Autoreply.sendMessage(fromGroup, 0, "无数据");
-					return true;
-				}
-				StringBuilder sb=new StringBuilder(String.format("群内共有%d条消息,今日消息情况:\n", GroupCounterChart.ins.groupsMap.get(fromGroup).all));
-				for (int i=0;i < 24;++i) {
-					if (hashMap.get(i) == null) {
-						continue;
-					}
-					sb.append(String.format("%d:00-%d:00  共%d条消息\n", i, i + 1, hashMap.get(i)));
-				}
-				Autoreply.sendMessage(fromGroup, 0, sb.toString());
-				File pic=GroupCounterChart.ins.dchart.check(GroupCounterChart.ins.groupsMap.get(fromGroup));
-				Autoreply.sendMessage(fromGroup, 0, Autoreply.instence.CC.image(pic));
-				pic.delete();
-				File pic2=GroupCounterChart.ins.mchart.check(GroupCounterChart.ins.groupsMap.get(fromGroup));
-				Autoreply.sendMessage(fromGroup, 0, Autoreply.instence.CC.image(pic2));
-				pic2.delete();
-				return true;
-			}
+
 			if (msg.equals(".live")) {
 				String msgSend;
 				StringBuilder stringBuilder = new StringBuilder();
-				for (Map.Entry<Integer,LivePerson> entry:Autoreply.instence.liveListener.livePersonMap.entrySet()) {	
+				for (Map.Entry<Integer,LivePerson> entry:Autoreply.instance.liveListener.livePersonMap.entrySet()) {	
 					if (entry.getValue().lastStatus) {
-						stringBuilder.append(Autoreply.instence.configManager.getPersonInfoFromBid(entry.getKey()).name).append("正在直播").append(entry.getValue().liveUrl).append("\n");
+						stringBuilder.append(ConfigManager.instance.getPersonInfoFromBid(entry.getKey()).name).append("正在直播").append(entry.getValue().liveUrl).append("\n");
 					}
 				}
 				msgSend = stringBuilder.toString();
 				Autoreply.sendMessage(fromGroup, fromQQ, msgSend.equals("") ? "居然没有飞机佬直播" : msgSend);
 				return true;
 			}
-			if (msg.startsWith("ban")) {
-                String[] arr = msg.split("\\.");
-                if (arr.length == 3 || arr.length == 4) {
-                    Autoreply.instence.banner.checkBan(fromGroup, fromQQ, msg);
-				}
-                return true;
-			}
-            if (msg.equals("蓝统计")) {
-				Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instence.useCount.getMyCount(Autoreply.CQ.getLoginQQ()));
-                return true;
-			}
+
             if (msg.startsWith("findInAll:")) {
-                Autoreply.instence.threadPool.execute(new Runnable() {
-						@Override
-						public void run() {
-							Tools.CQ.findQQInAllGroup(fromGroup, fromQQ, msg);
-						}
-					});
+				Tools.CQ.findQQInAllGroup(fromGroup, fromQQ, msg);
                 return true;
 			}
-            if (msg.contains("迫害图[CQ:image")) {
-                Autoreply.instence.threadPool.execute(new Runnable() {
-						@Override
-						public void run() {
-							String pohaituName = msg.substring(0, msg.indexOf("[CQ:image") - 3);
-							switch (pohaituName) {
-								case "零食":
-									pohaituName = "鸽鸽";
-									break;
-								case "旭东":
-									pohaituName = "天星厨";
-									break;
-								case "星小渚":
-									pohaituName = "杏子";
-									break;
-								default:
-									break;
-							}
-							List<CQImage> imgList = Autoreply.instence.CC.getCQImages(msg);
-							for (CQImage cqImage : imgList) {
-								try {
-									Autoreply.instence.fileTypeUtil.checkFormat(cqImage.download(Autoreply.appDirectory + File.separator + "pohai/" + pohaituName, cqImage.getMd5()));
-								} catch (IOException e) {
-									e.printStackTrace();
-									Autoreply.sendMessage(fromGroup, fromQQ, e.toString());
-									return;
-								}
-							}
-							Autoreply.sendMessage(fromGroup, fromQQ, imgList.size() + "张图添加成功");
-						}
-					});
-                return true;
-			}
-            if (msg.contains("色图[CQ:image")) {
-                Autoreply.instence.threadPool.execute(new Runnable() {
-						@Override
-						public void run() {
-							String setuName = msg.substring(0, msg.indexOf("[CQ:image") - 2);
-							List<CQImage> imgList = Autoreply.instence.CC.getCQImages(msg);
-							for (CQImage cqImage : imgList) {
-								try {
-									Autoreply.instence.fileTypeUtil.checkFormat(cqImage.download(Autoreply.appDirectory + File.separator + "setu/" + setuName, cqImage.getMd5()));
-								} catch (IOException e) {
-									e.printStackTrace();
-									Autoreply.sendMessage(fromGroup, fromQQ, e.toString());
-									return;
-								}
-							}
-							Autoreply.sendMessage(fromGroup, fromQQ, imgList.size() + "张图添加成功");
-						}
-					});
-                return true;
-			}
-            if (msg.contains("女装[CQ:image")) {
-                Autoreply.instence.threadPool.execute(new Runnable() {
-						@Override
-						public void run() {
-							String setuName = msg.substring(0, msg.indexOf("[CQ:image") - 2);
-							List<CQImage> imgList = Autoreply.instence.CC.getCQImages(msg);
-							for (CQImage cqImage : imgList) {
-								try {
-									Autoreply.instence.fileTypeUtil.checkFormat(cqImage.download(Autoreply.appDirectory + File.separator + "nvzhuang/" + setuName, cqImage.getMd5()));
-								} catch (IOException e) {
-									e.printStackTrace();
-									Autoreply.sendMessage(fromGroup, fromQQ, e.toString());
-									return;
-								}
-							}
-							Autoreply.sendMessage(fromGroup, fromQQ, imgList.size() + "张图添加成功");
-						}
-					});
-                return true;
-			}
+
+
+
 		}
         return false;
 	}
@@ -693,7 +529,7 @@ public class AdminMessageProcessor {
         liveHead.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
         liveHead.put("Connection", "keep-alive");
         liveHead.put("Origin", "https://link.bilibili.com");
-        connection.userAgent(Autoreply.instence.userAgent)
+        connection.userAgent(Autoreply.instance.userAgent)
 			.headers(liveHead)
 			.ignoreContentType(true)
 			.referrer("https://link.bilibili.com/p/center/index")
@@ -724,7 +560,7 @@ public class AdminMessageProcessor {
         liveHead.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
         liveHead.put("Connection", "keep-alive");
         liveHead.put("Origin", "https://link.bilibili.com");
-        connection.userAgent(Autoreply.instence.userAgent)
+        connection.userAgent(Autoreply.instance.userAgent)
 			.headers(liveHead)
 			.ignoreContentType(true)
 			.referrer("https://link.bilibili.com/p/center/index")
@@ -752,7 +588,7 @@ public class AdminMessageProcessor {
         liveHead.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
         liveHead.put("Connection", "keep-alive");
         liveHead.put("Origin", "https://link.bilibili.com");
-        connection.userAgent(Autoreply.instence.userAgent)
+        connection.userAgent(Autoreply.instance.userAgent)
 			.headers(liveHead)
 			.ignoreContentType(true)
 			.referrer("https://link.bilibili.com/p/center/index")

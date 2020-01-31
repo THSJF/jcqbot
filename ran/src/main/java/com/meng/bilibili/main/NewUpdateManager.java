@@ -3,21 +3,25 @@ package com.meng.bilibili.main;
 import com.google.gson.*;
 import com.meng.*;
 import com.meng.bilibili.*;
-import com.meng.config.*;
 import com.meng.config.javabeans.*;
+import com.meng.modules.*;
 import com.meng.tools.*;
+import java.io.*;
+import com.meng.config.*;
 
-public class NewUpdateManager {
+public class NewUpdateManager extends BaseModule {
 
     private String[] words = new String[]{"更了吗", "出来更新", "什么时候更新啊", "在？看看更新", "怎么还不更新", "更新啊草绳"};
-    private ConfigManager configManager;
 
-    public NewUpdateManager(ConfigManager configManager) {
-        this.configManager = configManager;
-    }
+	@Override
+	public BaseModule load() {
+		enable = true;
+		return this;
+	}
 
-    public boolean check(long fromGroup, String msg) {
-        if (msg.contains("今天更了吗") && isUpper(msg.substring(0, msg.indexOf("今天更了吗")))) {
+	@Override
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+		if (msg.contains("今天更了吗") && isUpper(msg.substring(0, msg.indexOf("今天更了吗")))) {
             long videoUpdateTime = 0;
             long articalUpdateTime = 0;
             Gson gson = new Gson();
@@ -58,9 +62,9 @@ public class NewUpdateManager {
     private void tipVideo(long fromGroup, String msg, long videoUpdateTime, NewVideoBean.Data.Vlist vlist) {
         if (System.currentTimeMillis() - videoUpdateTime < 86400000) {
             Autoreply.sendMessage(fromGroup, 0, "更新莉,,,https://www.bilibili.com/video/av" + vlist.aid);
-            Autoreply.sendMessage(fromGroup, 0, BiliLinkInfo.encodeBilibiliURL(vlist.aid, true));
+            Autoreply.sendMessage(fromGroup, 0, MBiliLinkInfo.encodeBilibiliURL(vlist.aid, true));
         } else {
-            Autoreply.sendMessage(fromGroup, 0, Autoreply.instence.CC.at(getUpQQ(msg.substring(0, msg.indexOf("今天更了吗")))) + Tools.ArrayTool.rfa(words));
+            Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.at(getUpQQ(msg.substring(0, msg.indexOf("今天更了吗")))) + Tools.ArrayTool.rfa(words));
             int days = (int) ((System.currentTimeMillis() - videoUpdateTime) / 86400000);
             if (days <= 30) {
                 Autoreply.sendMessage(fromGroup, 0, "你都" + days + "天没更新了");
@@ -73,9 +77,9 @@ public class NewUpdateManager {
     private void tipArticle(long fromGroup, String msg, long articalUpdateTime, NewArticleBean.Data.Articles articles) {
         if (System.currentTimeMillis() - articalUpdateTime < 86400000) {
             Autoreply.sendMessage(fromGroup, 0, "更新莉,,,https://www.bilibili.com/read/cv" + articles.id);
-            Autoreply.sendMessage(fromGroup, 0, BiliLinkInfo.encodeBilibiliURL(articles.id, false));
+            Autoreply.sendMessage(fromGroup, 0, MBiliLinkInfo.encodeBilibiliURL(articles.id, false));
         } else {
-            Autoreply.sendMessage(fromGroup, 0, Autoreply.instence.CC.at(getUpQQ(msg.substring(0, msg.indexOf("今天更了吗")))) + Tools.ArrayTool.rfa(words));
+            Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.at(getUpQQ(msg.substring(0, msg.indexOf("今天更了吗")))) + Tools.ArrayTool.rfa(words));
             int days = (int) ((System.currentTimeMillis() - articalUpdateTime) / 86400000);
             if (days <= 30) {
                 Autoreply.sendMessage(fromGroup, 0, "你都" + days + "天没更新了");
@@ -116,7 +120,7 @@ public class NewUpdateManager {
     }
 
     private boolean isUpper(String msg) {
-        for (PersonInfo cb : configManager.configJavaBean.personInfo) {
+        for (PersonInfo cb : ConfigManager.instance.configJavaBean.personInfo) {
             if (msg.equals(cb.name) && cb.bid != 0) {
                 return true;
             }
@@ -125,7 +129,7 @@ public class NewUpdateManager {
     }
 
     private int getUpId(String msg) {
-        for (PersonInfo cb : configManager.configJavaBean.personInfo) {
+        for (PersonInfo cb : ConfigManager.instance.configJavaBean.personInfo) {
             if (cb.bid == 0) {
                 continue;
             }
@@ -137,7 +141,7 @@ public class NewUpdateManager {
     }
 
     private long getUpQQ(String msg) {
-        for (PersonInfo cb : configManager.configJavaBean.personInfo) {
+        for (PersonInfo cb : ConfigManager.instance.configJavaBean.personInfo) {
             if (msg.equals(cb.name)) {
                 return cb.qq;
             }

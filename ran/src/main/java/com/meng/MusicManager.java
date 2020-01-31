@@ -5,15 +5,61 @@ import com.meng.tools.*;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
+import com.meng.modules.*;
 
-public class MusicManager {
+public class MusicManager extends BaseModule {
 	public static String musicFolder="C://thbgm/";
 	private HashMap<Long,String> resultMap=new HashMap<>();
 
-	public MusicManager() {
+	@Override
+	public BaseModule load() {
+		enable = true;
+		return this;
 	}
 
-	public File createMusicCut(int musicNum, int needSeconeds, long fromQQ) {
+	@Override
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+		if (msg.equals("原曲认知")) {
+			File musicFragment=createMusicCut(new Random().nextInt(16), 10, fromQQ);
+			Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.record(musicFragment.getName()));	
+			return true;
+		}
+		if (msg.startsWith("原曲认知回答 ")) {
+		judgeAnswer(fromGroup, fromQQ, msg.substring(7));
+			return true;
+		}
+		if (msg.startsWith("原曲认知 ")) {
+			switch (msg) {
+				case "原曲认知 E":
+				case "原曲认知 e":
+				case "原曲认知 easy":
+				case "原曲认知 Easy":
+					Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.record(createMusicCut(new Random().nextInt(16), 10, fromQQ).getName()));	
+					break;
+				case "原曲认知 N":
+				case "原曲认知 n":
+				case "原曲认知 normal":
+				case "原曲认知 Normal":
+					Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.record(createMusicCut(new Random().nextInt(16), 6, fromQQ).getName()));
+					break;
+				case "原曲认知 H":
+				case "原曲认知 h":
+				case "原曲认知 hard":
+				case "原曲认知 Hard":
+					Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.record(createMusicCut(new Random().nextInt(16), 3, fromQQ).getName()));
+					break;
+				case "原曲认知 L":
+				case "原曲认知 l":
+				case "原曲认知 lunatic":
+				case "原曲认知 Lunatic":
+					Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.record(createMusicCut(new Random().nextInt(16), 1, fromQQ).getName()));
+					break;		
+			}
+		}
+		return false;
+	}
+
+	private File createMusicCut(int musicNum, int needSeconeds, long fromQQ) {
 		File[] games=new File(musicFolder).listFiles();
 		int game=new Random().nextInt(games.length);
 		File fmtFile = new File(musicFolder + games[game].getName() + "/thbgm.fmt");
@@ -38,7 +84,7 @@ public class MusicManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		Autoreply.instence.threadPool.execute(new Runnable(){
+		Autoreply.instance.threadPool.execute(new Runnable(){
 
 				@Override
 				public void run() {
@@ -59,7 +105,7 @@ public class MusicManager {
 		return resultFile;
 	}
 
-	public void judgeAnswer(long fromGroup, long fromQQ, String msg) {
+	private void judgeAnswer(long fromGroup, long fromQQ, String msg) {
 		if (resultMap.get(fromQQ) == null) {
 			return;
 		}
@@ -95,7 +141,7 @@ public class MusicManager {
 		resultMap.remove(fromQQ);
 	}
 
-	public static boolean isContainChinese(String str) {
+	private boolean isContainChinese(String str) {
         Pattern p = Pattern.compile("[\u4e00-\u9fa5]");
         Matcher m = p.matcher(str);
         if (m.find()) {
@@ -104,7 +150,7 @@ public class MusicManager {
         return false;
     }
 
-	public int getStartBytes(int musicNum, THfmt thfmt, int needSeconeds) {
+	private int getStartBytes(int musicNum, THfmt thfmt, int needSeconeds) {
 		MusicInfo muiscInfo=thfmt.musicInfos[musicNum];
 		int oneFrameBytes=muiscInfo.bitsPerSample / 8 * muiscInfo.channels;	
 		int startFtame=new Random().nextInt(muiscInfo.length / oneFrameBytes);
@@ -116,7 +162,7 @@ public class MusicManager {
 		return questionStartBytes;
 	}
 
-	public byte[] readFile(byte[] data, int offset, String name) {
+	private byte[] readFile(byte[] data, int offset, String name) {
         RandomAccessFile randomAccessFile;
         try {
             randomAccessFile = new RandomAccessFile(musicFolder + name + "/thbgm.dat", "r");

@@ -3,8 +3,8 @@ package com.meng.tools;
 import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
+import com.meng.config.*;
 import java.io.*;
-import java.lang.reflect.*;
 import java.nio.charset.*;
 import java.util.*;
 
@@ -17,16 +17,14 @@ public class ZanManager {
         if (!jsonBaseConfigFile.exists()) {
             saveConfig();
         }
-        Type type = new TypeToken<HashSet<Long>>() {
-        }.getType();
-        hashSet = new Gson().fromJson(Tools.FileTool.readString(configPath), type);
+        hashSet = new Gson().fromJson(Tools.FileTool.readString(configPath), new TypeToken<HashSet<Long>>() {}.getType());
     }
 
     public void sendZan() {
-        for (long l : Autoreply.instence.configManager.configJavaBean.masterList) {
+        for (long l : ConfigManager.instance.configJavaBean.masterList) {
             zanCore(l);
         }
-        for (long l : Autoreply.instence.configManager.configJavaBean.adminList) {
+        for (long l : ConfigManager.instance.configJavaBean.adminList) {
             zanCore(l);
         }
         for (long l : hashSet) {
@@ -51,7 +49,7 @@ public class ZanManager {
 
     public boolean checkAdd(long fromGroup, long fromQQ, String msg) {
 		if (msg.startsWith("z.add")) {
-			hashSet.addAll(Autoreply.instence.CC.getAts(msg));
+			hashSet.addAll(Autoreply.instance.CC.getAts(msg));
 			saveConfig();
 			Autoreply.sendMessage(fromGroup, fromQQ, "已添加至赞列表");
 			return true;

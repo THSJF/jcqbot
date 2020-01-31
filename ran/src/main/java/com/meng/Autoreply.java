@@ -9,11 +9,8 @@ import com.meng.config.javabeans.*;
 import com.meng.config.sanae.*;
 import com.meng.dice.*;
 import com.meng.groupChat.*;
-import com.meng.groupChat.Sequence.*;
 import com.meng.messageProcess.*;
-import com.meng.ocr.*;
-import com.meng.picProcess.*;
-import com.meng.picProcess.barcode.*;
+import com.meng.modules.*;
 import com.meng.remote.*;
 import com.meng.tip.*;
 import com.meng.tools.*;
@@ -29,65 +26,35 @@ import java.util.concurrent.*;
  */
 public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
-    public static Autoreply instence;
+    public static Autoreply instance;
     public String createdImageFolder;
     public Random random = new Random();
     public CQCodeCC CC = new CQCodeCC();
-    public UserCounter useCount;
-    public GroupCounter groupCount;
-    public Banner banner;
-    public RepeaterManager repeatManager;
-    public TimeTip timeTip = new TimeTip();
-    public BiliLinkInfo biliLinkInfo = new BiliLinkInfo();
-    public DicReplyManager dicReplyManager;
-    public CQCodeManager CQcodeManager = new CQCodeManager();
-    public PicSearchManager picSearchManager;
-    public BarcodeManager barcodeManager = new BarcodeManager();
-    private OggInterface oggInterface = new OggInterface();
-    public NewUpdateManager updateManager;
-    public ConfigManager configManager;
-    public NaiManager naiManager;
-    public OcrManager ocrManager = new OcrManager();
-    public ConcurrentHashMap<Long, MessageSender> messageMap = new ConcurrentHashMap<>();
-    //private FileInfoManager fileInfoManager = new FileInfoManager();
-    public PicEditManager picEditManager;
-    public BanListener banListener;
-    public ZanManager zanManager;
+	private OggInterface oggInterface = new OggInterface();
+	public NaiManager naiManager;
+	//private FileInfoManager fileInfoManager = new FileInfoManager();
+	public ZanManager zanManager;
     public UpdateListener updateListener;
     public LiveListener liveListener;
-    public AdminMessageProcessor adminMessageProcessor;
-    public GroupMemberChangerListener groupMemberChangerListener;
+	public GroupMemberChangerListener groupMemberChangerListener;
     public FileTypeUtil fileTypeUtil = new FileTypeUtil();
 	public CookieManager cookieManager;
-	public SeqManager seqManager;
 	public DanmakuListenerManager danmakuListenerManager;
 	public RitsukageServer connectServer;
 	public SanaeServer sanaeServer;
-	public SpellCollect spellCollect;
     public ExecutorService threadPool = Executors.newCachedThreadPool();
-	
-	public static VirusManager virusManager;
+
 	public RemoteWebSocket remoteWebSocket;
-
-    public static String lastSend = " ";
-    public static String lastSend2 = "  ";
-    public static boolean tipedBreak = false;
-    public static boolean sleeping = true;
-
 	public String userAgent="Mozilla/5.0 (Windows NT 6.1; WOW64; rv:28.0) Gecko/20100101 Firefox/28.0";
-    public FanPoHaiManager fph;
     public HashSet<Long> botOff = new HashSet<>();
-	public CoinManager coinManager;
-	public BirthdayTip birthdayTip;
-	public ThreeManager threeManager;
-	public MusicManager musicManager;
-
-	public DiceImitate diceImitate=new DiceImitate();
 	public static long mainGroup=1023432971l;
 	public static Gson gson;
-    /**
-     * @param args 系统参数
-     */
+	public static boolean sleeping=true;
+
+	private static String lastSend=" ";
+	private static String lastSend2="  ";
+	private static boolean tipedBreak = false;
+
     public static void main(String[] args) {
         CQ = new CoolQ(1000);
         CQ.logInfo("[JCQ] TEST Demo", "测试启动");
@@ -106,7 +73,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
     @Override
     public int startup() {
         // 获取应用数据目录(无需储存数据时，请将此行注释)
-        instence = this;
+        instance = this;
         appDirectory = CQ.getAppDirectory();
 		GsonBuilder gb = new GsonBuilder();
 		gb.setLongSerializationPolicy(LongSerializationPolicy.STRING);
@@ -114,40 +81,16 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         createdImageFolder = Autoreply.appDirectory + "createdImages/";
         // 返回如：D:\CoolQ\app\com.sobte.cqp.jcq\app\com.example.demo\
         System.out.println("开始加载");
+		ModuleManager.instance = (ModuleManager) new ModuleManager().load();
 		cookieManager = new CookieManager();
         long startTime = System.currentTimeMillis();
-        configManager = new ConfigManager();
+        ConfigManager.instance.instance = new ConfigManager();
 
-		picEditManager = new PicEditManager();
-		picSearchManager = new PicSearchManager();
-        groupMemberChangerListener = new GroupMemberChangerListener();
-        adminMessageProcessor = new AdminMessageProcessor(configManager);
-        banListener = new BanListener();
+		groupMemberChangerListener = new GroupMemberChangerListener();
         zanManager = new ZanManager();
-        messageMap.clear();
-        banner = new Banner(configManager);
-        dicReplyManager = new DicReplyManager();
-        repeatManager = new RepeaterManager();
-        for (GroupConfig groupConfig : configManager.configJavaBean.groupConfigs) {
-            if (groupConfig.isDic()) {
-                dicReplyManager.addDic(groupConfig.groupNumber);
-            }
-            if (groupConfig.isRepeat()) {
-                repeatManager.addRepeater(groupConfig.groupNumber);
-            }
-        }
-        updateManager = new NewUpdateManager(configManager);
-        liveListener = new LiveListener(configManager);
-        updateListener = new UpdateListener(configManager);
-        useCount = new UserCounter();
-        groupCount = new GroupCounter();
-        fph = new FanPoHaiManager();
-        naiManager = new NaiManager();
-		seqManager = new SeqManager();
-		birthdayTip = new BirthdayTip();
-		threeManager = new ThreeManager();
-		musicManager = new MusicManager();
-		virusManager = new VirusManager();
+        liveListener = new LiveListener();
+        updateListener = new UpdateListener();
+		naiManager = new NaiManager();
 		try {
 			connectServer = new RitsukageServer(9961);
 			connectServer.start();
@@ -161,18 +104,13 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         FileTipManager fileTipManager = new FileTipManager();
         fileTipManager.addTip(807242547L, 1592608126L);
         //new TimeTipManager().start();
-		spellCollect = new SpellCollect();
         threadPool.execute(liveListener);
         threadPool.execute(updateListener);
 		//   threadPool.execute(fileTipManager);
-        threadPool.execute(timeTip);
-
-		coinManager = new CoinManager();
 		danmakuListenerManager = new DanmakuListenerManager();
-        threadPool.execute(new checkMessageRunnable());
         threadPool.execute(new CleanRunnable());
-		GroupCounterChart.ins = new GroupCounterChart();
-        System.out.println("加载完成,用时" + (System.currentTimeMillis() - startTime));
+		threadPool.execute(new BirthdayTip());
+		System.out.println("加载完成,用时" + (System.currentTimeMillis() - startTime));
         return 0;
     }
 
@@ -217,21 +155,21 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         // if (fromQQ != 2856986197L) {
         // return MSG_IGNORE;
         // }
-        if (configManager.isNotReplyQQ(fromQQ) || configManager.isNotReplyWord(msg)) {
+        if (ConfigManager.instance.isNotReplyQQ(fromQQ) || ConfigManager.instance.isNotReplyWord(msg)) {
             return MSG_IGNORE;
         }
-        Autoreply.instence.threadPool.execute(new Runnable() {
+        Autoreply.instance.threadPool.execute(new Runnable() {
 				@Override
 				public void run() {
 					//     if (Tools.CQ.checkXiong(fromQQ, msg)) {
 					//         return;
 					//      }
-					if (fromQQ == Autoreply.instence.configManager.configJavaBean.ogg || configManager.isMaster(fromQQ)) {
+					if (fromQQ == ConfigManager.instance.configJavaBean.ogg || ConfigManager.instance.isMaster(fromQQ)) {
 						if (oggInterface.processOgg(fromQQ, msg)) {
 							return;
 						}
 					}
-					if (configManager.isMaster(fromQQ)) {
+					if (ConfigManager.instance.isMaster(fromQQ)) {
 						if (msg.equals("喵")) {
 							sendMessage(0, fromQQ, CC.record("miao.mp3"));
 							return;
@@ -256,9 +194,9 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 							return;
 						}
 					}
-					if (messageMap.get(fromQQ) == null) {
-						messageMap.put(fromQQ, new MessageSender(0, fromQQ, msg, System.currentTimeMillis(), msgId, null));
-					}
+
+
+
 				}
 			});
         return MSG_IGNORE;
@@ -294,59 +232,47 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
             // CQ.setGroupBan(fromGroup, anonymous.getAid(), 60);
         }
 
-        if (Autoreply.instence.configManager.isBlackQQ(fromQQ)) {
+        if (ConfigManager.instance.isBlackQQ(fromQQ)) {
             System.out.println("black:" + fromQQ);
             if (Tools.CQ.ban(fromGroup, fromQQ, 300)) {
                 sendMessage(fromGroup, fromQQ, "嘘 别说话");
             }
         }
 
-        if (msg.equals(".admin enable") && Autoreply.instence.configManager.isAdmin(fromQQ)) {
+        if (msg.equals(".admin enable") && ConfigManager.instance.isAdmin(fromQQ)) {
 			++RemoteWebSocket.botInfoBean.msgCmdPerSec;
-			GroupConfig groupConfig = Autoreply.instence.configManager.getGroupConfig(fromGroup);
+			GroupConfig groupConfig =ConfigManager.instance.getGroupConfig(fromGroup);
             if (groupConfig == null) {
                 Autoreply.sendMessage(fromGroup, fromQQ, "本群没有默认配置");
                 return MSG_IGNORE;
             }
             groupConfig.reply = true;
             Autoreply.sendMessage(fromGroup, fromQQ, "已由admin启用");
-            Autoreply.instence.configManager.saveConfig();
+            ConfigManager.instance.saveConfig();
             return MSG_IGNORE;
         }
-        if (msg.equals(".admin disable") && Autoreply.instence.configManager.isAdmin(fromQQ)) {
+        if (msg.equals(".admin disable") && ConfigManager.instance.isAdmin(fromQQ)) {
             ++RemoteWebSocket.botInfoBean.msgCmdPerSec;
-			GroupConfig groupConfig = Autoreply.instence.configManager.getGroupConfig(fromGroup);
+			GroupConfig groupConfig = ConfigManager.instance.getGroupConfig(fromGroup);
             if (groupConfig == null) {
                 Autoreply.sendMessage(fromGroup, fromQQ, "本群没有默认配置");
                 return MSG_IGNORE;
             }
             groupConfig.reply = false;
             Autoreply.sendMessage(fromGroup, fromQQ, "已由admin停用");
-            Autoreply.instence.configManager.saveConfig();
+            ConfigManager.instance.saveConfig();
             return MSG_IGNORE;
         }
-        if (configManager.isNotReplyQQ(fromQQ)) {
+        if (ConfigManager.instance.isNotReplyQQ(fromQQ)) {
             return MSG_IGNORE;
         }
-        banListener.check(fromGroup, fromQQ, msg);
-        useCount.incSpeak(fromQQ);
-        groupCount.incSpeak(fromGroup);
-		GroupCounterChart.ins.addSpeak(fromGroup, 1);
-        if (msg.contains("方东入悔无生此")) {
-            useCount.incMengEr(fromQQ);
-            groupCount.incMengEr(fromGroup);
-        }
-        if (msg.contains("艹") || msg.contains("草")) {
-            useCount.incGrass(fromQQ);
-            groupCount.incGrass(fromGroup);
-        }
-        if (configManager.isNotReplyWord(msg)) {
+        if (ConfigManager.instance.isNotReplyWord(msg)) {
             return MSG_IGNORE;
         }
         if (fromQQ == 1033317031L && msg.startsWith("nai.")) {
             ++RemoteWebSocket.botInfoBean.msgCmdPerSec;
 			String[] sarr = msg.split("\\.", 3);
-            PersonInfo pInfo = configManager.getPersonInfoFromName(sarr[1]);
+            PersonInfo pInfo = ConfigManager.instance.getPersonInfoFromName(sarr[1]);
             if (pInfo != null) {
                 naiManager.checkXinghuo(fromGroup, pInfo.bliveRoom + "", fromQQ, sarr[2]);
             } else {
@@ -360,7 +286,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 			if (strings[0].equals("cookie")) {
 				switch (strings[1]) {
 					case "XingHuo":
-						Autoreply.instence.cookieManager.setCookie("XingHuo", strings[2]);
+						Autoreply.instance.cookieManager.setCookie("XingHuo", strings[2]);
 						break;
 					default:
 						Autoreply.sendMessage(fromGroup, 0, "名称不存在");
@@ -374,7 +300,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 			++RemoteWebSocket.botInfoBean.msgCmdPerSec;
 			if (msg.contains("setConnect")) {
 				try {
-					configManager.setOgg(CC.getAt(msg));
+					ConfigManager.instance.setOgg(CC.getAt(msg));
 					sendMessage(fromGroup, 0, "设置连接" + CC.getAt(msg));
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -382,17 +308,8 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 				return MSG_IGNORE;
 			}
 		}
-        if (adminMessageProcessor.check(fromGroup, fromQQ, msg)) {
-			++RemoteWebSocket.botInfoBean.msgCmdPerSec;
-            return MSG_IGNORE;
-        }
-        if (configManager.isNotReplyGroup(fromGroup)) {
-            return MSG_IGNORE;
-        }
-		if (threeManager.check(fromGroup, fromQQ)) {
-			return MSG_IGNORE;
-		}
-        threadPool.execute(new GroupMsgPart1Runnable(new MessageSender(fromGroup, fromQQ, msg, System.currentTimeMillis(), msgId, null)));
+        
+		threadPool.execute(new GroupMsgPart2Runnable(fromGroup,fromQQ,msg,msgId,System.currentTimeMillis()));
         return MSG_IGNORE;
     }
 
@@ -432,7 +349,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         // if (com.meng.groupFile == null) { // 解析群文件信息，如果失败直接忽略该消息
         // return MSG_IGNORE;
         // }
-        if (configManager.isNotReplyGroup(fromGroup)) {
+        if (ConfigManager.instance.isNotReplyGroup(fromGroup)) {
             return MSG_IGNORE;
         }
 		//   fileInfoManager.check(subType, sendTime, fromGroup, fromQQ, file);
@@ -452,7 +369,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
     @Override
     public int groupAdmin(int subtype, int sendTime, long fromGroup, long beingOperateQQ) {
         // 这里处理消息
-        if (configManager.isNotReplyGroup(fromGroup)) {
+        if (ConfigManager.instance.isNotReplyGroup(fromGroup)) {
             return MSG_IGNORE;
         }
         if (subtype == 1) {
@@ -532,7 +449,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
     @Override
     public int requestAddFriend(int subtype, int sendTime, final long fromQQ, String msg, final String responseFlag) {
         // 这里处理消息
-        if (configManager.isNotReplyQQ(fromQQ)) {
+        if (ConfigManager.instance.isNotReplyQQ(fromQQ)) {
             threadPool.execute(new Runnable() {
 					@Override
 					public void run() {
@@ -580,24 +497,24 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
          */
         System.out.println("groupAdd");
         if (subtype == 1) {
-            if (configManager.isBlackQQ(fromQQ)) {
+            if (ConfigManager.instance.isBlackQQ(fromQQ)) {
                 CQ.setGroupAddRequest(responseFlag, REQUEST_GROUP_ADD, REQUEST_ADOPT, null);
                 Tools.CQ.ban(fromGroup, fromQQ, 2592000);
                 sendMessage(fromGroup, fromQQ, "不要问为什么你会进黑名单，你干了什么自己知道");
                 return MSG_IGNORE;
             }
-            PersonInfo personInfo = configManager.getPersonInfoFromQQ(fromQQ);
+            PersonInfo personInfo = ConfigManager.instance.getPersonInfoFromQQ(fromQQ);
             if (personInfo != null) {
                 CQ.setGroupAddRequest(responseFlag, REQUEST_GROUP_ADD, REQUEST_ADOPT, null);
                 //        sendMessage(fromGroup, 0, "欢迎" + personInfo.name);
-            } else if (configManager.isGroupAutoAllow(fromQQ)) {
+            } else if (ConfigManager.instance.isGroupAutoAllow(fromQQ)) {
                 CQ.setGroupAddRequest(responseFlag, REQUEST_GROUP_ADD, REQUEST_ADOPT, null);
                 sendMessage(fromGroup, 0, "此账号在自动允许列表中，已同意进群");
             } else {
                 sendMessage(fromGroup, 0, "有人申请加群，绿帽赶紧瞅瞅");
             }
         } else if (subtype == 2) {
-            if (configManager.isBlackQQ(fromQQ) || configManager.isBlackGroup(fromGroup)) {
+            if (ConfigManager.instance.isBlackQQ(fromQQ) || ConfigManager.instance.isBlackGroup(fromGroup)) {
                 threadPool.execute(new Runnable() {
 						@Override
 						public void run() {
@@ -612,7 +529,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 					});
                 return MSG_IGNORE;
             }
-			if (configManager.isMaster(fromQQ) || configManager.containsGroup(fromGroup)) {
+			if (ConfigManager.instance.isMaster(fromQQ) || ConfigManager.instance.containsGroup(fromGroup)) {
 				CQ.setGroupAddRequest(responseFlag, REQUEST_GROUP_INVITE, REQUEST_ADOPT, null);
 				sendMessage(0, 2856986197L, "Master" + fromQQ + "邀请我加入群" + fromGroup);			
 				return MSG_IGNORE;
@@ -643,81 +560,39 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         // 处理词库中为特殊消息做的标记
 		++RemoteWebSocket.botInfoBean.msgSendPerSec;
         Tools.CQ.setRandomPop();
+		ModuleManager.instance.getModule(UserCounter.class).incSpeak(CQ.getLoginQQ());
+		ModuleManager.instance.getModule(MGroupCounter.class).incSpeak(fromGroup);
         try {
             if (msg.startsWith("red:")) {
                 msg = msg.substring(4);
 				++RemoteWebSocket.botInfoBean.msgSendPerSec;
-                if (dicReplyManager.check(fromGroup, fromQQ, msg)) {
+                if (ModuleManager.instance.getModule(MGroupDic.class).onMsg(fromGroup, fromQQ, msg, -1, null)) {
                     return -1;
                 }
-                messageMap.put(fromQQ, new MessageSender(fromGroup, fromQQ, msg, System.currentTimeMillis() + 999, -11, null));
-                return -1;
             }
             String[] stri = msg.split(":");
-
             switch (stri[0]) {
                 case "image":
-                    useCount.incSpeak(CQ.getLoginQQ());
-                    groupCount.incSpeak(fromGroup);
-                    value = CQ.sendGroupMsg(fromGroup, stri[2].replace("--image--", instence.CC.image(new File(appDirectory + stri[1]))));
+					value = CQ.sendGroupMsg(fromGroup, stri[2].replace("--image--", instance.CC.image(new File(appDirectory + stri[1]))));
 					break;
 				case "atFromQQ":
-                    useCount.incSpeak(CQ.getLoginQQ());
-                    groupCount.incSpeak(fromGroup);
-                    value = CQ.sendGroupMsg(fromGroup, instence.CC.at(fromQQ) + stri[1]);
+					value = CQ.sendGroupMsg(fromGroup, instance.CC.at(fromQQ) + stri[1]);
 					break;
 				case "atQQ":
-                    useCount.incSpeak(CQ.getLoginQQ());
-                    groupCount.incSpeak(fromGroup);
-                    value = CQ.sendGroupMsg(fromGroup, instence.CC.at(Long.parseLong(stri[1])) + stri[2]);
+					value = CQ.sendGroupMsg(fromGroup, instance.CC.at(Long.parseLong(stri[1])) + stri[2]);
 					break;
 				case "imageFolder":
-                    useCount.incSpeak(CQ.getLoginQQ());
-                    groupCount.incSpeak(fromGroup);
-                    File[] files = (new File(appDirectory + stri[1])).listFiles();
-                    value = CQ.sendGroupMsg(fromGroup, stri[2].replace("--image--", instence.CC.image((File) Tools.ArrayTool.rfa(files))));
+					File[] files = (new File(appDirectory + stri[1])).listFiles();
+                    value = CQ.sendGroupMsg(fromGroup, stri[2].replace("--image--", instance.CC.image((File) Tools.ArrayTool.rfa(files))));
 					break;
 				default:
-                    useCount.incSpeak(CQ.getLoginQQ());
-                    groupCount.incSpeak(fromGroup);
-                    value = CQ.sendGroupMsg(fromGroup, msg);
+					value = CQ.sendGroupMsg(fromGroup, msg);
             }
-			instence.remoteWebSocket.sendMsg(1, fromGroup, CQ.getLoginQQ(), msg, value);
+			instance.remoteWebSocket.sendMsg(1, fromGroup, CQ.getLoginQQ(), msg, value);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return value;
-    }
-
-    private int sendPrivateMessage(long fromQQ, String msg) {
-        if (sleeping) {
-            return -1;
-        }
-        Tools.CQ.setRandomPop();
-        // 处理词库中为特殊消息做的标记
-        String[] stri = msg.split(":");
-        switch (stri[0]) {
-            case "image":
-                return CQ.sendPrivateMsg(fromQQ, stri[2].replace("--image--", instence.CC.image(new File(appDirectory + stri[1]))));
-            case "imageFolder":
-                File[] files = (new File(appDirectory + stri[1])).listFiles();
-                if (files != null) {
-                    return CQ.sendPrivateMsg(fromQQ, stri[2].replace("--image--", instence.CC.image((File) Tools.ArrayTool.rfa(files))));
-                }
-                break;
-            default:
-                return CQ.sendPrivateMsg(fromQQ, msg);
-        }
-        return -1;
-    }
-
-    public void addGroupDic() {
-        dicReplyManager.clear();
-        for (GroupConfig groupConfig : configManager.configJavaBean.groupConfigs) {
-            if (groupConfig.isDic()) {
-                dicReplyManager.addDic(groupConfig.groupNumber);
-            }
-        }
     }
 
     public static int sendMessage(long fromGroup, long fromQQ, String msg) {
@@ -727,19 +602,19 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
     public static int sendMessage(long fromGroup, long fromQQ, String msg, boolean isTip) {
         int value = -1;
         if (fromGroup == 0 || fromGroup == -1) {
-            value = instence.sendPrivateMessage(fromQQ, msg);
+            value = CQ.sendPrivateMsg(fromQQ, msg);
         } else {
             if (isTip) {
-                value = instence.sendGroupMessage(fromGroup, fromQQ, msg);
+                value = instance.sendGroupMessage(fromGroup, fromQQ, msg);
             } else {
                 if (msg.equals(lastSend) && lastSend.equals(lastSend2)) {
                     if (!tipedBreak) {
                         tipedBreak = true;
-                        value = instence.sendGroupMessage(fromGroup, fromQQ, "打断");
+                        value = instance.sendGroupMessage(fromGroup, fromQQ, "打断");
                     }
                 } else {
                     tipedBreak = false;
-                    value = instence.sendGroupMessage(fromGroup, fromQQ, msg);
+                    value = instance.sendGroupMessage(fromGroup, fromQQ, msg);
                 }
                 lastSend2 = lastSend;
                 lastSend = msg;
@@ -748,26 +623,4 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         return value;
     }
 
-    private class checkMessageRunnable implements Runnable {
-        @Override
-        public void run() {
-			while (true) {
-                for (MessageSender value : messageMap.values()) {
-                    if (System.currentTimeMillis() - value.timeStamp > 1000) {
-                        if (value.fromGroup != 0) {
-                            threadPool.execute(new GroupMsgPart2Runnable(value));
-                        } else {
-                            threadPool.execute(new PrivateMsgRunnable(value));
-						}
-						messageMap.remove(value.fromQQ);
-                    }
-                }
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 }

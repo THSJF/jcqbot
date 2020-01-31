@@ -11,8 +11,6 @@ public class FileTipManager implements Runnable {
     private String[] stringsC5 = new String[]{"更新了吗", "出来打牌", "在？看看牌", "把你的打牌图给我交了"};
     private String[] strings = new String[]{"更新了吗", "出来更新"};
 
-    public FileTipManager() {
-    }
 
     // 新文件上传时
     public void onUploadFile(long groupNumber, long qqNumber) {
@@ -38,10 +36,10 @@ public class FileTipManager implements Runnable {
             for (FileTipUploader tftu : dataMap) {
                 if (System.currentTimeMillis() - tftu.fileLastUpload > 86400000 && System.currentTimeMillis() - tftu.fileLastTipTime > 7200000) {
                     if (tftu.groupNumber == 807242547L && tftu.QQNumber == 1592608126L) {
-                        Autoreply.sendMessage(tftu.groupNumber, 0, Autoreply.instence.CC.at(tftu.QQNumber) + Tools.ArrayTool.rfa(stringsC5));
+                        Autoreply.sendMessage(tftu.groupNumber, 0, Autoreply.instance.CC.at(tftu.QQNumber) + Tools.ArrayTool.rfa(stringsC5));
                         tftu.fileLastTipTime = System.currentTimeMillis();
                     } else {
-                        Autoreply.sendMessage(tftu.groupNumber, 0, Autoreply.instence.CC.at(tftu.QQNumber) + Tools.ArrayTool.rfa(strings));
+                        Autoreply.sendMessage(tftu.groupNumber, 0, Autoreply.instance.CC.at(tftu.QQNumber) + Tools.ArrayTool.rfa(strings));
                         tftu.fileLastTipTime = System.currentTimeMillis();
                     }
                 }

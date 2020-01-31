@@ -1,11 +1,14 @@
 package com.meng.dice;
 
 import com.meng.*;
+import com.meng.config.*;
 import com.meng.gameData.TouHou.zun.*;
+import com.meng.modules.*;
 import com.meng.tools.*;
+import java.io.*;
 import java.util.*;
 
-public class DiceImitate {
+public class MDiceImitate extends BaseModule {
 	public static String[] spells;
 	public static String[] neta;
 	public static String[] music;
@@ -23,20 +26,21 @@ public class DiceImitate {
 	public static HashSet<String> memory=new HashSet<>();
 	public static HashSet<String> pachouli=new HashSet<>();
 
-
-	public DiceImitate() {
+	@Override
+	public BaseModule load() {
 		spells = new String[]{};
-		spells = Tools.ArrayTool.mergeArray(spells, TH06GameData.spells);
-		spells = Tools.ArrayTool.mergeArray(spells, TH07GameData.spells);
-		spells = Tools.ArrayTool.mergeArray(spells, TH08GameData.spells);
-		spells = Tools.ArrayTool.mergeArray(spells, TH10GameData.spells);
-		spells = Tools.ArrayTool.mergeArray(spells, TH11GameData.spells);
-		spells = Tools.ArrayTool.mergeArray(spells, TH12GameData.spells);
-		spells = Tools.ArrayTool.mergeArray(spells, TH13GameData.spells);
-		spells = Tools.ArrayTool.mergeArray(spells, TH14GameData.spells);
-		spells = Tools.ArrayTool.mergeArray(spells, TH15GameData.spells);
-		spells = Tools.ArrayTool.mergeArray(spells, TH16GameData.spells);
-		spells = Tools.ArrayTool.mergeArray(spells, TH17GameData.spells);
+		spells = Tools.ArrayTool.mergeArray(spells, 
+											TH06GameData.spells,
+											TH07GameData.spells,
+											TH08GameData.spells,
+											TH10GameData.spells,
+											TH11GameData.spells,
+											TH12GameData.spells,
+											TH13GameData.spells,
+											TH14GameData.spells,
+											TH15GameData.spells,
+											TH16GameData.spells,
+											TH17GameData.spells);
 		neta = new String[]{
 			"红lnb",
 			"红lnm",
@@ -56,17 +60,18 @@ public class DiceImitate {
 			//th4
 			"bad apple",
 		};
-		music = Tools.ArrayTool.mergeArray(music, TH06GameData.musicName);
-		music = Tools.ArrayTool.mergeArray(music, TH07GameData.musicName);
-		music = Tools.ArrayTool.mergeArray(music, TH08GameData.musicName);
-		music = Tools.ArrayTool.mergeArray(music, TH10GameData.musicName);
-		music = Tools.ArrayTool.mergeArray(music, TH11GameData.musicName);
-		music = Tools.ArrayTool.mergeArray(music, TH12GameData.musicName);
-		music = Tools.ArrayTool.mergeArray(music, TH13GameData.musicName);
-		music = Tools.ArrayTool.mergeArray(music, TH14GameData.musicName);
-		music = Tools.ArrayTool.mergeArray(music, TH15GameData.musicName);
-		music = Tools.ArrayTool.mergeArray(music, TH16GameData.musicName);
-		music = Tools.ArrayTool.mergeArray(music, TH17GameData.musicName);
+		music = Tools.ArrayTool.mergeArray(music,
+										   TH06GameData.musicName,
+										   TH07GameData.musicName,
+										   TH08GameData.musicName,
+										   TH10GameData.musicName,
+										   TH11GameData.musicName,
+										   TH12GameData.musicName,
+										   TH13GameData.musicName,
+										   TH14GameData.musicName,
+										   TH15GameData.musicName,
+										   TH16GameData.musicName,
+										   TH17GameData.musicName);
 		name = new String[]{
 			//th2
 			"里香",
@@ -92,39 +97,39 @@ public class DiceImitate {
 			"舞",
 			"梦子",
 			"神绮"};
-		name = Tools.ArrayTool.mergeArray(name, TH06GameData.charaName);
-		name = Tools.ArrayTool.mergeArray(name, TH07GameData.charaName);
-		name = Tools.ArrayTool.mergeArray(name, TH08GameData.charaName);
-		name = Tools.ArrayTool.mergeArray(name, new String[]{
+		name = Tools.ArrayTool.mergeArray(name,
+										  TH06GameData.charaName,
+										  TH07GameData.charaName,
+										  TH08GameData.charaName,
+										  new String[]{
 											  //th9
 											  "梅蒂欣·梅兰可莉",
 											  "风见幽香",
 											  "小野冢小町",
-											  "四季映姬"});
-		name = Tools.ArrayTool.mergeArray(name, TH10GameData.charaName);
-		name = Tools.ArrayTool.mergeArray(name, TH11GameData.charaName);
-		name = Tools.ArrayTool.mergeArray(name, TH12GameData.charaName);
-		name = Tools.ArrayTool.mergeArray(name, new String[]{
+											  "四季映姬"},
+										  TH10GameData.charaName,
+										  TH11GameData.charaName,
+										  TH12GameData.charaName,
+										  new String[]{
 											  //th12.8
 											  "桑尼·米尔克",
 											  "露娜·切露德",
-											  "斯塔·萨菲雅"});
-		name = Tools.ArrayTool.mergeArray(name, TH13GameData.charaName);
-		name = Tools.ArrayTool.mergeArray(name, new String[]{
+											  "斯塔·萨菲雅"},
+										  TH13GameData.charaName,
+										  new String[]{
 											  //th13.5
-											  "秦心"});
-		name = Tools.ArrayTool.mergeArray(name, TH14GameData.charaName);
-		name = Tools.ArrayTool.mergeArray(name, new String[]{
+											  "秦心"},
+										  TH14GameData.charaName,
+										  new String[]{
 											  //th14.5
-											  "宇佐见堇子"});
-		name = Tools.ArrayTool.mergeArray(name, TH15GameData.charaName);
-		name = Tools.ArrayTool.mergeArray(name, new String[]{
+											  "宇佐见堇子"},
+										  TH15GameData.charaName,
+										  new String[]{
 											  //th15.5
 											  "依神紫苑",
-											  "依神女苑"});
-		name = Tools.ArrayTool.mergeArray(name, TH16GameData.charaName);
-		name = Tools.ArrayTool.mergeArray(name, TH17GameData.charaName);
-
+											  "依神女苑"},
+										  TH16GameData.charaName,
+										  TH17GameData.charaName);
 		addArrayToSet(memory, "想起「二重黑死蝶」", "想起「粼粼水底之心伤」");
 		addArrayToSet(pachouli, "火符「火神之光」", "土&金符「翡翠巨石」");
 		addArrayToSet(pachouli, "月符「静息的月神」", "火水木金土符「贤者之石」");
@@ -155,9 +160,12 @@ public class DiceImitate {
 							   "「小恶灵复活」",
 							   "妖怪「火焰的车轮」"
 						   });
-
+		enable = true;
+		return this;
 	}
-	public boolean check(long fromGroup, long fromQQ, String msg) {
+
+	@Override
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
 		String[] ss = msg.split("\\.");
         if (ss.length > 1) {
             if (ss[0].equals("roll")) {
@@ -173,7 +181,7 @@ public class DiceImitate {
                         break;
                     case "游戏":
                     case "game":
-                        Autoreply.sendMessage(fromGroup, 0, "th" + (Autoreply.instence.random.nextInt(16) + 1));
+                        Autoreply.sendMessage(fromGroup, 0, "th" + (Autoreply.instance.random.nextInt(16) + 1));
                         break;
                     case "diff":
                     case "difficult":
@@ -194,7 +202,7 @@ public class DiceImitate {
                 return true;
             }
         }
-		String pname=Autoreply.instence.configManager.getNickName(fromGroup, fromQQ);
+		String pname=ConfigManager.instance.getNickName(fromGroup, fromQQ);
 		String md5=Tools.Hash.MD5(String.valueOf(fromQQ + System.currentTimeMillis() / (24 * 60 * 60 * 1000)));
 		char c=md5.charAt(0);
 		switch (msg) {
@@ -487,7 +495,7 @@ public class DiceImitate {
     private void rollStage(String[] ss, long fromGroup) {
         HashMap<Integer, String> hMap = new HashMap<>();
         for (int i = 2; i < ss.length; i++) {
-            hMap.put(Autoreply.instence.random.nextInt(), ss[i]);
+            hMap.put(Autoreply.instance.random.nextInt(), ss[i]);
         }
         int flag = 1;
         StringBuilder sBuilder = new StringBuilder();

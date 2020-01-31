@@ -4,13 +4,18 @@ import com.google.gson.*;
 import com.meng.*;
 import com.meng.tools.*;
 import java.util.*;
+import com.meng.modules.*;
+import java.io.*;
 
-public class BiliLinkInfo {
+public class MBiliLinkInfo extends BaseModule {
 
     private final String liveUrl = "live.bilibili.com/";
 
-    public BiliLinkInfo() {
-    }
+	@Override
+	public BaseModule load() {
+		enable = true;
+		return this;
+	}
 
     public boolean checkOgg(long fromGroup, long fromQQ, String msg) {
         if (msg.startsWith("bav:")) {
@@ -49,8 +54,9 @@ public class BiliLinkInfo {
         return false;
     }
 
-    public boolean check(long fromGroup, long fromQQ, String msg) {
-        String subedUrl;
+	@Override
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+		String subedUrl;
         if (msg.startsWith("FromUriOpen@bilibili://")) {
             String subedString = null;
             try {
@@ -69,8 +75,6 @@ public class BiliLinkInfo {
                 result += "cv" + getArticalId(subedString) + "\n";
                 result += processArtical(getArticalId(subedString));
             }
-            Autoreply.instence.useCount.incBilibiliLink(fromQQ);
-            Autoreply.instence.groupCount.incBilibiliLink(fromGroup);
             Autoreply.sendMessage(fromGroup, 0, result);
             return !msg.contains("[CQ:share,url=");
         } else {
@@ -93,9 +97,7 @@ public class BiliLinkInfo {
                 result = processLive(getLiveId(subedUrl));
             }
             if (result != null) {
-                Autoreply.instence.useCount.incBilibiliLink(fromQQ);
-                Autoreply.instence.groupCount.incBilibiliLink(fromGroup);
-                Autoreply.sendMessage(fromGroup, 0, result);
+				Autoreply.sendMessage(fromGroup, 0, result);
                 // 如果不是分享链接就拦截消息
                 return !msg.contains("[CQ:share,url=");
             }
@@ -172,7 +174,7 @@ public class BiliLinkInfo {
 
     public static String encodeBilibiliURL(long id, boolean av) {
         try {
-            return "FromUriOpen@bilibili://" +Tools.Base64.encode(((av ? "av:" : "cv") + id).getBytes());
+            return "FromUriOpen@bilibili://" + Tools.Base64.encode(((av ? "av:" : "cv") + id).getBytes());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -233,7 +235,7 @@ public class BiliLinkInfo {
 			}
 		}
 	}
-	
+
 	public class VideoInfoBean {
 		public String code;
 		public String message;

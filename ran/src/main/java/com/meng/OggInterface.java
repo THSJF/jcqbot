@@ -1,8 +1,11 @@
 package com.meng;
 
 import com.google.gson.*;
+import com.meng.bilibili.*;
 import com.meng.bilibili.main.*;
+import com.meng.config.*;
 import com.meng.config.javabeans.*;
+import com.meng.modules.*;
 import com.meng.tools.*;
 import java.util.*;
 
@@ -11,7 +14,7 @@ public class OggInterface {
     public boolean processOgg(final long fromQQ, String msg) {
         if (msg.startsWith("findInAll:")) {
             final String finalMsg = msg;
-            Autoreply.instence.threadPool.execute(new Runnable() {
+            Autoreply.instance.threadPool.execute(new Runnable() {
 					@Override
 					public void run() {
 						Tools.CQ.findQQInAllGroup(0, fromQQ, finalMsg);
@@ -22,24 +25,24 @@ public class OggInterface {
         if (msg.startsWith("ban")) {
             String[] arr = msg.split("\\.");
             if (arr.length == 4) {
-                Autoreply.instence.banner.checkBan(0, fromQQ, msg);
+				// ModuleManager.instance.getModule(Banner.class).checkBan(0, fromQQ, msg);
             }
             return true;
         }
         if (msg.startsWith("av更新时间:")) {
-            sendPrivateMessage(fromQQ, String.valueOf(Autoreply.instence.updateManager.getAVLastUpdateTime(msg.substring(7))));
+            sendPrivateMessage(fromQQ, String.valueOf(ModuleManager.instance.getModule(NewUpdateManager.class).getAVLastUpdateTime(msg.substring(7))));
             return true;
         }
         if (msg.startsWith("avJson:")) {
-            sendPrivateMessage(fromQQ, Autoreply.instence.updateManager.getAVJson(msg.substring(7)));
+            sendPrivateMessage(fromQQ, ModuleManager.instance.getModule(NewUpdateManager.class).getAVJson(msg.substring(7)));
             return true;
         }
         if (msg.startsWith("cv更新时间:")) {
-            sendPrivateMessage(fromQQ, String.valueOf(Autoreply.instence.updateManager.getCVLastUpdateTime(msg.substring(7))));
+            sendPrivateMessage(fromQQ, String.valueOf(ModuleManager.instance.getModule(NewUpdateManager.class).getCVLastUpdateTime(msg.substring(7))));
             return true;
         }
         if (msg.startsWith("cvJson:")) {
-            sendPrivateMessage(fromQQ, Autoreply.instence.updateManager.getCVJson(msg.substring(7)));
+            sendPrivateMessage(fromQQ, ModuleManager.instance.getModule(NewUpdateManager.class).getCVJson(msg.substring(7)));
             return true;
         }
         if (msg.startsWith("直播状态lid:")) {
@@ -49,7 +52,7 @@ public class OggInterface {
             sendPrivateMessage(fromQQ, data.get("live_status").getAsInt() == 1 ? "true" : "false");
             return true;
         }
-        if (Autoreply.instence.biliLinkInfo.checkOgg(0, fromQQ, msg)) {
+        if (ModuleManager.instance.getModule(MBiliLinkInfo.class).checkOgg(0, fromQQ, msg)) {
             return true;
         }
         if (msg.startsWith("直播状态bid:")) {
@@ -70,8 +73,8 @@ public class OggInterface {
                 return true;
             }
             if (personInfo != null) {
-                Autoreply.instence.configManager.configJavaBean.personInfo.add(personInfo);
-                Autoreply.instence.configManager.saveConfig();
+				ConfigManager.instance.configJavaBean.personInfo.add(personInfo);
+                ConfigManager.instance.saveConfig();
                 sendPrivateMessage(fromQQ, msg + "成功");
             } else {
                 sendPrivateMessage(fromQQ, "一个玄学问题导致了失败");
@@ -87,8 +90,8 @@ public class OggInterface {
                 return true;
             }
             if (p != null) {
-                Autoreply.instence.configManager.configJavaBean.personInfo.remove(p);
-                Autoreply.instence.configManager.saveConfig();
+                ConfigManager.instance.configJavaBean.personInfo.remove(p);
+                ConfigManager.instance.saveConfig();
                 sendPrivateMessage(fromQQ, msg + "成功");
             } else {
                 sendPrivateMessage(fromQQ, "一个玄学问题导致了失败");
@@ -98,7 +101,7 @@ public class OggInterface {
         if (msg.startsWith("find:")) {
             String name = msg.substring(5);
             HashSet<PersonInfo> hashSet = new HashSet<>();
-            for (PersonInfo personInfo : Autoreply.instence.configManager.configJavaBean.personInfo) {
+            for (PersonInfo personInfo : ConfigManager.instance.configJavaBean.personInfo) {
                 if (personInfo.name.contains(name)) {
                     hashSet.add(personInfo);
                 }

@@ -8,8 +8,9 @@ import java.lang.reflect.*;
 import java.nio.charset.*;
 import java.util.*;
 import java.util.Map.*;
+import com.meng.modules.*;
 
-public class GroupCounter {
+public class MGroupCounter extends BaseModule {
     private HashMap<String, GroupInfo> countMap = new HashMap<>();
     private File file;
 
@@ -28,8 +29,9 @@ public class GroupCounter {
         public int grass = 0;
     }
 
-    public GroupCounter() {
-        file = new File(Autoreply.appDirectory + "properties\\GroupCount.json");
+	@Override
+	public BaseModule load() {
+		file = new File(Autoreply.appDirectory + "properties\\GroupCount.json");
         if (!file.exists()) {
             try {
                 FileOutputStream fos = new FileOutputStream(file);
@@ -41,22 +43,38 @@ public class GroupCounter {
                 e.printStackTrace();
             }
         }
-        Type type = new TypeToken<HashMap<String, GroupInfo>>() {
-        }.getType();
-        countMap = new Gson().fromJson(Tools.FileTool.readString(file), type);
-        Autoreply.instence.threadPool.execute(new Runnable() {
-            @Override
-            public void run() {
-                saveData();
-            }
-        });
-        Autoreply.instence.threadPool.execute(new Runnable() {
-            @Override
-            public void run() {
-                backupData();
-            }
-        });
+        countMap = new Gson().fromJson(Tools.FileTool.readString(file), new TypeToken<HashMap<String, GroupInfo>>() { }.getType());
+        Autoreply.instance.threadPool.execute(new Runnable() {
+				@Override
+				public void run() {
+					saveData();
+				}
+			});
+        Autoreply.instance.threadPool.execute(new Runnable() {
+				@Override
+				public void run() {
+					backupData();
+				}
+			});
+		enable = true;
+		return this;
     }
+
+	@Override
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+		if (msg.contains("艹") || msg.contains("草")) {
+			incGrass(fromGroup);
+        }
+		if (msg.equals("查看群统计")) {
+			Autoreply.sendMessage(fromGroup, fromQQ, getMyCount(fromGroup));
+            return true;
+		}
+        if (msg.equals("查看群排行")) {
+			Autoreply.sendMessage(fromGroup, fromQQ, getTheFirst());
+            return true;
+		}
+		return false;
+	}
 
     public void incSpeak(long qq) {
         GroupInfo groupInfo = getBean(qq);

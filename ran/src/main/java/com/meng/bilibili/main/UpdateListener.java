@@ -12,8 +12,8 @@ public class UpdateListener implements Runnable {
 
     private ArrayList<UpdatePerson> updatePerson = new ArrayList<>();
 
-    public UpdateListener(ConfigManager configManager) {
-        for (PersonInfo cb : configManager.configJavaBean.personInfo) {
+    public UpdateListener() {
+        for (PersonInfo cb : ConfigManager.instance.configJavaBean.personInfo) {
             addPerson(cb);
         }
     }
@@ -50,12 +50,12 @@ public class UpdateListener implements Runnable {
 									dp.write(1, updater.name);
 									dp.write(2, articles.title);
 									dp.write(1, articles.id);
-									Autoreply.instence.connectServer.broadcast(dp.getData());						
+									Autoreply.instance.connectServer.broadcast(dp.getData());						
 								} catch (Exception e) {
 									Autoreply.sendMessage(Autoreply.mainGroup, 0, e.toString());
 								}
 								tip(String.valueOf(updater.bid), updater.name + "发布新文章" + articles.id + ":" + articles.title);
-								Autoreply.instence.sanaeServer.send(SanaeDataPack.encode(SanaeDataPack.opNewArtical).write(updater.name).write(articles.title).write(articles.id));
+								Autoreply.instance.sanaeServer.send(SanaeDataPack.encode(SanaeDataPack.opNewArtical).write(updater.name).write(articles.title).write(articles.id));
                             } else {
                                 updater.needTipArtical = true;
                             }
@@ -70,12 +70,12 @@ public class UpdateListener implements Runnable {
 									dp.write(1, updater.name);
 									dp.write(2, vlist.title);
 									dp.write(1, vlist.aid);
-									Autoreply.instence.connectServer.broadcast(dp.getData());
+									Autoreply.instance.connectServer.broadcast(dp.getData());
 								} catch (Exception e) {
 									Autoreply.sendMessage(Autoreply.mainGroup, 0, e.toString());
 								}
                                 tip(String.valueOf(updater.bid), updater.name + "发布新视频" + vlist.aid + ":" + vlist.title);
-								Autoreply.instence.sanaeServer.send(SanaeDataPack.encode(SanaeDataPack.opNewVideo).write(updater.name).write(vlist.title).write(vlist.aid));
+								Autoreply.instance.sanaeServer.send(SanaeDataPack.encode(SanaeDataPack.opNewVideo).write(updater.name).write(vlist.title).write(vlist.aid));
 								} else {
                                 updater.needTipVideo = true;
                             }
@@ -93,9 +93,9 @@ public class UpdateListener implements Runnable {
     }
 
     private void tip(String updater, String msg) {
-		if (Autoreply.instence.configManager.getPersonInfoFromBid(Integer.parseInt(updater)).isTipVidoe()) {
+		if (ConfigManager.instance.getPersonInfoFromBid(Integer.parseInt(updater)).isTipVidoe()) {
             Autoreply.sendMessage(Autoreply.mainGroup, 0, msg, true);
-            ArrayList<Long> groupList = Autoreply.instence.configManager.getPersonInfoFromBid(Long.parseLong(updater)).tipIn;
+            ArrayList<Long> groupList = ConfigManager.instance.getPersonInfoFromBid(Long.parseLong(updater)).tipIn;
             if (groupList != null) {
                 for (long group : groupList) {
                     Autoreply.sendMessage(group, 0, msg, true);

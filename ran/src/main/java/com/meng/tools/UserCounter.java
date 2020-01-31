@@ -3,13 +3,15 @@ package com.meng.tools;
 import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
+import com.meng.modules.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.nio.charset.*;
 import java.util.*;
 import java.util.Map.*;
+import com.meng.config.*;
 
-public class UserCounter {
+public class UserCounter extends BaseModule {
     private HashMap<Long, UserInfo> countMap = new HashMap<>();
     private File file;
 
@@ -36,8 +38,9 @@ public class UserCounter {
         // }
     }
 
-    public UserCounter() {
-        file = new File(Autoreply.appDirectory + "properties\\UserCount.json");
+	@Override
+	public BaseModule load() {
+		file = new File(Autoreply.appDirectory + "properties\\UserCount.json");
         if (!file.exists()) {
             try {
                 FileOutputStream fos = new FileOutputStream(file);
@@ -52,20 +55,44 @@ public class UserCounter {
         Type type = new TypeToken<HashMap<Long, UserInfo>>() {
         }.getType();
         countMap = Autoreply.gson.fromJson(Tools.FileTool.readString(file), type);
-        Autoreply.instence.threadPool.execute(new Runnable() {
+        Autoreply.instance.threadPool.execute(new Runnable() {
 				@Override
 				public void run() {
 					saveData();
 				}
 			});
-        Autoreply.instence.threadPool.execute(new Runnable() {
+        Autoreply.instance.threadPool.execute(new Runnable() {
 				@Override
 				public void run() {
 					backupData();
 				}
 			});
+		enable = true;
+		return this;
     }
 
+	@Override
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+		if (msg.contains("艹") || msg.contains("草")) {
+            incGrass(fromQQ);
+        }
+		if (msg.equals("查看统计")) {
+			Autoreply.sendMessage(fromGroup, fromQQ, getMyCount(fromQQ));
+            return true;
+		}
+        if (msg.equals("查看排行")) {
+			Autoreply.sendMessage(fromGroup, fromQQ, getTheFirst());
+            return true;
+		}
+		if (!ConfigManager.instance.isAdmin(fromQQ)) {
+			return false;
+		}
+		if (msg.equals("蓝统计")) {
+			Autoreply.sendMessage(fromGroup, fromQQ, getMyCount(Autoreply.CQ.getLoginQQ()));
+			return true;
+		}
+		return false;
+	}
 
     public void incSpeak(long qq) {
         UserInfo userInfo = getBean(qq);

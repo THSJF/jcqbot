@@ -3,6 +3,7 @@ package com.meng.config.javabeans;
 import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
+import com.meng.config.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.lang.reflect.*;
@@ -149,7 +150,7 @@ public class RitsukageDataPack {
 		write(getBytes(headLength));
 		write(getBytes((short)1));
 		write(getBytes(timeStamp));
-		write(getBytes(Autoreply.instence.configManager.configJavaBean.ogg));
+		write(getBytes(ConfigManager.instance.configJavaBean.ogg));
 		write(getBytes(opCode));
 	}   
 

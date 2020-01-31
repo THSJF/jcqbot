@@ -5,6 +5,8 @@ import com.google.gson.reflect.*;
 import com.meng.*;
 import com.meng.config.javabeans.*;
 import com.meng.groupChat.*;
+import com.meng.modules.*;
+import com.meng.tools.*;
 import com.sobte.cqp.jcq.entity.*;
 import java.io.*;
 import java.lang.reflect.*;
@@ -14,7 +16,7 @@ import java.util.*;
 import com.sobte.cqp.jcq.entity.Member;
 
 public class BanListener {
-
+/*
     private HashMap<String, HashSet<Long>> sleepSet = new HashMap<>();
     private String configPath = Autoreply.appDirectory + "configV3_sleep.json";
 
@@ -26,7 +28,7 @@ public class BanListener {
         Type type = new TypeToken<HashMap<String, HashSet<Long>>>() {
         }.getType();
         sleepSet = new Gson().fromJson(Tools.FileTool.readString(configPath), type);
-        Autoreply.instence.threadPool.execute(new Runnable() {
+        Autoreply.instance.threadPool.execute(new Runnable() {
 				@Override
 				public void run() {
 					while (true) {
@@ -44,7 +46,7 @@ public class BanListener {
     }
 
     public void check(long fromGroup, long fromQQ, String msg) {
-        long targetQQ = Autoreply.instence.CC.getAt(msg);
+        long targetQQ = Autoreply.instance.CC.getAt(msg);
         if (msg.startsWith("夏眠")) {
             checkSleepMsg(fromGroup, fromQQ, msg);
         }
@@ -72,8 +74,8 @@ public class BanListener {
                 String keyWord = "被管理员禁言";
                 if (msg.contains(keyWord)) {
                     long qq = Long.parseLong(msg.substring(msg.lastIndexOf("(") + 1, msg.lastIndexOf(")")));
-                    Autoreply.instence.useCount.incBanCount(qq);
-                    Autoreply.instence.groupCount.incBanCount(fromGroup);
+                    ModuleManager.getModule(UserCounter.class).incBanCount(qq);
+                    ModuleManager.getModule(GroupCounter.class).incBanCount(fromGroup);
                     String timeStr = msg.substring(msg.indexOf(keyWord) + keyWord.length());
                     if (timeStr.equals("1月")) {
                         Autoreply.sendMessage(Autoreply.mainGroup, 0, "在群" + fromGroup + "中" + qq + "被禁言一个月", true);
@@ -130,16 +132,16 @@ public class BanListener {
 
     private void onBan(long fromGroup, long banQQ, int minute) {
         if (banQQ == Autoreply.CQ.getLoginQQ()) {
-            Autoreply.instence.configManager.getGroupConfig(fromGroup).reply = false;
+            Autoreply.instance.configManager.getGroupConfig(fromGroup).reply = false;
             Autoreply.sendMessage(Autoreply.mainGroup, 0, "在群" + fromGroup + "被禁言,关闭了回复群");
-            Autoreply.instence.configManager.saveConfig();
+            Autoreply.instance.configManager.saveConfig();
         } else {
 			//      Autoreply.sendMessage(Autoreply.mainGroup, 0, "在群" + fromGroup + "中" + banQQ + "被禁言" + minute + "min");
         }
     }
 
     private void onRelease(long fromGroup, long banQQ) {
-        if (Autoreply.instence.configManager.isNotReplyGroup(fromGroup)) {
+        if (Autoreply.instance.configManager.isNotReplyGroup(fromGroup)) {
             return;
         }
 		//    Autoreply.sendMessage(Autoreply.mainGroup, 0, "在群" + fromGroup + "中" + banQQ + "无罪释放");
@@ -168,15 +170,15 @@ public class BanListener {
     }
 
     private void checkSleepMsg(long fromGroup, long fromQQ, String msg) {
-        GroupConfig groupConfig = Autoreply.instence.configManager.getGroupConfig(fromGroup);
-        if (groupConfig == null || !groupConfig.isSleep() || Autoreply.instence.configManager.isNotReplyWord(msg)) {
+        GroupConfig groupConfig = Autoreply.instance.configManager.getGroupConfig(fromGroup);
+        if (groupConfig == null || !groupConfig.isSleep() || Autoreply.instance.configManager.isNotReplyWord(msg)) {
             return;
         }
         Member qqInfo = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, fromQQ);
-        if (!Autoreply.instence.configManager.isAdmin(fromQQ) && qqInfo.getAuthority() == 1) {
+        if (!Autoreply.instance.configManager.isAdmin(fromQQ) && qqInfo.getAuthority() == 1) {
             return;
         }
-        if (Autoreply.instence.configManager.isAdmin(fromQQ) && msg.equals("夏眠结束")) {
+        if (Autoreply.instance.configManager.isAdmin(fromQQ) && msg.equals("夏眠结束")) {
             HashSet<Long> hashSet = sleepSet.get(String.valueOf(fromGroup));
             if (hashSet != null) {
                 Tools.CQ.ban(fromGroup, hashSet, 0);
@@ -189,9 +191,9 @@ public class BanListener {
             Autoreply.sendMessage(fromGroup, fromQQ, new Gson().toJson(sleepSet));
             return;
         }
-        long targetQQ = Autoreply.instence.CC.getAt(msg);
+        long targetQQ = Autoreply.instance.CC.getAt(msg);
         if (msg.startsWith("夏眠结束[CQ:at,qq=")) {
-            HashMap<Long, BanType> targetQQAndType =Autoreply.instence.banner.banMap.get(fromGroup);
+            HashMap<Long, BanType> targetQQAndType =Autoreply.instance.banner.banMap.get(fromGroup);
 			if (targetQQAndType == null) {
 				targetQQAndType = new HashMap<>();
 			}
@@ -199,7 +201,7 @@ public class BanListener {
 			if (lastOp == null) {
 				lastOp = BanType.ByUser;
 			}
-            BanType thisOp = Autoreply.instence.banner.getType(fromGroup, fromQQ);
+            BanType thisOp = Autoreply.instance.banner.getType(fromGroup, fromQQ);
             if (thisOp.getPermission() - lastOp.getPermission() < 0) {
                 Autoreply.sendMessage(fromGroup, fromQQ, "你无法修改等级比你高的人进行的操作");
                 return;
@@ -221,7 +223,7 @@ public class BanListener {
     }
 
     public void addSummerSleep(long fromGroup, long fromQQ, long targetQQ) {
-        HashMap<Long, BanType> targetQQAndType =Autoreply.instence.banner.banMap.get(fromGroup);
+        HashMap<Long, BanType> targetQQAndType =Autoreply.instance.banner.banMap.get(fromGroup);
 		if (targetQQAndType == null) {
 			targetQQAndType = new HashMap<>();
 		}
@@ -229,7 +231,7 @@ public class BanListener {
 		if (lastOp == null) {
 			lastOp = BanType.ByUser;
 		}
-		BanType thisOp = Autoreply.instence.banner.getType(fromGroup, fromQQ);
+		BanType thisOp = Autoreply.instance.banner.getType(fromGroup, fromQQ);
 		if (thisOp.getPermission() - lastOp.getPermission() < 0) {
 			Autoreply.sendMessage(fromGroup, fromQQ, "你无法修改等级比你高的人进行的操作");
             return;
@@ -257,4 +259,5 @@ public class BanListener {
             e.printStackTrace();
         }
     }
+	*/
 }

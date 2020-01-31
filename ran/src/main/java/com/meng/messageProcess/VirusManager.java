@@ -2,14 +2,18 @@ package com.meng.messageProcess;
 
 import com.google.gson.reflect.*;
 import com.meng.*;
+import com.meng.modules.*;
 import com.meng.tools.*;
 import java.util.*;
+import java.io.*;
 
-public class VirusManager {
+public class VirusManager extends BaseModule {
 	private ArrayList<VirusBean> vb=new ArrayList<>();
 
-	public VirusManager() {
-		Autoreply.instence.threadPool.execute(new Runnable(){
+	@Override
+	public BaseModule load() {
+		enable = true;
+		Autoreply.instance.threadPool.execute(new Runnable(){
 
 				@Override
 				public void run() {
@@ -22,13 +26,16 @@ public class VirusManager {
 					}
 				}
 			});
+		return this;
 	}
 
-	public boolean check(long fromGroup, long fromQQ, String msg) {
+	@Override
+	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
 		if (msg.startsWith("-病毒 ")) {
 			Autoreply.sendMessage(fromGroup, 0, getV(msg.substring(4)));
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	public String getV(String placeName) {
@@ -84,6 +91,4 @@ public class VirusManager {
 			return sb.toString();
 		}
 	}
-
-
 }
