@@ -1,16 +1,9 @@
 package com.meng.modules;
 
 import com.meng.*;
-import com.meng.dice.*;
-import com.meng.groupChat.*;
-import com.meng.groupChat.Sequence.*;
-import com.meng.messageProcess.*;
-import com.meng.ocr.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.util.*;
-import com.meng.bilibili.*;
-import com.meng.bilibili.main.*;
 import com.meng.tip.*;
 
 public class ModuleManager extends BaseModule {
@@ -19,39 +12,36 @@ public class ModuleManager extends BaseModule {
 
 	@Override
 	public BaseModule load() {
-		add(new MGroupCounterChart().load());
-		add(new MGroupCounter().load());
-		add(new MTimeTip().load());
-		add(new MAdminMsg().load());
-		add(new MWarnMsg().load());
-		add(new MRepeater().load());
-		add(new MCoinManager().load());
-		add(new MMsgAt().load());
-		add(new NewUpdateManager().load());
-
-		add(new MDiceImitate().load());
-		add(new MSpellCollect().load());
-		add(new MOcr().load());
-		add(new MBarcode().load());
-		add(new FanPoHaiManager().load());
-		add(new ThreeManager().load());
-		add(new MBanner().load());
-		add(new MCQCodeProcess().load());
-		add(new MusicManager().load());
-		add(new MPicSearch().load());
-		add(new MPicEdit().load());
-	
-
-		add(new MBiliLinkInfo().load());
-		add(new MNumberProcess().load());
-		add(new MSetu().load());
-		add(new MPohaitu().load());
-		add(new MNvzhuang().load());
-
-		add(new VirusManager().load());
-		add(new MSeq().load());
-		add(new MGroupDic().load());
-		add(new MNvzhuang().load());
+		modules.add(new MGroupCounterChart().load());
+		modules.add(new MGroupCounter().load());
+		modules.add(new MTimeTip().load());
+		modules.add(new MAdminMsg().load());
+		modules.add(new MWarnMsg().load());
+		modules.add(new MRepeater().load());
+		modules.add(new MoShenFuSong().load());
+		modules.add(new MCoinManager().load());
+		modules.add(new MMsgAt().load());
+		modules.add(new MBiliUpdate().load());
+		modules.add(new MDiceImitate().load());
+		modules.add(new MSpellCollect().load());
+		modules.add(new MOcr().load());
+		modules.add(new MBarcode().load());
+		modules.add(new FanPoHaiManager().load());
+		modules.add(new ThreeManager().load());
+		modules.add(new MBanner().load());
+		modules.add(new MCQCodeProcess().load());
+		modules.add(new MusicManager().load());
+		modules.add(new MPicSearch().load());
+		modules.add(new MPicEdit().load());
+		modules.add(new MBiliLinkInfo().load());
+		modules.add(new MNumberProcess().load());
+		modules.add(new MSetu().load());
+		modules.add(new MPohaitu().load());
+		modules.add(new MNvzhuang().load());
+		modules.add(new VirusManager().load());
+		modules.add(new MSeq().load());
+		modules.add(new MGroupDic().load());
+		modules.add(new MNvzhuang().load());
 		Autoreply.instance.threadPool.execute(getModule(MTimeTip.class));
 		instance = this;
 		enable = true;
@@ -72,15 +62,11 @@ public class ModuleManager extends BaseModule {
 		int s = modules.size();
 		for (int i=0;i < s;++i) {
 			BaseModule t = modules.get(i);
-			if (t.getClass() == module.getClass()) {
+			if (t.getClass().getSimpleName().equals(module.getClass().getSimpleName())) {
 				return (T)t;
 			}
 		}
 		return null;
-	}
-
-	private void add(BaseModule T) {
-		modules.add(T);
 	}
 }
 

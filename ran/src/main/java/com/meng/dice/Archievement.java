@@ -2,6 +2,8 @@ package com.meng.dice;
 
 import java.util.*;
 
+import com.meng.modules.MDiceImitate;
+
 public class Archievement {
 	public String name;
 	public int archNum;

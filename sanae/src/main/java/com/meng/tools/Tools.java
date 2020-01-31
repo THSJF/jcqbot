@@ -155,7 +155,7 @@ public class Tools {
 			try {
 				findqq = Long.parseLong(msg.substring(10));
 			} catch (Exception e) {
-				findqq = Autoreply.ins.CC.getAt(msg);
+				findqq = Autoreply.CC.getAt(msg);
 			}
 			if (findqq <= 0) {
 				Autoreply.sendMessage(fromGroup, fromQQ, "QQ账号错误");
@@ -188,7 +188,7 @@ public class Tools {
 			return hashSet;
 		}
 		public static boolean isAtme(String msg) {
-			List<Long> list = Autoreply.ins.CC.getAts(msg);
+			List<Long> list = Autoreply.CC.getAts(msg);
 			long me = Autoreply.CQ.getLoginQQ();
 			for (long l : list) {
 				if (l == me) {

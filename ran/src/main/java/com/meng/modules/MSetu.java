@@ -30,16 +30,16 @@ public class MSetu extends BaseModule {
 			File folder = (File) Tools.ArrayTool.rfa(files);
 			File[] pics = folder.listFiles();
 			Autoreply.instance.threadPool.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(pics)))));
-			ModuleManager.instance.getModule(UserCounter.class).incSetu(fromQQ);
+			ModuleManager.instance.getModule(MUserCounter.class).incSetu(fromQQ);
 			ModuleManager.instance.getModule(MGroupCounter.class).incSetu(fromGroup);
-			ModuleManager.instance.getModule(UserCounter.class).incSetu(Autoreply.CQ.getLoginQQ());
+			ModuleManager.instance.getModule(MUserCounter.class).incSetu(Autoreply.CQ.getLoginQQ());
 		} else if (msg.endsWith("色图")) {
 			File[] files = (new File(Autoreply.appDirectory + "setu/" + msg.replace("色图", ""))).listFiles();
 			if (files != null && files.length > 0) {
 				Autoreply.instance.threadPool.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files)))));
-				ModuleManager.instance.getModule(UserCounter.class).incSetu(fromQQ);
+				ModuleManager.instance.getModule(MUserCounter.class).incSetu(fromQQ);
 				ModuleManager.instance.getModule(MGroupCounter.class).incSetu(fromGroup);
-				ModuleManager.instance.getModule(UserCounter.class).incSetu(Autoreply.CQ.getLoginQQ());
+				ModuleManager.instance.getModule(MUserCounter.class).incSetu(Autoreply.CQ.getLoginQQ());
 			}
 			return true;
 		}

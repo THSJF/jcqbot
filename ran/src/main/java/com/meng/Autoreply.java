@@ -1,14 +1,11 @@
 package com.meng;
 
 import com.google.gson.*;
-import com.meng.bilibili.*;
 import com.meng.bilibili.live.*;
 import com.meng.bilibili.main.*;
 import com.meng.config.*;
 import com.meng.config.javabeans.*;
 import com.meng.config.sanae.*;
-import com.meng.dice.*;
-import com.meng.groupChat.*;
 import com.meng.messageProcess.*;
 import com.meng.modules.*;
 import com.meng.remote.*;
@@ -30,7 +27,6 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
     public String createdImageFolder;
     public Random random = new Random();
     public CQCodeCC CC = new CQCodeCC();
-	private OggInterface oggInterface = new OggInterface();
 	public NaiManager naiManager;
 	//private FileInfoManager fileInfoManager = new FileInfoManager();
 	public ZanManager zanManager;
@@ -84,7 +80,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 		ModuleManager.instance = (ModuleManager) new ModuleManager().load();
 		cookieManager = new CookieManager();
         long startTime = System.currentTimeMillis();
-        ConfigManager.instance.instance = new ConfigManager();
+        ConfigManager.instance = new ConfigManager();
 
 		groupMemberChangerListener = new GroupMemberChangerListener();
         zanManager = new ZanManager();
@@ -161,14 +157,6 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         Autoreply.instance.threadPool.execute(new Runnable() {
 				@Override
 				public void run() {
-					//     if (Tools.CQ.checkXiong(fromQQ, msg)) {
-					//         return;
-					//      }
-					if (fromQQ == ConfigManager.instance.configJavaBean.ogg || ConfigManager.instance.isMaster(fromQQ)) {
-						if (oggInterface.processOgg(fromQQ, msg)) {
-							return;
-						}
-					}
 					if (ConfigManager.instance.isMaster(fromQQ)) {
 						if (msg.equals("喵")) {
 							sendMessage(0, fromQQ, CC.record("miao.mp3"));
@@ -308,8 +296,8 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 				return MSG_IGNORE;
 			}
 		}
-        
-		threadPool.execute(new GroupMsgPart2Runnable(fromGroup,fromQQ,msg,msgId,System.currentTimeMillis()));
+
+		threadPool.execute(new MessageRunnable(fromGroup, fromQQ, msg, msgId, System.currentTimeMillis()));
         return MSG_IGNORE;
     }
 
@@ -560,9 +548,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         // 处理词库中为特殊消息做的标记
 		++RemoteWebSocket.botInfoBean.msgSendPerSec;
         Tools.CQ.setRandomPop();
-		ModuleManager.instance.getModule(UserCounter.class).incSpeak(CQ.getLoginQQ());
-		ModuleManager.instance.getModule(MGroupCounter.class).incSpeak(fromGroup);
-        try {
+		try {
             if (msg.startsWith("red:")) {
                 msg = msg.substring(4);
 				++RemoteWebSocket.botInfoBean.msgSendPerSec;

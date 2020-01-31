@@ -3,7 +3,6 @@ package com.meng.config;
 import com.meng.*;
 import com.meng.bilibili.live.*;
 import com.meng.config.javabeans.*;
-import com.meng.dice.*;
 import com.meng.modules.*;
 import com.meng.remote.*;
 import com.meng.tools.*;

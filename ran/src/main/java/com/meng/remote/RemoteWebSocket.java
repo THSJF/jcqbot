@@ -118,7 +118,7 @@ public class RemoteWebSocket extends WebSocketServer {
 				break;
 			case BotDataPack.opGroupMemberInfo:
 				toSend = BotDataPack.encode(rec.getOpCode());
-				Member m=Autoreply.instance.CQ.getGroupMemberInfo(rec.readLong(), rec.readLong());
+				Member m=Autoreply.CQ.getGroupMemberInfo(rec.readLong(), rec.readLong());
 				toSend.
 					write(m.getGroupId()).
 					write(m.getQqId()).

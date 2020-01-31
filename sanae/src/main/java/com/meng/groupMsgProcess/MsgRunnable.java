@@ -1,6 +1,5 @@
 package com.meng.groupMsgProcess;
 
-import com.meng.*;
 import com.meng.remote.*;
 
 public class MsgRunnable implements Runnable {

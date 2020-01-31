@@ -58,18 +58,18 @@ public class SanaeServer extends WebSocketServer {
 				break;
 			case SanaeDataPack.opIncSpeak:
 				ModuleManager.instance.getModule(MGroupCounter.class).incSpeak(rsdp.readLong());
-				ModuleManager.instance.getModule(UserCounter.class).incSpeak(rsdp.readLong());
+				ModuleManager.instance.getModule(MUserCounter.class).incSpeak(rsdp.readLong());
 				break;
 			case SanaeDataPack.opIncRepeat:
 				ModuleManager.instance.getModule(MGroupCounter.class).incFudu(rsdp.readLong());
-				ModuleManager.instance.getModule(UserCounter.class).incFudu(rsdp.readLong());
+				ModuleManager.instance.getModule(MUserCounter.class).incFudu(rsdp.readLong());
 				break;
 			case SanaeDataPack.opIncRepeatStart:
-				ModuleManager.instance.getModule(UserCounter.class).incFudujiguanjia(rsdp.readLong());
+				ModuleManager.instance.getModule(MUserCounter.class).incFudujiguanjia(rsdp.readLong());
 				break;
 			case SanaeDataPack.opIncRepeatBreak:
 				ModuleManager.instance.getModule(MGroupCounter.class).incRepeatBreaker(rsdp.readLong());
-				ModuleManager.instance.getModule(UserCounter.class).incRepeatBreaker(rsdp.readLong());
+				ModuleManager.instance.getModule(MUserCounter.class).incRepeatBreaker(rsdp.readLong());
 				break;
 			case SanaeDataPack.opSetNick:
 				ConfigManager.instance.setNickName(rsdp.readLong(), rsdp.readString());

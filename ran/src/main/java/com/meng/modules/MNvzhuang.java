@@ -21,16 +21,16 @@ public class MNvzhuang extends BaseModule {
 			File[] files = (new File(Autoreply.appDirectory + "nvzhuang/")).listFiles();
 			File folder = (File) Tools.ArrayTool.rfa(files);
 			File[] pics = folder.listFiles();
-			ModuleManager.instance.getModule(UserCounter.class).incSetu(fromQQ);
+			ModuleManager.instance.getModule(MUserCounter.class).incSetu(fromQQ);
 			ModuleManager.instance.getModule(MGroupCounter.class).incSetu(fromGroup);
-			ModuleManager.instance.getModule(UserCounter.class).incSetu(Autoreply.CQ.getLoginQQ());
+			ModuleManager.instance.getModule(MUserCounter.class).incSetu(Autoreply.CQ.getLoginQQ());
 			Autoreply.instance.threadPool.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(pics)))));
 		} else if (msg.endsWith("女装")) {
 			File[] files = (new File(Autoreply.appDirectory + "nvzhuang/" + msg.replace("女装", ""))).listFiles();
 			if (files != null && files.length > 0) {
-				ModuleManager.instance.getModule(UserCounter.class).incSetu(fromQQ);
+				ModuleManager.instance.getModule(MUserCounter.class).incSetu(fromQQ);
 				ModuleManager.instance.getModule(MGroupCounter.class).incSetu(fromGroup);
-				ModuleManager.instance.getModule(UserCounter.class).incSetu(Autoreply.CQ.getLoginQQ());
+				ModuleManager.instance.getModule(MUserCounter.class).incSetu(Autoreply.CQ.getLoginQQ());
 				Autoreply.instance.threadPool.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files)))));
 			}
 			return true;

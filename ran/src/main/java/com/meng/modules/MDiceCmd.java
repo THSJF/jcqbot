@@ -4,7 +4,6 @@ import com.meng.bilibili.live.*;
 import com.meng.config.*;
 import java.io.*;
 import java.util.*;
-import com.meng.messageProcess.*;
 
 public class MDiceCmd extends BaseModule {
 

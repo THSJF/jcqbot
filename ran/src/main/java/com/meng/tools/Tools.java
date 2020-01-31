@@ -175,52 +175,7 @@ public class Tools {
 		public static String getDate(long timeStamp) {
 			return new SimpleDateFormat("yyyy-MM-dd").format(new Date(timeStamp));
 		}
-		// 窥屏检测
-		public static boolean checkLook(long fromGroup, String msg) {
-			if (msg.equals("有人吗") || msg.equalsIgnoreCase("testip") || msg.equalsIgnoreCase("窥屏检测")) {
-				int port = Autoreply.instance.random.nextInt(5000);
-				Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.share("http://123.207.65.93:" + (port + 4000), "窥屏检测", "滴滴滴", "http://123.207.65.93:" + (port + 4000) + "/111.jpg"));
-				final IPGetter ipGetter = new IPGetter(fromGroup, port);
-				Autoreply.instance.threadPool.execute(ipGetter);
-				Timer timer = new Timer();
-				timer.schedule(new TimerTask() {
-						@Override
-						public void run() {
-							Autoreply.sendMessage(ipGetter.fromGroup, 0, "当前有" + ipGetter.hSet.size() + "个小伙伴看了群聊");
-							ipGetter.running = false;
-						}
-					}, 20000);
-				return true;
-			}
-			return false;
-		}
-		public static boolean checkXiong(long fromQQ, String msg) {
-			if (ConfigManager.instance.isAdmin(fromQQ)) {
-				if (msg.equals("吊熊")) {
-					int port = Autoreply.instance.random.nextInt(5000);
-					Autoreply.sendMessage(0, fromQQ, Autoreply.instance.CC.share("http://123.207.65.93:" + (port + 4000), "东方绀珠传LNN", "东方绀珠传LNN", "http://123.207.65.93:" + (port + 4000) + "/1111.jpg"));
-					final XiongIPGetter ipGetter = new XiongIPGetter(fromQQ, port);
-					Autoreply.instance.threadPool.execute(ipGetter);
-					Timer timer = new Timer();
-					timer.schedule(new TimerTask() {
-							@Override
-							public void run() {
-								ipGetter.running = false;
-							}
-						}, 200000);
-					return true;
-				}
-				if (msg.equals("吊熊2")) {
-					int port = Autoreply.instance.random.nextInt(5000);
-					Autoreply.sendMessage(0, fromQQ, Autoreply.instance.CC.share("http://123.207.65.93:" + (port + 4000), "东方绀珠传LNN", "东方绀珠传LNN", "http://123.207.65.93:" + (port + 4000) + "/1111.jpg"));
-					XiongIPGetter ipGetter = new XiongIPGetter(fromQQ, port);
-					Autoreply.instance.threadPool.execute(ipGetter);
-					return true;
-				}
-			}
-			return false;
-		}
-
+		
 		public static void findQQInAllGroup(long fromGroup, long fromQQ, String msg) {
 			long findqq;
 			try {
@@ -276,13 +231,13 @@ public class Tools {
 			Member ban = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, banQQ);
 			if (me.getAuthority() - ban.getAuthority() > 0) {
 				Autoreply.CQ.setGroupBan(fromGroup, banQQ, time);
-				ModuleManager.instance.getModule(UserCounter.class).incGbanCount(Autoreply.CQ.getLoginQQ());
+				ModuleManager.instance.getModule(MUserCounter.class).incGbanCount(Autoreply.CQ.getLoginQQ());
 				return true;
 			} else {
 				Member ogg = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, ConfigManager.instance.configJavaBean.ogg);
 				if (ogg != null && ogg.getAuthority() - ban.getAuthority() > 0) {
 					Autoreply.sendMessage(Autoreply.mainGroup, 0, "~mutegroupuser " + fromGroup + " " + (time / 60) + " " + banQQ);
-					ModuleManager.instance.getModule(UserCounter.class).incGbanCount(Autoreply.CQ.getLoginQQ());
+					ModuleManager.instance.getModule(MUserCounter.class).incGbanCount(Autoreply.CQ.getLoginQQ());
 					return true;
 				}
 			}
@@ -307,10 +262,10 @@ public class Tools {
 				Member ban = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, banQQ);
 				if (me.getAuthority() - ban.getAuthority() > 0) {
 					Autoreply.CQ.setGroupBan(fromGroup, banQQ, (int)time);
-					ModuleManager.instance.getModule(UserCounter.class).incGbanCount(Autoreply.CQ.getLoginQQ());
+					ModuleManager.instance.getModule(MUserCounter.class).incGbanCount(Autoreply.CQ.getLoginQQ());
 				} else if (ogg != null && ogg.getAuthority() - ban.getAuthority() > 0) {
 					banqqs.append(" ").append(banQQ);
-					ModuleManager.instance.getModule(UserCounter.class).incGbanCount(Autoreply.CQ.getLoginQQ());
+					ModuleManager.instance.getModule(MUserCounter.class).incGbanCount(Autoreply.CQ.getLoginQQ());
 				}
 			}
 			if (!banqqs.toString().equals("")) {
