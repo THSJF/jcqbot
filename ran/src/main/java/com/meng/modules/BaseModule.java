@@ -4,9 +4,13 @@ import java.io.*;
 
 public abstract class BaseModule {
 
+	
+	
+	
+	
 	public boolean enable = false;
 	private String moduleName = null;
-
+	
 	public final boolean onMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
 		if (!enable) {
 			return false;

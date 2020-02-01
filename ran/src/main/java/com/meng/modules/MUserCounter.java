@@ -3,16 +3,13 @@ package com.meng.modules;
 import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
-import com.meng.modules.*;
-import com.meng.tools.Tools;
-import com.meng.tools.Tools.FileTool;
-
+import com.meng.config.*;
+import com.meng.tools.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.nio.charset.*;
 import java.util.*;
 import java.util.Map.*;
-import com.meng.config.*;
 
 public class MUserCounter extends BaseModule {
     private HashMap<Long, UserInfo> countMap = new HashMap<>();
@@ -76,6 +73,9 @@ public class MUserCounter extends BaseModule {
 
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_UserCount)){
+			return false;
+		}
 		if (msg.contains("艹") || msg.contains("草")) {
             incGrass(fromQQ);
         }

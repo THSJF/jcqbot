@@ -3,6 +3,8 @@ package com.meng.modules;
 import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
+import com.meng.config.*;
+import com.meng.modules.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.nio.charset.*;
@@ -36,6 +38,9 @@ public class MSeq extends BaseModule {
 
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_Seq)){
+			return false;
+		}
 		for (SeqBean sb:seqs) {
 			if (msg.equals(sb.content[0])) {
 				sb.pos = 0;

@@ -28,6 +28,9 @@ public class MPicEdit extends BaseModule {
 
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_PicEdit)){
+			return false;
+		}
 		if (msg.startsWith("精神支柱[CQ:at")) {
 			Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.image(jingShenZhiZhuByAt(fromGroup, fromQQ, msg)));
 			return true;

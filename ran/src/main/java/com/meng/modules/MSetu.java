@@ -16,6 +16,9 @@ public class MSetu extends BaseModule {
 
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_Setu)){
+			return false;
+		}
 		if (msg.equals("色图")) {
 			String[] strings = (new File(Autoreply.appDirectory + "setu/")).list();
 			StringBuilder sBuilder = new StringBuilder("现在有");

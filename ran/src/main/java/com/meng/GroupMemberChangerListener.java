@@ -2,6 +2,7 @@ package com.meng;
 
 import com.meng.config.*;
 import com.meng.config.javabeans.*;
+import com.meng.modules.*;
 import com.meng.tools.*;
 import com.sobte.cqp.jcq.entity.*;
 
@@ -21,7 +22,7 @@ public class GroupMemberChangerListener {
             sendMessage(959615179L, 0, Autoreply.instance.CC.at(-1) + "熊加入了群" + fromGroup, true);
             return;
         }
-        if (ConfigManager.instance.isNotReplyGroup(fromGroup)) {
+        if (!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_MainSwitch)) {
             return;
         }
         if (personInfo != null) {
@@ -46,7 +47,7 @@ public class GroupMemberChangerListener {
 			//	}
 			//     Autoreply.CQ.setGroupLeave(fromGroup, false);
 			//    }
-            if (ConfigManager.instance.isNotReplyGroup(fromGroup)) {
+            if (!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_MainSwitch)) {
                 return;
             }
             if (ConfigManager.instance.isBlackQQ(beingOperateQQ)) {
@@ -73,7 +74,7 @@ public class GroupMemberChangerListener {
                 ConfigManager.instance.addBlack(fromGroup, fromQQ);
                 return;
             }
-            if (ConfigManager.instance.isNotReplyGroup(fromGroup)) {
+            if (!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_MainSwitch)) {
                 return;
             }
             if (ConfigManager.instance.isNotReplyQQ(beingOperateQQ)) {

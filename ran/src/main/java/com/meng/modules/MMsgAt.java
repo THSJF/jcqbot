@@ -18,11 +18,6 @@ public class MMsgAt extends BaseModule {
 			return false;
 		}
 		if (Tools.CQ.isAtme(msg)) {
-			// 过滤特定的文字
-			// @消息发送者并复读内容
-			if (msg.contains("蓝") || msg.contains("藍") || msg.contains("赠送")) {
-				return true;
-			}
 			if (fromQQ == 2558395159L || fromQQ == 1281911569L || fromQQ == ConfigManager.instance.configJavaBean.ogg) {
 				return true;
 			}

@@ -26,7 +26,10 @@ public class MRepeater extends BaseModule {
 
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
-        RepeaterBanner repeaterBanner = repeaters.get(fromGroup);
+		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_Repeater)){
+			return false;
+		}
+		RepeaterBanner repeaterBanner = repeaters.get(fromGroup);
         if (repeaterBanner == null) {
             repeaterBanner = new RepeaterBanner(fromGroup);
 			repeaters.put(fromGroup, new RepeaterBanner(fromGroup));

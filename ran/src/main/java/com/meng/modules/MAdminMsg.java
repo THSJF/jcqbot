@@ -122,14 +122,19 @@ public class MAdminMsg extends BaseModule {
 			return false;
 		}
 		if (msg.equals(".on")) {
-            if (Autoreply.instance.botOff.contains(fromGroup)) {
-                Autoreply.instance.botOff.remove(fromGroup);
-				Autoreply.sendMessage(fromGroup, 0, "已启用");
-				return true;
+            GroupConfig groupConfig =ConfigManager.instance.getGroupConfig(fromGroup);
+            if (groupConfig == null) {
+                Autoreply.sendMessage(fromGroup, fromQQ, "本群没有默认配置");
+                return true;
             }
-        }
+            ConfigManager.instance.setFunctionEnabled(fromGroup,ModuleManager.ID_MainSwitch,true);
+            Autoreply.sendMessage(fromGroup, fromQQ, "已启用");
+            ConfigManager.instance.saveConfig();
+			return true;
+            }
+ 
         if (msg.equals(".off")) {
-            Autoreply.instance.botOff.add(fromGroup);
+			ConfigManager.instance.setFunctionEnabled(fromGroup,ModuleManager.ID_MainSwitch,false);
 			Autoreply.sendMessage(fromGroup, 0, "已停用");
             return true;
         }
@@ -178,7 +183,7 @@ public class MAdminMsg extends BaseModule {
 			List<Group> glist=Autoreply.CQ.getGroupList();
 			for (Group g:glist) {
 				GroupConfig gc=ConfigManager.instance.getGroupConfig(g.getId());
-				if (gc == null || !gc.reply) {
+				if (!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_MainSwitch)) {
 					continue;
 				}
 				Autoreply.sendMessage(gc.groupNumber, 0, broadcast, true);

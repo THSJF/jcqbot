@@ -3,10 +3,11 @@ package com.meng.modules;
 import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
+import com.meng.config.*;
+import com.meng.modules.*;
 import com.meng.tools.*;
 import java.awt.*;
 import java.io.*;
-import java.lang.reflect.*;
 import java.nio.charset.*;
 import java.text.*;
 import java.util.*;
@@ -33,9 +34,7 @@ public class MGroupCounterChart extends BaseModule {
                 e.printStackTrace();
             }
         }
-        Type type = new TypeToken<HashMap<Long, GroupSpeak>>() {
-        }.getType();
-        groupsMap = Autoreply.gson.fromJson(Tools.FileTool.readString(historyFile), type);
+        groupsMap = Autoreply.gson.fromJson(Tools.FileTool.readString(historyFile), new TypeToken<HashMap<Long, GroupSpeak>>() {}.getType());
 		Autoreply.instance.threadPool.execute(new Runnable() {
 				@Override
 				public void run() {
@@ -52,6 +51,9 @@ public class MGroupCounterChart extends BaseModule {
 
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_GroupCountChart)){
+			return false;
+		}
 		GroupSpeak gs=groupsMap.get(fromGroup);
 		if (gs == null) {
 			gs = new GroupSpeak();

@@ -1,7 +1,9 @@
 package com.meng.modules;
 
-import com.meng.Autoreply;
+import com.meng.*;
+import com.meng.config.*;
 import com.meng.gameData.TouHou.zun.*;
+import com.meng.modules.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.util.*;
@@ -19,6 +21,9 @@ public class MusicManager extends BaseModule {
 
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_Music)){
+			return false;
+		}
 		if (msg.equals("原曲认知")) {
 			File musicFragment=createMusicCut(new Random().nextInt(16), 10, fromQQ);
 			Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.record(musicFragment.getName()));	

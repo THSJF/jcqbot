@@ -32,9 +32,8 @@ public class MMsgRefuse extends BaseModule {
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
 		
-		
 		ConfigManager cm=ConfigManager.instance;
-		if (Autoreply.instance.botOff.contains(fromGroup) || cm.isNotReplyQQ(fromQQ) || cm.isNotReplyWord(msg)) {
+		if (!cm.isNotReplyQQ(fromQQ) || cm.isNotReplyWord(msg)) {
             return true;
         }
 		FireWallBean mtmb=msgMap.get(fromQQ);

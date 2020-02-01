@@ -19,6 +19,9 @@ public class MoShenFuSong extends BaseModule {
 
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_MoShenFuSong)){
+			return false;
+		}
 		if (msg.contains("大膜法")) { 
             switch (msg) {
                 case "大膜法 膜神复诵":

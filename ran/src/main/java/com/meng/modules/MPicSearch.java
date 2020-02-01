@@ -1,6 +1,7 @@
 package com.meng.modules;
 
 import com.meng.*;
+import com.meng.config.*;
 import com.meng.modules.*;
 import com.meng.tools.*;
 import java.io.*;
@@ -23,6 +24,9 @@ public class MPicSearch extends BaseModule {
 
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_PicSearch)){
+			return false;
+		}
 		if (msg.equalsIgnoreCase("sp.help")) {
             if (fromGroup != 0) {
                 sendMsg(fromGroup, fromQQ, "使用方式已私聊发送");

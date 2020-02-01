@@ -42,7 +42,6 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 
 	public RemoteWebSocket remoteWebSocket;
 	public String userAgent="Mozilla/5.0 (Windows NT 6.1; WOW64; rv:28.0) Gecko/20100101 Firefox/28.0";
-    public HashSet<Long> botOff = new HashSet<>();
 	public static long mainGroup=1023432971l;
 	public static Gson gson;
 	public static boolean sleeping=true;
@@ -227,30 +226,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
             }
         }
 
-        if (msg.equals(".admin enable") && ConfigManager.instance.isAdmin(fromQQ)) {
-			++RemoteWebSocket.botInfoBean.msgCmdPerSec;
-			GroupConfig groupConfig =ConfigManager.instance.getGroupConfig(fromGroup);
-            if (groupConfig == null) {
-                Autoreply.sendMessage(fromGroup, fromQQ, "本群没有默认配置");
-                return MSG_IGNORE;
-            }
-            groupConfig.reply = true;
-            Autoreply.sendMessage(fromGroup, fromQQ, "已由admin启用");
-            ConfigManager.instance.saveConfig();
-            return MSG_IGNORE;
-        }
-        if (msg.equals(".admin disable") && ConfigManager.instance.isAdmin(fromQQ)) {
-            ++RemoteWebSocket.botInfoBean.msgCmdPerSec;
-			GroupConfig groupConfig = ConfigManager.instance.getGroupConfig(fromGroup);
-            if (groupConfig == null) {
-                Autoreply.sendMessage(fromGroup, fromQQ, "本群没有默认配置");
-                return MSG_IGNORE;
-            }
-            groupConfig.reply = false;
-            Autoreply.sendMessage(fromGroup, fromQQ, "已由admin停用");
-            ConfigManager.instance.saveConfig();
-            return MSG_IGNORE;
-        }
+        
         if (ConfigManager.instance.isNotReplyQQ(fromQQ)) {
             return MSG_IGNORE;
         }
@@ -337,7 +313,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         // if (com.meng.groupFile == null) { // 解析群文件信息，如果失败直接忽略该消息
         // return MSG_IGNORE;
         // }
-        if (ConfigManager.instance.isNotReplyGroup(fromGroup)) {
+        if (!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_MainSwitch)) {
             return MSG_IGNORE;
         }
 		//   fileInfoManager.check(subType, sendTime, fromGroup, fromQQ, file);
@@ -357,7 +333,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
     @Override
     public int groupAdmin(int subtype, int sendTime, long fromGroup, long beingOperateQQ) {
         // 这里处理消息
-        if (ConfigManager.instance.isNotReplyGroup(fromGroup)) {
+        if (!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_MainSwitch)) {
             return MSG_IGNORE;
         }
         if (subtype == 1) {

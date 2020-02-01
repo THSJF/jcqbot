@@ -65,7 +65,7 @@ public class MNumberProcess extends BaseModule {
 		if (msg.startsWith("-uint ")) {
 			String[] args=msg.split("\\s", 2);
 			try {
-				Autoreply.sendMessage(fromGroup, 0, (Integer.parseInt(args[1]) & 0x00000000ffffffffL) + "");
+				Autoreply.sendMessage(fromGroup, 0, (Long.parseLong(args[1]) % (0L + Integer.MAX_VALUE + Integer.MAX_VALUE + 2) + ""));
 			} catch (Exception e) {
 				Autoreply.sendMessage(fromGroup, 0, e.toString());
 			}

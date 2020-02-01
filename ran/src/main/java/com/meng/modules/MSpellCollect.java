@@ -139,6 +139,9 @@ public class MSpellCollect extends BaseModule {
 
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_SpellCollect)){
+			return false;
+		}
 		if (msg.startsWith("#幻币转账") && fromQQ == ConfigManager.instance.configJavaBean.ogg) {
 			List<Long> chan=Autoreply.instance.CC.getAts(msg);
 			if (!ConfigManager.instance.isMaster(chan.get(1))) {
@@ -178,6 +181,7 @@ public class MSpellCollect extends BaseModule {
 				return true;
 			}
 			Autoreply.sendMessage(fromGroup, 0, sb.toString());
+			return true;
 		}
 
 		if (msg.startsWith("幻币抽卡 ")) {
@@ -437,9 +441,6 @@ public class MSpellCollect extends BaseModule {
 			}
 			return true;
 		}
-		
-		
-		
 		return false;
 	}
 

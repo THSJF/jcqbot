@@ -34,7 +34,10 @@ public class MOcr extends BaseModule {
 
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
-		if (!ConfigManager.instance.isAdmin(fromQQ) || ! msg.startsWith("ocr")) {
+		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_OCR)) {
+			return false;
+		}
+		if (!msg.startsWith("ocr")) {
 			return false;
 		}
 		JSONObject response;

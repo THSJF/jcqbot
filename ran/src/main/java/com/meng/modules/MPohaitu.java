@@ -17,7 +17,9 @@ public class MPohaitu extends BaseModule {
 
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
-
+		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_PoHaiTu)){
+			return false;
+		}
 		if (msg.equals("迫害图")) {
 			String[] strings = (new File(Autoreply.appDirectory + "pohai/")).list();
 			StringBuilder sBuilder = new StringBuilder("现在有");

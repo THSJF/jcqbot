@@ -69,7 +69,7 @@ public class SocketConfigManager implements Runnable {
 
 		private String processText(String string) {
 			if (string.equals("getFull")) {
-				return configManager.gson.toJson(configManager.configJavaBean);
+				return Autoreply.gson.toJson(configManager.configJavaBean);
 			}
 			String type = string.substring(0, string.indexOf("."));
 			String content = string.substring(string.indexOf(".") + 1);
@@ -78,7 +78,7 @@ public class SocketConfigManager implements Runnable {
 			}
 			switch (NetworkType.valueOf(type)) {
 				case addGroup:
-					GroupConfig g1c=configManager.gson.fromJson(content, GroupConfig.class);
+					GroupConfig g1c=Autoreply.gson.fromJson(content, GroupConfig.class);
 					configManager.configJavaBean.groupConfigs.add(g1c);
 					Autoreply.sendMessage(Autoreply.mainGroup, 0, "添加群" + g1c.groupNumber);
 					break;
@@ -89,7 +89,7 @@ public class SocketConfigManager implements Runnable {
 					configManager.configJavaBean.wordNotReply.add(content);
 					break;
 				case addPersonInfo:
-					configManager.configJavaBean.personInfo.add(configManager.gson.fromJson(content, PersonInfo.class));
+					configManager.configJavaBean.personInfo.add(Autoreply.gson.fromJson(content, PersonInfo.class));
 					break;
 				case addMaster:
 					configManager.configJavaBean.masterList.add(Long.parseLong(content));
@@ -109,7 +109,7 @@ public class SocketConfigManager implements Runnable {
 					configManager.configJavaBean.blackListGroup.add(Long.parseLong(content));
 					break;
 				case removeGroup:
-					configManager.configJavaBean.groupConfigs.remove(configManager.gson.fromJson(content, GroupConfig.class));
+					configManager.configJavaBean.groupConfigs.remove(Autoreply.gson.fromJson(content, GroupConfig.class));
 					break;
 				case removeNotReplyUser:
 					configManager.configJavaBean.QQNotReply.remove(Long.parseLong(content));
@@ -118,7 +118,7 @@ public class SocketConfigManager implements Runnable {
 					configManager.configJavaBean.wordNotReply.remove(content);
 					break;
 				case removePersonInfo:
-					configManager.configJavaBean.personInfo.remove(configManager.gson.fromJson(content, PersonInfo.class));
+					configManager.configJavaBean.personInfo.remove(Autoreply.gson.fromJson(content, PersonInfo.class));
 					break;
 				case removeMaster:
 					configManager.configJavaBean.masterList.remove(Long.parseLong(content));
@@ -138,7 +138,7 @@ public class SocketConfigManager implements Runnable {
 					configManager.configJavaBean.blackListGroup.remove(Long.parseLong(content));
 					break;
 				case setGroup:
-					GroupConfig groupConfig = configManager.gson.fromJson(content, GroupConfig.class);
+					GroupConfig groupConfig = Autoreply.gson.fromJson(content, GroupConfig.class);
 					for (GroupConfig gc : configManager.configJavaBean.groupConfigs) {
 						if (gc.groupNumber == groupConfig.groupNumber) {
 							configManager.configJavaBean.groupConfigs.remove(gc);
@@ -170,8 +170,8 @@ public class SocketConfigManager implements Runnable {
 					break;
 				case setPersonInfo:
 					String[] obj = content.split(" ");
-					PersonInfo oldPersonInfo = configManager.gson.fromJson(obj[0], PersonInfo.class);
-					PersonInfo newPersonInfo = configManager.gson.fromJson(obj[1], PersonInfo.class);
+					PersonInfo oldPersonInfo = Autoreply.gson.fromJson(obj[0], PersonInfo.class);
+					PersonInfo newPersonInfo = Autoreply.gson.fromJson(obj[1], PersonInfo.class);
 					for (PersonInfo pi : configManager.configJavaBean.personInfo) {
 						if (pi.name.equals(oldPersonInfo.name) && pi.qq == oldPersonInfo.qq && pi.bid == oldPersonInfo.bid && pi.bliveRoom == oldPersonInfo.bliveRoom) {
 							configManager.configJavaBean.personInfo.remove(oldPersonInfo);

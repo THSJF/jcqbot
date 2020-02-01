@@ -38,7 +38,7 @@ public class MBiliLinkInfo extends BaseModule {
                 result += processArtical(getArticalId(subedString));
             }
             Autoreply.sendMessage(fromGroup, 0, result);
-            return !msg.contains("[CQ:share,url=");
+            return true;
         } else {
             int ind = msg.indexOf("http");
             int ind1 = msg.indexOf(",text=");
@@ -60,8 +60,7 @@ public class MBiliLinkInfo extends BaseModule {
             }
             if (result != null) {
 				Autoreply.sendMessage(fromGroup, 0, result);
-                // 如果不是分享链接就拦截消息
-                return !msg.contains("[CQ:share,url=");
+                return true;
             }
         }
         return false;
@@ -132,15 +131,6 @@ public class MBiliLinkInfo extends BaseModule {
             }
         }
         return stringBuilder.toString();
-    }
-
-    public static String encodeBilibiliURL(long id, boolean av) {
-        try {
-            return "FromUriOpen@bilibili://" + Tools.Base64.encode(((av ? "av:" : "cv") + id).getBytes());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
 	private class ArticleInfoBean {

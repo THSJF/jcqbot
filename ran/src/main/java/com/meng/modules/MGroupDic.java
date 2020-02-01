@@ -3,6 +3,7 @@ package com.meng.modules;
 import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
+import com.meng.config.*;
 import com.meng.modules.*;
 import com.meng.tools.*;
 import java.io.*;
@@ -22,9 +23,7 @@ public class MGroupDic extends BaseModule {
         if (!dicFile.exists()) {
             saveDic(dicFile, dic);
         }
-        Type type = new TypeToken<HashMap<String, HashSet<String>>>() {
-        }.getType();
-        dic = new Gson().fromJson(Tools.FileTool.readString(dicFile), type);
+        dic = new Gson().fromJson(Tools.FileTool.readString(dicFile), new TypeToken<HashMap<String, HashSet<String>>>() {}.getType());
 		enable = true;
 		return this;
 	}
@@ -39,6 +38,9 @@ public class MGroupDic extends BaseModule {
 
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_GroupDic)){
+			return false;
+		}
 		if (checkPublicDic(fromGroup, fromQQ, msg)) {
             return true;
         }

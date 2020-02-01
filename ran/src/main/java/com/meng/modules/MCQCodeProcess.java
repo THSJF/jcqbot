@@ -17,7 +17,7 @@ public class MCQCodeProcess extends BaseModule {
 		 String picture = msg.substring(msg.lastIndexOf("http"), msg.lastIndexOf("]"));
 		 Autoreply.sendMessage(fromGroup, 0, "封面图:" + picture);
 		 return true;
-		 } else*/ if (msg.startsWith("[CQ:music")) {
+		 } else if (msg.startsWith("[CQ:music")) {
             switch (Autoreply.instance.random.nextInt(3)) {
                 case 0:
                     Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.music(22636603, "163", false));
@@ -30,7 +30,7 @@ public class MCQCodeProcess extends BaseModule {
                     break;
             }
             return true;
-        } else if (msg.startsWith("[CQ:location,lat=")) {
+        } else*/ if (msg.startsWith("[CQ:location,lat=")) {
 			Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.location(35.594993, 118.869838, 15, "守矢神社", "此生无悔入东方 来世愿生幻想乡"));
 			return true;
 		}

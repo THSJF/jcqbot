@@ -62,8 +62,7 @@ public class MBiliUpdate extends BaseModule {
     private void tipVideo(long fromGroup, String msg, long videoUpdateTime, NewVideoBean.Data.Vlist vlist) {
         if (System.currentTimeMillis() - videoUpdateTime < 86400000) {
             Autoreply.sendMessage(fromGroup, 0, "更新莉,,,https://www.bilibili.com/video/av" + vlist.aid);
-            Autoreply.sendMessage(fromGroup, 0, MBiliLinkInfo.encodeBilibiliURL(vlist.aid, true));
-        } else {
+		} else {
             Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.at(getUpQQ(msg.substring(0, msg.indexOf("今天更了吗")))) + Tools.ArrayTool.rfa(words));
             int days = (int) ((System.currentTimeMillis() - videoUpdateTime) / 86400000);
             if (days <= 30) {
@@ -77,7 +76,6 @@ public class MBiliUpdate extends BaseModule {
     private void tipArticle(long fromGroup, String msg, long articalUpdateTime, NewArticleBean.Data.Articles articles) {
         if (System.currentTimeMillis() - articalUpdateTime < 86400000) {
             Autoreply.sendMessage(fromGroup, 0, "更新莉,,,https://www.bilibili.com/read/cv" + articles.id);
-            Autoreply.sendMessage(fromGroup, 0, MBiliLinkInfo.encodeBilibiliURL(articles.id, false));
         } else {
             Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.at(getUpQQ(msg.substring(0, msg.indexOf("今天更了吗")))) + Tools.ArrayTool.rfa(words));
             int days = (int) ((System.currentTimeMillis() - articalUpdateTime) / 86400000);

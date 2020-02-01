@@ -19,38 +19,37 @@ public class MBanner extends BaseModule {
 
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
-		if(!ConfigManager.instance.isAdmin(fromQQ)){
+		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_Banner)){
+			return false;
+		}
+		if (!ConfigManager.instance.isAdmin(fromQQ)) {
 			return false;
 		}
 		String[] strs = msg.split("\\.");
 		switch (strs.length) {
             case 1:
-                if (ConfigManager.instance.isAdmin(fromQQ)) {
-                    if (msg.equalsIgnoreCase("allban")) {
-                        Autoreply.CQ.setGroupWholeBan(fromGroup, true);
-                        return true;
-                    }
-                    if (msg.equalsIgnoreCase("allrelease")) {
-                        Autoreply.CQ.setGroupWholeBan(fromGroup, false);
-                        return true;
-                    }
-                }
+				if (msg.equalsIgnoreCase("allban")) {
+					Autoreply.CQ.setGroupWholeBan(fromGroup, true);
+					return true;
+				}
+				if (msg.equalsIgnoreCase("allrelease")) {
+					Autoreply.CQ.setGroupWholeBan(fromGroup, false);
+					return true;
+				}
                 break;
             case 2:
-                if (ConfigManager.instance.isAdmin(fromQQ)) {
-                    try {
-                        if (strs[0].equalsIgnoreCase("allban")) {
-                            Autoreply.CQ.setGroupWholeBan(Long.parseLong(strs[1]), true);
-                            return true;
-                        }
-                        if (strs[0].equalsIgnoreCase("allrelease")) {
-                            Autoreply.CQ.setGroupWholeBan(Long.parseLong(strs[1]), false);
-                            return true;
-                        }
-                    } catch (Exception e) {
-                        Autoreply.sendMessage(fromGroup, fromQQ, e.toString());
-                    }
-                }
+                try {
+					if (strs[0].equalsIgnoreCase("allban")) {
+						Autoreply.CQ.setGroupWholeBan(Long.parseLong(strs[1]), true);
+						return true;
+					}
+					if (strs[0].equalsIgnoreCase("allrelease")) {
+						Autoreply.CQ.setGroupWholeBan(Long.parseLong(strs[1]), false);
+						return true;
+					}
+				} catch (Exception e) {
+					Autoreply.sendMessage(fromGroup, fromQQ, e.toString());
+				}
                 break;
             case 3:
                 if (strs[0].equals("ban")) {
@@ -251,7 +250,7 @@ public class MBanner extends BaseModule {
         }
         return BanType.ByUser;
     }
-	
+
 	public enum BanType {
 		ByMaster(4),
 		ByGroupMaster(3),

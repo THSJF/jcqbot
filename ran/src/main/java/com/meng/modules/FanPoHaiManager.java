@@ -76,8 +76,7 @@ public class FanPoHaiManager extends BaseModule {
                 }
                 File file = new File(folder);
                 if (msgId != -1) {
-                    GroupConfig groupConfig = ConfigManager.instance.getGroupConfig(fromGroup);
-                    if (groupConfig != null && groupConfig.isCheHuiMoTu()) {
+                     if (ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_CheHuiMotu)) {
                         Member me = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, Autoreply.CQ.getLoginQQ());
                         Member ban = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, Autoreply.CQ.getLoginQQ());
                         if (me.getAuthority() - ban.getAuthority() > 0) {

@@ -12,20 +12,19 @@ import java.nio.charset.*;
 
 public class ConfigManager {
 	public static ConfigManager instance;
-    public ConfigJavaBean configJavaBean = new ConfigJavaBean();
-    public Gson gson = new Gson();
+    public RanCfgBean configJavaBean = new RanCfgBean();
     public PortConfig portConfig = new PortConfig();
 
     public ConfigManager() {
-		instance=this;
-        portConfig = gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "grzxEditConfig.json"), PortConfig.class);
+		instance = this;
+        portConfig =Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "grzxEditConfig.json"), PortConfig.class);
         File jsonBaseConfigFile = new File(Autoreply.appDirectory + "configV3.json");
         if (!jsonBaseConfigFile.exists()) {
             saveConfig();
         }
-        Type type = new TypeToken<ConfigJavaBean>() {
+        Type type = new TypeToken<RanCfgBean>() {
         }.getType();
-        configJavaBean = gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "configV3.json"), type);
+        configJavaBean = Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "configV3.json"), type);
         Autoreply.instance.threadPool.execute(new SocketConfigManager(this));
         Autoreply.instance.threadPool.execute(new SocketDicManager(this));
     }
@@ -37,6 +36,24 @@ public class ConfigManager {
 			}
 		}
 		return false;
+	}
+
+	public boolean isFunctionEnable(long fromGroup, int functionID) {
+		GroupConfig gc=getGroupConfig(fromGroup);
+		if(gc == null){
+			return false;
+		}
+		return (gc.f1 & functionID) != 0;
+	}
+
+	public void setFunctionEnabled(long fromGroup, int functionID, boolean enable) {
+		GroupConfig gc=getGroupConfig(fromGroup);
+		if (enable) {
+			gc.f1 |= functionID;
+		} else {
+			gc.f1 &= ~functionID;
+		}
+		saveConfig();
 	}
 
 	public void setNickName(long qq, String nickname) {
@@ -108,11 +125,6 @@ public class ConfigManager {
 		Autoreply.sendMessage(Autoreply.mainGroup, 0, "自动同意列表移除用户" + qq);
 		saveConfig();
 	}
-
-    public boolean isNotReplyGroup(long fromGroup) {
-        GroupConfig groupConfig = getGroupConfig(fromGroup);
-        return groupConfig == null || !groupConfig.reply;
-    }
 
     public boolean isNotReplyQQ(long qq) {
         return configJavaBean.QQNotReply.contains(qq) || configJavaBean.blackListQQ.contains(qq);
@@ -214,7 +226,7 @@ public class ConfigManager {
             File file = new File(Autoreply.appDirectory + "configV3.json");
             FileOutputStream fos = new FileOutputStream(file);
             OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-            writer.write(gson.toJson(configJavaBean));
+            writer.write(Autoreply.gson.toJson(configJavaBean));
             writer.flush();
             fos.close();
         } catch (IOException e) {

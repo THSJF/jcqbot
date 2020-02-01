@@ -18,9 +18,7 @@ public class MCoinManager extends BaseModule {
 		if (!file.exists()) {
 			saveData();
 		}
-		Type type = new TypeToken<HashMap<Long, Integer>>() {
-		}.getType();
-		countMap = Autoreply.gson.fromJson(Tools.FileTool.readString(file), type);
+		countMap = Autoreply.gson.fromJson(Tools.FileTool.readString(file), new TypeToken<HashMap<Long, Integer>>() {}.getType());
 		Autoreply.instance.threadPool.execute(new Runnable() {
 				@Override
 				public void run() {
@@ -33,6 +31,10 @@ public class MCoinManager extends BaseModule {
 
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+		if (msg.equals("~coins")) {
+			Autoreply.sendMessage(fromGroup, 0, "你有" + getCoinsCount(fromQQ) + "个幻币");
+			return true;
+		}
 		return false;
 	}
 

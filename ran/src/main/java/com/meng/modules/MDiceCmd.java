@@ -1,9 +1,8 @@
 package com.meng.modules;
+
 import com.meng.*;
-import com.meng.bilibili.live.*;
 import com.meng.config.*;
 import java.io.*;
-import java.util.*;
 
 public class MDiceCmd extends BaseModule {
 
@@ -28,7 +27,7 @@ public class MDiceCmd extends BaseModule {
 				switch (next()) {
 					case ".r":
 						String rs = next();
-						Autoreply.sendMessage(fromGroup, 0, String.format("%s投掷%s:D100 = %d", ConfigManager.instance.getNickName(fromQQ), rs == null ?"": rs, Autoreply.instance.random.nextInt(100)));
+						Autoreply.sendMessage(fromGroup, 0, String.format("%s投掷%s:D100 = %d", ConfigManager.instance.getNickName(fromQQ), rs == null ?"": rs, Autoreply.instance.random.nextInt(101)));
 						return true;
 					case ".ra":
 						String ras = next();
@@ -41,7 +40,7 @@ public class MDiceCmd extends BaseModule {
 						Autoreply.sendMessage(fromGroup, 0, String.format("%s的疯狂发作-临时症状:\n1D10=%d\n症状: 逃避行为：调查员会用任何的手段试图逃离现在所处的位置，状态持续1D10=%d轮。", ConfigManager.instance.getNickName(fromQQ), Autoreply.instance.random.nextInt(11), Autoreply.instance.random.nextInt(11)));
 						return true;
 					case ".rd":
-						Autoreply.sendMessage(fromGroup, 0, String.format("由于%s %s骰出了: D100=%d", next(), ConfigManager.instance.getNickName(fromGroup, fromQQ), Autoreply.instance.random.nextInt()));
+						Autoreply.sendMessage(fromGroup, 0, String.format("由于%s %s骰出了: D100=%d", next(), ConfigManager.instance.getNickName(fromGroup, fromQQ), Autoreply.instance.random.nextInt(101)));
 						return true;
 					case ".nn":
 						String name = next();
@@ -57,20 +56,6 @@ public class MDiceCmd extends BaseModule {
 						ConfigManager.instance.setNickName(fromQQ, name);
 						Autoreply.sendMessage(fromGroup, 0, "我以后会称呼你为" + name);
 						return true;
-					case ".help":
-						Autoreply.sendMessage(fromGroup, 0, ModuleManager.instance.getModule(MAdminMsg.class).userPermission.toString());
-						return true;
-					case ".live":
-							String msgSend;
-							StringBuilder stringBuilder = new StringBuilder();
-							for (Map.Entry<Integer,LivePerson> entry:Autoreply.instance.liveListener.livePersonMap.entrySet()) {	
-								if (entry.getValue().lastStatus) {
-									stringBuilder.append(ConfigManager.instance.getPersonInfoFromBid(entry.getKey()).name).append("正在直播").append(entry.getValue().liveUrl).append("\n");
-								}
-							}
-							msgSend = stringBuilder.toString();
-							Autoreply.sendMessage(fromGroup, fromQQ, msgSend.equals("") ? "居然没有飞机佬直播" : msgSend);
-							return true;	
 				}
 			} catch (NumberFormatException ne) {
 				Autoreply.sendMessage(fromGroup, 0, "参数错误");
