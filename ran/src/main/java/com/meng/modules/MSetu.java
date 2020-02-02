@@ -16,7 +16,7 @@ public class MSetu extends BaseModule {
 
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
-		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_Setu)){
+		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_Setu)) {
 			return false;
 		}
 		if (msg.equals("色图")) {
@@ -33,16 +33,16 @@ public class MSetu extends BaseModule {
 			File folder = (File) Tools.ArrayTool.rfa(files);
 			File[] pics = folder.listFiles();
 			Autoreply.instance.threadPool.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(pics)))));
-			ModuleManager.instance.getModule(MUserCounter.class).incSetu(fromQQ);
-			ModuleManager.instance.getModule(MGroupCounter.class).incSetu(fromGroup);
-			ModuleManager.instance.getModule(MUserCounter.class).incSetu(Autoreply.CQ.getLoginQQ());
+			((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incSetu(fromQQ);
+			((MGroupCounter)ModuleManager.instance.getModule(MGroupCounter.class)).incSetu(fromGroup);
+			((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incSetu(Autoreply.CQ.getLoginQQ());
 		} else if (msg.endsWith("色图")) {
 			File[] files = (new File(Autoreply.appDirectory + "setu/" + msg.replace("色图", ""))).listFiles();
 			if (files != null && files.length > 0) {
 				Autoreply.instance.threadPool.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files)))));
-				ModuleManager.instance.getModule(MUserCounter.class).incSetu(fromQQ);
-				ModuleManager.instance.getModule(MGroupCounter.class).incSetu(fromGroup);
-				ModuleManager.instance.getModule(MUserCounter.class).incSetu(Autoreply.CQ.getLoginQQ());
+				((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incSetu(fromQQ);
+				((MGroupCounter)ModuleManager.instance.getModule(MGroupCounter.class)).incSetu(fromGroup);
+				((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incSetu(Autoreply.CQ.getLoginQQ());
 			}
 			return true;
 		}

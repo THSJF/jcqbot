@@ -67,7 +67,7 @@ public class MRepeater extends BaseModule {
 					return true;
 				}
 				float simi = getPicSimilar(imageFiles);
-				switch (groupConfig.repeatMode) {
+				switch (groupConfig.s1) {
 					case 0:
 
 						break;
@@ -117,29 +117,29 @@ public class MRepeater extends BaseModule {
 		}
 
 		private boolean repeatEnd(long group, long qq, String msg) {
-			ModuleManager.instance.getModule(MUserCounter.class).incRepeatBreaker(qq);
-			ModuleManager.instance.getModule(MGroupCounter.class).incRepeatBreaker(group);
+			((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incRepeatBreaker(qq);
+			((MGroupCounter)ModuleManager.instance.getModule(MGroupCounter.class)).incRepeatBreaker(group);
 			return false;
 		}
 
 		private boolean repeatRunning(long group, long qq, String msg) {
-			ModuleManager.instance.getModule(MUserCounter.class).incFudu(qq);
-			ModuleManager.instance.getModule(MGroupCounter.class).incFudu(group);
+			((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incFudu(qq);
+			((MGroupCounter)ModuleManager.instance.getModule(MGroupCounter.class)).incFudu(group);
 			banCount--;
 			return false;
 		}
 
 		private boolean repeatStart(final long group, final long qq, final String msg, final File[] imageFiles) {
 			banCount = 6;
-			ModuleManager.instance.getModule(MUserCounter.class).incFudujiguanjia(qq);
-			ModuleManager.instance.getModule(MGroupCounter.class).incFudu(group);
+			((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incFudujiguanjia(qq);
+			((MGroupCounter)ModuleManager.instance.getModule(MGroupCounter.class)).incFudu(group);
 			Autoreply.instance.threadPool.execute(new Runnable() {
 					@Override
 					public void run() {
 					reply(group, qq, msg, imageFiles);
 					}
 				});
-			ModuleManager.instance.getModule(MUserCounter.class).incFudu(Autoreply.CQ.getLoginQQ());
+			((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incFudu(Autoreply.CQ.getLoginQQ());
 			return true;
 		}
 

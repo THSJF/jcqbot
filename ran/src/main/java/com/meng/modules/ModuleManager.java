@@ -40,6 +40,7 @@ public class ModuleManager extends BaseModule {
 	public BaseModule load() {
 		modules.add(new MGroupCounterChart().load());
 		modules.add(new MGroupCounter().load());
+		modules.add(new MUserCounter().load());
 		modules.add(new MTimeTip().load());
 		modules.add(new MAdminMsg().load());
 		modules.add(new MWarnMsg().load());
@@ -67,7 +68,7 @@ public class ModuleManager extends BaseModule {
 		modules.add(new VirusManager().load());
 		modules.add(new MSeq().load());
 		modules.add(new MGroupDic().load());
-		Autoreply.instance.threadPool.execute(getModule(MTimeTip.class));
+		Autoreply.instance.threadPool.execute((MTimeTip)getModule(MTimeTip.class));
 		instance = this;
 		enable = true;
 		return this;
@@ -75,7 +76,7 @@ public class ModuleManager extends BaseModule {
 
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
-		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_MainSwitch)){
+		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_MainSwitch)) {
 			return true;
 		}
 		for (int i=0;i < modules.size();++i) {
@@ -86,15 +87,19 @@ public class ModuleManager extends BaseModule {
 		return false;
 	}
 
-	public <T extends BaseModule> T getModule(Class<T> module) {
-		int s = modules.size();
-		for (int i=0;i < s;++i) {
-			BaseModule t = modules.get(i);
-			if (t.getClass().getSimpleName().equals(module.getClass().getSimpleName())) {
-				return (T)t;
+	public BaseModule getModule(Class<?> baseModule) {
+		return getModule(baseModule.getSimpleName());
+	}
+
+	public BaseModule getModule(String simpleClassName) {
+		for (int i=0,s= modules.size();i < s;++i) {
+			BaseModule bm=modules.get(i);
+			if (bm.getClass().getSimpleName().equals(simpleClassName)) {
+				return bm;
 			}
 		}
-		return null;
+		throw new RuntimeException("试图获取未加载的模块");
 	}
+
 }
 

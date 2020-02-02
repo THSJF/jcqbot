@@ -77,7 +77,8 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         // 返回如：D:\CoolQ\app\com.sobte.cqp.jcq\app\com.example.demo\
         System.out.println("开始加载");
 		ConfigManager.instance = new ConfigManager();
-		ModuleManager.instance = (ModuleManager) new ModuleManager().load();
+		ModuleManager.instance = new ModuleManager();
+		ModuleManager.instance.load();
 		cookieManager = new CookieManager();
         long startTime = System.currentTimeMillis();
         groupMemberChangerListener = new GroupMemberChangerListener();

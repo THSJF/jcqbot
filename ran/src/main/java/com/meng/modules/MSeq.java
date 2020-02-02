@@ -47,11 +47,11 @@ public class MSeq extends BaseModule {
 			}
 			if (msg.equals(sb.content[sb.pos])) {
 				if (sb.flag == 1) {
-					ModuleManager.instance.getModule(MUserCounter.class).decLife(fromQQ);
-					ModuleManager.instance.getModule(MGroupCounter.class).decLife(fromGroup);
+					((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).decLife(fromQQ);
+					((MGroupCounter)ModuleManager.instance.getModule(MGroupCounter.class)).decLife(fromGroup);
 				} else if (sb.flag == 2) {
-					ModuleManager.instance.getModule(MUserCounter.class).incMengEr(fromQQ);
-					ModuleManager.instance.getModule(MGroupCounter.class).incMengEr(fromGroup);
+					((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incMengEr(fromQQ);
+					((MGroupCounter)ModuleManager.instance.getModule(MGroupCounter.class)).incMengEr(fromGroup);
 				}
 				++sb.pos;			
 				if (sb.pos < sb.content.length) {

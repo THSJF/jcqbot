@@ -68,7 +68,7 @@ public class ThreeManager extends BaseModule {
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
 		if (changeMap.get(fromQQ) != null && changeMap.get(fromQQ)) {
-			Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image(ModuleManager.instance.getModule(MPicEdit.class).jingShenZhiZhuByAt(fromGroup, 0, Autoreply.instance.CC.at(fromQQ))));
+			Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image(((MPicEdit)ModuleManager.instance.getModule(MPicEdit.class)).jingShenZhiZhuByAt(fromGroup, 0, Autoreply.instance.CC.at(fromQQ))));
 			changeMap.put(fromQQ, false);
 			return true;
 		}

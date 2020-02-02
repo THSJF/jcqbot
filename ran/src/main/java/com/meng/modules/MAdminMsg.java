@@ -309,19 +309,19 @@ public class MAdminMsg extends BaseModule {
 			return true;
 		}
 		if (msg.startsWith("av更新时间:")) {
-			Autoreply.sendMessage(fromGroup, fromQQ, String.valueOf(ModuleManager.instance.getModule(MBiliUpdate.class).getAVLastUpdateTime(msg.substring(7))));
+			Autoreply.sendMessage(fromGroup, fromQQ, String.valueOf(((MBiliUpdate)ModuleManager.instance.getModule(MBiliUpdate.class)).getAVLastUpdateTime(msg.substring(7))));
 			return true;
 		}
 		if (msg.startsWith("avJson:")) {
-			Autoreply.sendMessage(fromGroup, fromQQ, ModuleManager.instance.getModule(MBiliUpdate.class).getAVJson(msg.substring(7)));
+			Autoreply.sendMessage(fromGroup, fromQQ, ((MBiliUpdate)ModuleManager.instance.getModule(MBiliUpdate.class)).getAVJson(msg.substring(7)));
 			return true;
 		}
 		if (msg.startsWith("cv更新时间:")) {
-			Autoreply.sendMessage(fromGroup, fromQQ, String.valueOf(ModuleManager.instance.getModule(MBiliUpdate.class).getCVLastUpdateTime(msg.substring(7))));
+			Autoreply.sendMessage(fromGroup, fromQQ, String.valueOf(((MBiliUpdate)ModuleManager.instance.getModule(MBiliUpdate.class)).getCVLastUpdateTime(msg.substring(7))));
 			return true;
 		}
 		if (msg.startsWith("cvJson:")) {
-			Autoreply.sendMessage(fromGroup, fromQQ, ModuleManager.instance.getModule(MBiliUpdate.class).getCVJson(msg.substring(7)));
+			Autoreply.sendMessage(fromGroup, fromQQ, ((MBiliUpdate)ModuleManager.instance.getModule(MBiliUpdate.class)).getCVJson(msg.substring(7)));
 			return true;
 		}
 		if (msg.startsWith("直播状态lid:")) {
@@ -483,11 +483,11 @@ public class MAdminMsg extends BaseModule {
 			return true;
 		}
 		if (msg.startsWith("精神支柱[CQ:image")) {
-			ModuleManager.instance.getModule(MPicEdit.class).jingShenZhiZhuByPic(fromGroup, fromQQ, msg);
+			((MPicEdit)ModuleManager.instance.getModule(MPicEdit.class)).jingShenZhiZhuByPic(fromGroup, fromQQ, msg);
 			return true;
 		}
 		if (msg.startsWith("神触[CQ:image")) {
-			ModuleManager.instance.getModule(MPicEdit.class).shenChuByAt(fromGroup, fromQQ, msg);
+			((MPicEdit)ModuleManager.instance.getModule(MPicEdit.class)).shenChuByAt(fromGroup, fromQQ, msg);
 			return true;
 		}
 		if (msg.startsWith("设置群头衔[CQ:at")) {

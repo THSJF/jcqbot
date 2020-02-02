@@ -231,13 +231,13 @@ public class Tools {
 			Member ban = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, banQQ);
 			if (me.getAuthority() - ban.getAuthority() > 0) {
 				Autoreply.CQ.setGroupBan(fromGroup, banQQ, time);
-				ModuleManager.instance.getModule(MUserCounter.class).incGbanCount(Autoreply.CQ.getLoginQQ());
+				((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incGbanCount(Autoreply.CQ.getLoginQQ());
 				return true;
 			} else {
 				Member ogg = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, ConfigManager.instance.configJavaBean.ogg);
 				if (ogg != null && ogg.getAuthority() - ban.getAuthority() > 0) {
 					Autoreply.sendMessage(Autoreply.mainGroup, 0, "~mutegroupuser " + fromGroup + " " + (time / 60) + " " + banQQ);
-					ModuleManager.instance.getModule(MUserCounter.class).incGbanCount(Autoreply.CQ.getLoginQQ());
+					((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incGbanCount(Autoreply.CQ.getLoginQQ());
 					return true;
 				}
 			}
@@ -262,10 +262,10 @@ public class Tools {
 				Member ban = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, banQQ);
 				if (me.getAuthority() - ban.getAuthority() > 0) {
 					Autoreply.CQ.setGroupBan(fromGroup, banQQ, (int)time);
-					ModuleManager.instance.getModule(MUserCounter.class).incGbanCount(Autoreply.CQ.getLoginQQ());
+					((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incGbanCount(Autoreply.CQ.getLoginQQ());
 				} else if (ogg != null && ogg.getAuthority() - ban.getAuthority() > 0) {
 					banqqs.append(" ").append(banQQ);
-					ModuleManager.instance.getModule(MUserCounter.class).incGbanCount(Autoreply.CQ.getLoginQQ());
+					((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incGbanCount(Autoreply.CQ.getLoginQQ());
 				}
 			}
 			if (!banqqs.toString().equals("")) {

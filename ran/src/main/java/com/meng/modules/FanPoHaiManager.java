@@ -101,8 +101,8 @@ public class FanPoHaiManager extends BaseModule {
                     File[] files = file.listFiles();
                     if (files != null) {
                         Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files)));
-                        ModuleManager.instance.getModule(MUserCounter.class).incPohaitu(Autoreply.CQ.getLoginQQ());
-                        ModuleManager.instance.getModule(MGroupCounter.class).incPohaitu(fromGroup);
+                        ((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incPohaitu(Autoreply.CQ.getLoginQQ());
+                        ((MGroupCounter)ModuleManager.instance.getModule(MGroupCounter.class)).incPohaitu(fromGroup);
                     }
                     return true;
                 }

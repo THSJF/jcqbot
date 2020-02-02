@@ -23,33 +23,30 @@ public class MGroupDic extends BaseModule {
         if (!dicFile.exists()) {
             saveDic(dicFile, dic);
         }
-        dic = new Gson().fromJson(Tools.FileTool.readString(dicFile), new TypeToken<HashMap<String, HashSet<String>>>() {}.getType());
+        dic = new Gson().fromJson(Tools.FileTool.readString(dicFile), new TypeToken<HashMap<String, ArrayList<String>>>() {}.getType());
 		enable = true;
 		return this;
 	}
 
-    public void clear() {
-        groupMap.clear();
-    }
-
-	public void addDic(long group) {
-        groupMap.put(group, new DicReplyGroup(group));
-    }
-
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
-		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_GroupDic)){
+		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_GroupDic)) {
 			return false;
 		}
 		if (checkPublicDic(fromGroup, fromQQ, msg)) {
             return true;
         }
-        return groupMap.get(fromGroup).checkMsg(fromGroup, fromQQ, msg);
+		DicReplyGroup dig=groupMap.get(fromGroup);
+		if (dig == null) {
+			dig = new DicReplyGroup(fromGroup);
+			groupMap.put(fromGroup, dig);
+		}
+        return dig.checkMsg(fromGroup, fromQQ, msg);
     }
 
-    private boolean checkPublicDic(long group, long qq, String msg) {
-        for (String key : dic.keySet()) {
-            if (key.equals(msg)) {
+    private boolean checkPublicDic(long group, long qq, String msg) {  
+		for (String key : dic.keySet()) {
+            if (key.contains(msg)) {
 				ArrayList<String> ans=dic.get(key);
                 Autoreply.sendMessage(group, qq, ans.get(Autoreply.instance.random.nextInt(ans.size())));
                 return true;

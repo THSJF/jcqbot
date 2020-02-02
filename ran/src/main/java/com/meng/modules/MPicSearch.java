@@ -42,9 +42,9 @@ public class MPicSearch extends BaseModule {
         }
         if (imageFile != null && (msg.toLowerCase().startsWith("sp"))) {
             try {
-                ModuleManager.instance.getModule(MUserCounter.class).incSearchPicture(fromQQ);
-                ModuleManager.instance.getModule(MGroupCounter.class).incSearchPicture(fromGroup);
-                ModuleManager.instance.getModule(MUserCounter.class).incSearchPicture(Autoreply.CQ.getLoginQQ());
+                ((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incSearchPicture(fromQQ);
+                ((MGroupCounter)ModuleManager.instance.getModule(MGroupCounter.class)).incSearchPicture(fromGroup);
+                ((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incSearchPicture(Autoreply.CQ.getLoginQQ());
                 sendMsg(fromGroup, fromQQ, "土豆折寿中……");
                 int needPic = 1;
                 int database = 999;
@@ -65,9 +65,9 @@ public class MPicSearch extends BaseModule {
         } else if (imageFile != null && userNotSendPicture.get(fromQQ) != null) {
             try {
                 sendMsg(fromGroup, fromQQ, "土豆折寿中……");
-                ModuleManager.instance.getModule(MUserCounter.class).incSearchPicture(fromQQ);
-                ModuleManager.instance.getModule(MGroupCounter.class).incSearchPicture(fromGroup);
-                ModuleManager.instance.getModule(MUserCounter.class).incSearchPicture(Autoreply.CQ.getLoginQQ());
+                ((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incSearchPicture(fromQQ);
+                ((MGroupCounter)ModuleManager.instance.getModule(MGroupCounter.class)).incSearchPicture(fromGroup);
+                ((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incSearchPicture(Autoreply.CQ.getLoginQQ());
                 int needPic = 1;
                 int database = 999;
                 if (userNotSendPicture.get(fromQQ).startsWith("sp.")) {
