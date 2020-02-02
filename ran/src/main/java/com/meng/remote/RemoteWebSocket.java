@@ -175,22 +175,22 @@ public class RemoteWebSocket extends WebSocketServer {
 				break;
 			case BotDataPack.getConfig:
 				toSend = BotDataPack.encode(rec.getOpCode());
-				toSend.write(Autoreply.gson.toJson(ConfigManager.instance.instance.configJavaBean));
+				toSend.write(Autoreply.gson.toJson(ConfigManager.instance.configJavaBean));
 				break;
 			case BotDataPack.opEnableFunction:
-				ConfigManager.instance.instance.setFunctionEnabled(rec.readLong(), rec.readInt(), rec.readInt() == 1);
+				ConfigManager.instance.setFunctionEnabled(rec.readLong(), rec.readInt(), rec.readInt() == 1);
 				break;
 			case BotDataPack.addGroup:
 				GroupConfig g1c=new GroupConfig();
-				g1c.groupNumber = rec.readLong();
-				ConfigManager.instance.instance.configJavaBean.groupConfigs.add(g1c);
-				Autoreply.sendMessage(Autoreply.mainGroup, 0, "添加群" + g1c.groupNumber);
+				g1c.n = rec.readLong();
+				ConfigManager.instance.configJavaBean.groupConfigs.add(g1c);
+				Autoreply.sendMessage(Autoreply.mainGroup, 0, "添加群" + g1c.n);
 				break;
 			case BotDataPack.addNotReplyUser:
-				ConfigManager.instance.instance.configJavaBean.QQNotReply.add(rec.readLong());
+				ConfigManager.instance.configJavaBean.QQNotReply.add(rec.readLong());
 				break;
 			case BotDataPack.addNotReplyWord:
-				ConfigManager.instance.instance.configJavaBean.wordNotReply.add(rec.readString());
+				ConfigManager.instance.configJavaBean.wordNotReply.add(rec.readString());
 				break;
 			case BotDataPack.addPersonInfo:
 				ConfigManager.instance.configJavaBean.personInfo.add(Autoreply.gson.fromJson(rec.readString(), PersonInfo.class));
@@ -219,7 +219,7 @@ public class RemoteWebSocket extends WebSocketServer {
 				Iterator<GroupConfig> iterator=ConfigManager.instance.configJavaBean.groupConfigs.iterator();
 				while (iterator.hasNext()) {
 					GroupConfig gc=iterator.next();
-					if (gc.groupNumber == gcn) {
+					if (gc.n == gcn) {
 						iterator.remove();
 						break;
 					}

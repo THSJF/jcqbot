@@ -186,7 +186,7 @@ public class MAdminMsg extends BaseModule {
 				if (!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_MainSwitch)) {
 					continue;
 				}
-				Autoreply.sendMessage(gc.groupNumber, 0, broadcast, true);
+				Autoreply.sendMessage(gc.n, 0, broadcast, true);
 				hs.add(g);
 				try {
 					Thread.sleep(200);

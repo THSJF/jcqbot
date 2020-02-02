@@ -80,7 +80,7 @@ public class SocketConfigManager implements Runnable {
 				case addGroup:
 					GroupConfig g1c=Autoreply.gson.fromJson(content, GroupConfig.class);
 					configManager.configJavaBean.groupConfigs.add(g1c);
-					Autoreply.sendMessage(Autoreply.mainGroup, 0, "添加群" + g1c.groupNumber);
+					Autoreply.sendMessage(Autoreply.mainGroup, 0, "添加群" + g1c.n);
 					break;
 				case addNotReplyUser:
 					configManager.configJavaBean.QQNotReply.add(Long.parseLong(content));
@@ -140,7 +140,7 @@ public class SocketConfigManager implements Runnable {
 				case setGroup:
 					GroupConfig groupConfig = Autoreply.gson.fromJson(content, GroupConfig.class);
 					for (GroupConfig gc : configManager.configJavaBean.groupConfigs) {
-						if (gc.groupNumber == groupConfig.groupNumber) {
+						if (gc.n == groupConfig.n) {
 							configManager.configJavaBean.groupConfigs.remove(gc);
 							configManager.configJavaBean.groupConfigs.add(groupConfig);
 							break;

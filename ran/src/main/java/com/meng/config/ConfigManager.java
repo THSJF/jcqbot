@@ -31,7 +31,7 @@ public class ConfigManager {
 
 	public boolean containsGroup(long group) {
 		for (GroupConfig gf:configJavaBean.groupConfigs) {
-			if (gf.groupNumber == group) {
+			if (gf.n == group) {
 				return true;
 			}
 		}
@@ -107,7 +107,7 @@ public class ConfigManager {
 
     public GroupConfig getGroupConfig(long fromGroup) {
         for (GroupConfig gc : configJavaBean.groupConfigs) {
-            if (fromGroup == gc.groupNumber) {
+            if (fromGroup == gc.n) {
                 return gc;
             }
         }
@@ -187,7 +187,7 @@ public class ConfigManager {
         configJavaBean.blackListQQ.add(qq);
         configJavaBean.blackListGroup.add(group);
         for (GroupConfig groupConfig : configJavaBean.groupConfigs) {
-            if (groupConfig.groupNumber == group) {
+            if (groupConfig.n == group) {
                 configJavaBean.groupConfigs.remove(groupConfig);
                 break;
             }

@@ -20,6 +20,6 @@ public class GroupConfig extends Object {
             return false;
         }
         GroupConfig p = (GroupConfig) obj;
-        return this.groupNumber == p.groupNumber;
+        return this.n == p.n;
     }
 }

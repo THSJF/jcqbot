@@ -76,12 +76,11 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         createdImageFolder = Autoreply.appDirectory + "createdImages/";
         // 返回如：D:\CoolQ\app\com.sobte.cqp.jcq\app\com.example.demo\
         System.out.println("开始加载");
+		ConfigManager.instance = new ConfigManager();
 		ModuleManager.instance = (ModuleManager) new ModuleManager().load();
 		cookieManager = new CookieManager();
         long startTime = System.currentTimeMillis();
-        ConfigManager.instance = new ConfigManager();
-
-		groupMemberChangerListener = new GroupMemberChangerListener();
+        groupMemberChangerListener = new GroupMemberChangerListener();
         zanManager = new ZanManager();
         liveListener = new LiveListener();
         updateListener = new UpdateListener();
@@ -206,8 +205,8 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
     public int groupMsg(int subType, int msgId, long fromGroup, long fromQQ, String fromAnonymous, String msg, int font) {
         // if (fromGroup != 312342896L)
         // return MSG_IGNORE;
-		// if (fromGroup != 1023432971L)
-		//return MSG_IGNORE;
+		if (fromGroup != 1023432971L)
+		return MSG_IGNORE;
         // if (fromGroup != 617745343L)
         // return MSG_IGNORE;
         // 如果消息来自匿名者
@@ -226,7 +225,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
             }
         }
 
-        
+
         if (ConfigManager.instance.isNotReplyQQ(fromQQ)) {
             return MSG_IGNORE;
         }
@@ -313,7 +312,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         // if (com.meng.groupFile == null) { // 解析群文件信息，如果失败直接忽略该消息
         // return MSG_IGNORE;
         // }
-        if (!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_MainSwitch)) {
+        if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_MainSwitch)) {
             return MSG_IGNORE;
         }
 		//   fileInfoManager.check(subType, sendTime, fromGroup, fromQQ, file);
@@ -333,7 +332,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
     @Override
     public int groupAdmin(int subtype, int sendTime, long fromGroup, long beingOperateQQ) {
         // 这里处理消息
-        if (!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_MainSwitch)) {
+        if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_MainSwitch)) {
             return MSG_IGNORE;
         }
         if (subtype == 1) {
