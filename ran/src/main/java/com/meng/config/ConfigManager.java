@@ -17,7 +17,7 @@ public class ConfigManager {
 
     public ConfigManager() {
 		instance = this;
-        portConfig =Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "grzxEditConfig.json"), PortConfig.class);
+        portConfig = Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "grzxEditConfig.json"), PortConfig.class);
         File jsonBaseConfigFile = new File(Autoreply.appDirectory + "configV3.json");
         if (!jsonBaseConfigFile.exists()) {
             saveConfig();
@@ -40,18 +40,18 @@ public class ConfigManager {
 
 	public boolean isFunctionEnable(long fromGroup, int functionID) {
 		GroupConfig gc=getGroupConfig(fromGroup);
-		if(gc == null){
+		if (gc == null) {
 			return false;
 		}
-		return (gc.f1 & functionID) != 0;
+		return (gc.f1 & (1 << functionID)) != 0;
 	}
 
 	public void setFunctionEnabled(long fromGroup, int functionID, boolean enable) {
 		GroupConfig gc=getGroupConfig(fromGroup);
 		if (enable) {
-			gc.f1 |= functionID;
+			gc.f1 |= (1 << functionID);
 		} else {
-			gc.f1 &= ~functionID;
+			gc.f1 &= ~(1 << functionID);
 		}
 		saveConfig();
 	}

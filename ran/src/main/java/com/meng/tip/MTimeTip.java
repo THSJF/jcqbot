@@ -34,7 +34,7 @@ public class MTimeTip extends BaseModule implements Runnable {
 							@Override
 							public void run() {
 								for (GroupConfig groupConfig : ConfigManager.instance.configJavaBean.groupConfigs) {
-									if ((groupConfig.f1 & ModuleManager.ID_MainSwitch) != 0) {
+									if ((groupConfig.f1 & (1 << ModuleManager.ID_MainSwitch)) != 0) {
 										if (Autoreply.sendMessage(groupConfig.groupNumber, 0, "少女休息中...", true) < 0) {
 											continue;
 										}
