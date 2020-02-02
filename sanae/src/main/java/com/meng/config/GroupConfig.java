@@ -3,9 +3,9 @@ package com.meng.config;
 import java.util.*;
 
 public class GroupConfig extends Object {
-    public long groupNumber = 0;
+    public long n=0;
+	public int s1=0;
 	public int f1=0;
-    public int repeatMode = 0;
 
 	@Override
 	public int hashCode() {
@@ -19,6 +19,6 @@ public class GroupConfig extends Object {
             return false;
         }
         GroupConfig p = (GroupConfig) obj;
-        return this.groupNumber == p.groupNumber;
+        return this.n == p.n;
     }
 }

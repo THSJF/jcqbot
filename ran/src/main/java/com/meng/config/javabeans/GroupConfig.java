@@ -3,9 +3,10 @@ package com.meng.config.javabeans;
 import java.util.*;
 
 public class GroupConfig extends Object {
-    public long groupNumber = 0;
+    public long n=0;
+	public int s1=0;
 	public int f1=0;
-    public int repeatMode = 0;
+
 
 	@Override
 	public int hashCode() {
