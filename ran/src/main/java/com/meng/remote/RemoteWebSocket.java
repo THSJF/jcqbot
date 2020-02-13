@@ -279,6 +279,10 @@ public class RemoteWebSocket extends WebSocketServer {
 				 break;
 				 */
 		}
+		if (rec.getOpCode() >= BotDataPack.opEnableFunction && rec.getOpCode() <= BotDataPack.setPersonInfo) {
+			conn.send(message.array());
+			ConfigManager.instance.saveConfig();
+		}
 		if (toSend != null) {
 			conn.send(toSend.getData());
 		}

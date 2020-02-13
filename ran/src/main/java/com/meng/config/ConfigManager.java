@@ -25,8 +25,7 @@ public class ConfigManager {
         Type type = new TypeToken<RanCfgBean>() {
         }.getType();
         configJavaBean = Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "configV3.json"), type);
-        Autoreply.instance.threadPool.execute(new SocketConfigManager(this));
-        Autoreply.instance.threadPool.execute(new SocketDicManager(this));
+		Autoreply.instance.threadPool.execute(new SocketDicManager(this));
     }
 
 	public boolean containsGroup(long group) {

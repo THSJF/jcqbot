@@ -67,7 +67,7 @@ public class ModuleManager extends BaseModule {
 		modules.add(new MNvzhuang().load());
 		modules.add(new VirusManager().load());
 		modules.add(new MSeq().load());
-		modules.add(new MGroupDic().load());
+		//modules.add(new MGroupDic().load());
 		Autoreply.instance.threadPool.execute((MTimeTip)getModule(MTimeTip.class));
 		instance = this;
 		enable = true;

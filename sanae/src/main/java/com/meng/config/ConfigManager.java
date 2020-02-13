@@ -45,6 +45,20 @@ public class ConfigManager {
 			netConfig = new NetConfig(new URI("ws://123.207.65.93:9760"));
 			netConfig.connect();
 		} catch (URISyntaxException e) {}
+		Autoreply.ins.threadPool.execute(new Runnable(){
+
+				@Override
+				public void run() {
+					while (true) {
+						try {
+							Thread.sleep(10000);
+						} catch (InterruptedException e) {}
+						if (netConfig != null && !netConfig.isClosed()) {
+							netConfig.send("heart beat");
+						}
+					}
+				}
+			});
 	}
 
 	public String getOverSpell(long fromQQ) {
