@@ -55,6 +55,10 @@ public class SoftUpgradeServer extends WebSocketServer {
 			BotDataPack toSend=BotDataPack.encode(BotDataPack.opGetApp);
 			toSend.write(app);
 			conn.send(toSend.getData());
+		} else if (rec.getOpCode() == BotDataPack.opCrashLog) {
+			File fc=new File(Autoreply.appDirectory + "/softlog/" + rec.readString() + "-" + rec.readInt() + ".log");
+			rec.readFile(fc);
+			conn.send(BotDataPack.encode(BotDataPack.opTextNotify).write("发送成功").getData());
 		}
 		super.onMessage(conn, message);
 	}

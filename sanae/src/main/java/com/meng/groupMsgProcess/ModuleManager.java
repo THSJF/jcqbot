@@ -46,15 +46,11 @@ public class ModuleManager extends BaseModule {
 		return false;
 	}
 
-	public BaseModule getModule(Class<?> baseModule) {
-		return getModule(baseModule.getSimpleName());
-	}
-
-	public BaseModule getModule(String simpleClassName) {
+	public <T extends BaseModule> T getModule(Class<T> t) {
 		for (int i=0;i < modules.size();++i) {
 			BaseModule bm=modules.get(i);
-			if (bm.getClass().getSimpleName().equals(simpleClassName)) {
-				return bm;
+			if (bm.getClass().getSimpleName().equals(t.getSimpleName())) {
+				return (T)bm;
 			}
 		}
 		return null;
