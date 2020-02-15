@@ -213,6 +213,7 @@ public class BotDataPack {
 			} catch (Exception e) {
 				file.delete();
 				file = null;
+				e.printStackTrace();
 			}
 			dataPointer += fileLen;
 			return file;

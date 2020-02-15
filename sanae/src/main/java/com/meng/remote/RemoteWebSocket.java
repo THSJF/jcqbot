@@ -3,6 +3,8 @@ import com.meng.*;
 import com.meng.config.*;
 import com.meng.game.TouHou.*;
 import com.meng.groupMsgProcess.*;
+import com.meng.remote.softinfo.*;
+import com.meng.tools.*;
 import com.sobte.cqp.jcq.entity.*;
 import java.io.*;
 import java.net.*;
@@ -228,6 +230,29 @@ public class RemoteWebSocket extends WebSocketServer {
 				toSend.write(id);
 				toSend.write(img);
 				break;
+			case BotDataPack.opUploadApk:
+				String packageName2=rec.readString();
+				int versionCode2=rec.readInt();
+				String versionName2=rec.readString();
+				String describe2=rec.readString();
+				File apk=new File(Autoreply.appDirectory + "/software/" + packageName2 + "-" + versionCode2 + ".apk");
+				rec.readFile(apk);
+				SoftInfo si=new SoftInfo();
+				si.versionCode = versionCode2;
+				si.versionName = versionName2;
+				si.versionDescribe = describe2;
+				SoftInfoBean sib=readJson();
+				EachSoftInfo esi2=sib.infos.get(packageName2);
+				if (esi2 == null) {
+					esi2 = new EachSoftInfo();
+					sib.infos.put(packageName2, esi2);
+				}
+				esi2.lastestVersionCode = si.versionCode;
+				esi2.lastestVersionName = si.versionName;
+				esi2.infoList.add(si);
+				saveJson(sib);
+				conn.send(BotDataPack.encode(BotDataPack.opUploadApk).getData());
+				break;
 		}
 		if (toSend != null) {
 			conn.send(toSend.getData());
@@ -263,4 +288,21 @@ public class RemoteWebSocket extends WebSocketServer {
 		}
 		return sdp;
 	}
+
+	private SoftInfoBean readJson() {
+		return Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "/software/info.json"), SoftInfoBean.class);
+	}
+
+	private void saveJson(SoftInfoBean sib) {
+        try {
+            FileOutputStream fos = new FileOutputStream(new File(Autoreply.appDirectory + "/software/info.json"));
+            OutputStreamWriter writer = new OutputStreamWriter(fos, "utf-8");
+            writer.write(Autoreply.gson.toJson(sib));
+            writer.flush();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

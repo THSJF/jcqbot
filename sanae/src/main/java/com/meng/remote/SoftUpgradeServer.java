@@ -35,8 +35,8 @@ public class SoftUpgradeServer extends WebSocketServer {
 			p1.send("");
 			return;
 		}
-		File f=new File(Autoreply.appDirectory + "/software/" + cnb.packageName + ".apk");
-		esi.lastestSize = (int)f.length();
+		File app=new File(Autoreply.appDirectory + "/software/" + cnb.packageName + "-" + esi.lastestVersionCode + ".apk");
+		esi.lastestSize = (int)app.length();
 		Iterator<SoftInfo> iterator=esi.infoList.iterator();
 		while (iterator.hasNext()) {
 			if (iterator.next().versionCode > cnb.nowVersionCode) {
@@ -64,28 +64,6 @@ public class SoftUpgradeServer extends WebSocketServer {
 				rec.readFile(fc);
 				conn.send(BotDataPack.encode(BotDataPack.opTextNotify).write("发送成功").getData());
 				break;
-			case BotDataPack.opUploadApk:
-				String packageName2=rec.readString();
-				int versionCode2=rec.readInt();
-				String versionName2=rec.readString();
-				String describe2=rec.readString();
-				File apk=new File(Autoreply.appDirectory + "/software/" + packageName2 + "-" + versionCode2 + ".log");
-				rec.readFile(apk);
-				SoftInfo si=new SoftInfo();
-				si.versionCode = versionCode2;
-				si.versionName = versionName2;
-				si.versionDescribe = describe2;
-				SoftInfoBean sib=Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "/software/info.json"), SoftInfoBean.class);
-				EachSoftInfo esi2=sib.infos.get(packageName2);
-				if (esi2 == null) {
-					esi = new EachSoftInfo();
-					sib.infos.put(packageName2, esi);
-				}
-				esi2.lastestVersionCode = si.versionCode;
-				esi2.lastestVersionName = si.versionName;
-				esi2.infoList.add(si);
-				saveJson(sib);
-				conn.send(BotDataPack.encode(BotDataPack.opUploadApk).getData());
 		}
 		super.onMessage(conn, message);
 	}
@@ -108,17 +86,4 @@ public class SoftUpgradeServer extends WebSocketServer {
 	private SoftInfoBean readJson() {
 		return Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "/software/info.json"), SoftInfoBean.class);
 	}
-
-	private void saveJson(SoftInfoBean sib) {
-        try {
-            FileOutputStream fos = new FileOutputStream(new File(Autoreply.appDirectory + "/software/info.json"));
-            OutputStreamWriter writer = new OutputStreamWriter(fos, "utf-8");
-            writer.write(Autoreply.gson.toJson(sib));
-            writer.flush();
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 }
