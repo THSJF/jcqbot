@@ -57,6 +57,8 @@ public class BotDataPack {
 	public static final int opQuestionPic = 31;
 	public static final int opTextNotify = 32;
 
+	public static final int opGetApp=33;
+	
 	public static BotDataPack encode(int opCode) {
 		return new BotDataPack(opCode);
 	}

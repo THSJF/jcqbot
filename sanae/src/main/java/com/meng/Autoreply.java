@@ -12,6 +12,7 @@ import com.sobte.cqp.jcq.event.*;
 import java.util.*;
 import java.util.concurrent.*;
 import com.meng.remote.*;
+import java.net.*;
 
 public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
@@ -65,6 +66,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 		threadPool.execute(new LiveListener());
 		remoteWebSocket = new RemoteWebSocket();
 		remoteWebSocket.start();
+		new SoftUpgradeServer(new InetSocketAddress(9234)).start();
 		threadPool.execute(new Runnable(){
 
 				@Override
