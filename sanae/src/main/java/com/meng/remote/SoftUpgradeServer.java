@@ -34,6 +34,8 @@ public class SoftUpgradeServer extends WebSocketServer {
 			p1.send("");
 			return;
 		}
+		File f=new File(Autoreply.appDirectory + "/software/" + cnb.packageName + ".apk");
+		esi.lastestSize = (int)f.length();
 		Iterator<SoftInfo> iterator=esi.infoList.iterator();
 		while (iterator.hasNext()) {
 			if (iterator.next().versionCode > cnb.nowVersionCode) {

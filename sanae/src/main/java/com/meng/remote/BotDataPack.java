@@ -57,7 +57,28 @@ public class BotDataPack {
 	public static final int opQuestionPic = 31;
 	public static final int opTextNotify = 32;
 
-	public static final int opGetApp=33;
+	public static final int opEnableFunction=33;
+
+	public static final int addGroup=34;
+	public static final int addNotReplyUser = 35;
+	public static final int addNotReplyWord = 36;
+	public static final int addPersonInfo = 37;
+	public static final int addMaster = 38;
+	public static final int addAdmin = 39;
+	public static final int addGroupAllow = 40 ;
+	public static final int addBlackQQ = 41;
+	public static final int addBlackGroup = 42;
+	public static final int removeGroup = 43;
+	public static final int removeNotReplyUser = 44;
+	public static final int removeNotReplyWord = 45;
+	public static final int removePersonInfo = 46;
+	public static final int removeMaster = 47;
+	public static final int removeAdmin = 48;
+	public static final int removeGroupAllow = 49;
+	public static final int removeBlackQQ = 50;
+	public static final int removeBlackGroup = 51;
+	public static final int setPersonInfo = 52;
+	public static final int opGetApp = 53;
 	
 	public static BotDataPack encode(int opCode) {
 		return new BotDataPack(opCode);
