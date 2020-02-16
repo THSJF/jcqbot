@@ -25,7 +25,11 @@ public class ModuleReport extends BaseModule {
 				SanaeConfigJavaBean.ReportBean rb = ConfigManager.instence.getReport();
 				ModuleManager.instence.getModule(ModuleFaith.class).addFaith(rb.q, 5);
 				ConfigManager.instence.removeReport();
-				ModuleManager.instence.getModule(ModuleMsgDelaySend.class).addTip(rb.q, String.format("%d在%s的留言「%s」已经处理,获得5信仰奖励,附加消息:%s", rb.q, Tools.CQ.getTime(rb.t), rb.c, msg.substring(msg.indexOf("t") + 1)));
+				if (rb.g == -5) {
+
+				} else {
+					ModuleManager.instence.getModule(ModuleMsgDelaySend.class).addTip(rb.q, String.format("%d在%s的留言「%s」已经处理,获得5信仰奖励,附加消息:%s", rb.q, Tools.CQ.getTime(rb.t), rb.c, msg.substring(msg.indexOf("t") + 1)));
+				}
 				Autoreply.sendMessage(fromGroup, 0, "处理成功");
 				return true;
 			}
@@ -37,7 +41,11 @@ public class ModuleReport extends BaseModule {
 			}
 			if (msg.equalsIgnoreCase("-留言查看 w")) {
 				SanaeConfigJavaBean.ReportBean rb = ConfigManager.instence.getReport();
-				ModuleManager.instence.getModule(ModuleMsgDelaySend.class).addTip(rb.q, String.format("%d在%s的留言「%s」已经处理,开发者认为目前还不是处理此留言的时候", rb.q, Tools.CQ.getTime(rb.t), rb.c));
+				if (rb.g == -5) {
+
+				} else {
+					ModuleManager.instence.getModule(ModuleMsgDelaySend.class).addTip(rb.q, String.format("%d在%s的留言「%s」已经处理,开发者认为目前还不是处理此留言的时候", rb.q, Tools.CQ.getTime(rb.t), rb.c));
+				}
 				ConfigManager.instence.reportToLast();
 				Autoreply.sendMessage(fromGroup, 0, "处理成功");
 				return true;

@@ -1,5 +1,7 @@
 package com.meng.remote;
 import com.meng.*;
+import com.meng.config.*;
+import com.meng.groupMsgProcess.*;
 import com.meng.remote.softinfo.*;
 import com.meng.tools.*;
 import java.io.*;
@@ -63,6 +65,10 @@ public class SoftUpgradeServer extends WebSocketServer {
 				File fc=new File(Autoreply.appDirectory + "/softlog/" + rec.readString() + "-" + rec.readInt() + ".log");
 				rec.readFile(fc);
 				conn.send(BotDataPack.encode(BotDataPack.opTextNotify).write("发送成功").getData());
+				break;
+			case BotDataPack.sendToMaster:
+				ConfigManager.instence.addReport(-5, -5, rec.readString());
+				ModuleManager.instence.getModule(ModuleMsgDelaySend.class).addTip(Autoreply.mainGroup, 2856986197L, "有新的用户反馈");
 				break;
 		}
 		super.onMessage(conn, message);
