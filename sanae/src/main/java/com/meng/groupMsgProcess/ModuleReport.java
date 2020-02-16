@@ -21,23 +21,23 @@ public class ModuleReport extends BaseModule {
 				Autoreply.sendMessage(fromGroup, fromQQ, rb == null ?"无留言": rb.toString());
 				return true;
 			}
-			if (msg.equalsIgnoreCase("-留言查看 t")) {
+			if (msg.startsWith("-留言查看 t ")) {
 				SanaeConfigJavaBean.ReportBean rb = ConfigManager.instence.getReport();
-				((ModuleFaith)ModuleManager.instence.getModule(ModuleFaith.class)).addFaith(rb.q, 5);
+				ModuleManager.instence.getModule(ModuleFaith.class).addFaith(rb.q, 5);
 				ConfigManager.instence.removeReport();
-				((ModuleMsgDelaySend)ModuleManager.instence.getModule(ModuleMsgDelaySend.class)).addTip(rb.q, String.format("%d在%s的留言「%s」已经处理,获得5信仰奖励", rb.q, Tools.CQ.getTime(rb.t), rb.c));
+				ModuleManager.instence.getModule(ModuleMsgDelaySend.class).addTip(rb.q, String.format("%d在%s的留言「%s」已经处理,获得5信仰奖励,附加消息:%s", rb.q, Tools.CQ.getTime(rb.t), rb.c, msg.substring(msg.indexOf("t") + 1)));
 				Autoreply.sendMessage(fromGroup, 0, "处理成功");
 				return true;
 			}
 			if (msg.startsWith("-留言查看 f ")) {
 				SanaeConfigJavaBean.ReportBean rb = ConfigManager.instence.removeReport();
 				Autoreply.sendMessage(fromGroup, 0, "处理成功");
-				((ModuleMsgDelaySend)ModuleManager.instence.getModule(ModuleMsgDelaySend.class)).addTip(rb.q, String.format("%d在%s的留言「%s」已经处理:%s", rb.q, Tools.CQ.getTime(rb.t), rb.c, msg.substring(msg.indexOf("f") + 1)));
+				ModuleManager.instence.getModule(ModuleMsgDelaySend.class).addTip(rb.q, String.format("%d在%s的留言「%s」已经处理:%s", rb.q, Tools.CQ.getTime(rb.t), rb.c, msg.substring(msg.indexOf("f") + 1)));
 				return true;
 			}
 			if (msg.equalsIgnoreCase("-留言查看 w")) {
 				SanaeConfigJavaBean.ReportBean rb = ConfigManager.instence.getReport();
-				((ModuleMsgDelaySend)ModuleManager.instence.getModule(ModuleMsgDelaySend.class)).addTip(rb.q, String.format("%d在%s的留言「%s」已经处理,开发者认为目前还不是处理此留言的时候", rb.q, Tools.CQ.getTime(rb.t), rb.c));
+				ModuleManager.instence.getModule(ModuleMsgDelaySend.class).addTip(rb.q, String.format("%d在%s的留言「%s」已经处理,开发者认为目前还不是处理此留言的时候", rb.q, Tools.CQ.getTime(rb.t), rb.c));
 				ConfigManager.instence.reportToLast();
 				Autoreply.sendMessage(fromGroup, 0, "处理成功");
 				return true;
@@ -47,23 +47,23 @@ public class ModuleReport extends BaseModule {
 				Autoreply.sendMessage(fromGroup, fromQQ, brb == null ?"无反馈": brb.toString());
 				return true;
 			}
-			if (msg.equalsIgnoreCase("-反馈查看 t")) {
+			if (msg.startsWith("-反馈查看 t ")) {
 				SanaeConfigJavaBean.BugReportBean brb = ConfigManager.instence.getBugReport();
-				((ModuleFaith)ModuleManager.instence.getModule(ModuleFaith.class)).addFaith(brb.q, 10);
+				ModuleManager.instence.getModule(ModuleFaith.class).addFaith(brb.q, 10);
 				ConfigManager.instence.removeBugReport();
-				((ModuleMsgDelaySend)ModuleManager.instence.getModule(ModuleMsgDelaySend.class)).addTip(brb.q, String.format("%d在%s的反馈「%s」已经处理,获得10信仰奖励", brb.q, Tools.CQ.getTime(brb.t), brb.c));
+				ModuleManager.instence.getModule(ModuleMsgDelaySend.class).addTip(brb.q, String.format("%d在%s的反馈「%s」已经处理,获得10信仰奖励,附加消息:%s", brb.q, Tools.CQ.getTime(brb.t), brb.c, msg.substring(msg.indexOf("t") + 1)));
 				Autoreply.sendMessage(fromGroup, 0, "处理成功");
 				return true;
 			}
 			if (msg.startsWith("-反馈查看 f ")) {
 				SanaeConfigJavaBean.BugReportBean brb = ConfigManager.instence.removeBugReport();
 				Autoreply.sendMessage(fromGroup, 0, "处理成功");
-				((ModuleMsgDelaySend)ModuleManager.instence.getModule(ModuleMsgDelaySend.class)).addTip(brb.q, String.format("%d在%s的留言「%s」已经处理:%s", brb.q, Tools.CQ.getTime(brb.t), brb.c, msg.substring(msg.indexOf("f") + 1)));
+				ModuleManager.instence.getModule(ModuleMsgDelaySend.class).addTip(brb.q, String.format("%d在%s的留言「%s」已经处理:%s", brb.q, Tools.CQ.getTime(brb.t), brb.c, msg.substring(msg.indexOf("f") + 1)));
 				return true;
 			}
 			if (msg.equalsIgnoreCase("-反馈查看 w")) {
 				SanaeConfigJavaBean.BugReportBean brb = ConfigManager.instence.getBugReport();
-				((ModuleMsgDelaySend)ModuleManager.instence.getModule(ModuleMsgDelaySend.class)).addTip(brb.q, String.format("%d在%s的反馈「%s」已经处理,开发者认为暂时不需要处理此问题", brb.q, Tools.CQ.getTime(brb.t), brb.c));
+				ModuleManager.instence.getModule(ModuleMsgDelaySend.class).addTip(brb.q, String.format("%d在%s的反馈「%s」已经处理,开发者认为暂时不需要处理此问题", brb.q, Tools.CQ.getTime(brb.t), brb.c));
 				ConfigManager.instence.bugReportToLast();
 				Autoreply.sendMessage(fromGroup, 0, "处理成功");
 				return true;
