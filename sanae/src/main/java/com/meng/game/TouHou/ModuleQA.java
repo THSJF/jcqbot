@@ -106,7 +106,7 @@ public class ModuleQA extends BaseModule {
 			return true;
 		}
 		if (msg.equalsIgnoreCase("-qa")) {
-			int ran=Autoreply.ins.random.nextInt(qaList.size());
+			int ran=Autoreply.ins.random.nextQA();
 			QA qa2=qaList.get(ran);
 			StringBuilder sb=new StringBuilder(Autoreply.CC.at(fromQQ)).append("\n题目ID:").append(ran).append("\n");
 			sb.append("难度:");

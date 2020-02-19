@@ -17,7 +17,7 @@ import java.net.*;
 public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
     public static Autoreply ins;
-	public Random random = new MyRandom();
+	public MyRandom random = new MyRandom();
 	public TimeTip timeTip = new TimeTip();
 	public ModuleCQCode CQcodeManager = new ModuleCQCode();
     public GroupMemberChangerListener groupMemberChangerListener;
