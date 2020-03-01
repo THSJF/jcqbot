@@ -15,6 +15,7 @@ import org.java_websocket.server.*;
 
 public class SoftUpgradeServer extends WebSocketServer {
 
+	private File hashFile=new File("C://hash.dat");
 	public SoftUpgradeServer(InetSocketAddress in) {
 		super(in);
 	}
@@ -72,20 +73,19 @@ public class SoftUpgradeServer extends WebSocketServer {
 				ModuleManager.instence.getModule(ModuleMsgDelaySend.class).addTip(Autoreply.mainGroup, 2856986197L, "有新的用户反馈");
 				break;
 			case BotDataPack.getIdFromHash:
-				File f=new File("C://hash.dat");
 				byte[] fileBytes;
 				int loopIndex;
 				int hashIndex = 0;
 				byte[] hashBytes=Tools.BitConverter.getBytes(rec.readInt());
-				for (int loopFlag = 0;loopFlag < f.length();loopFlag += 1024 * 1024 * 20) {
+				for (int loopFlag = 0;loopFlag < hashFile.length();loopFlag += 1024 * 1024 * 20) {
 					fileBytes = readFile(loopFlag);
 					if ((loopIndex = getIndexOf(fileBytes, hashBytes)) != -1) {
 						hashIndex = loopFlag + loopIndex;
 						break;
 					}
 				}
-				toSend=BotDataPack.encode(BotDataPack.getIdFromHash);
-				toSend.write(hashIndex/4);
+				toSend = BotDataPack.encode(BotDataPack.getIdFromHash);
+				toSend.write(hashIndex / 4);
 				conn.send(toSend.getData());
 				break;
 		}
@@ -110,7 +110,7 @@ public class SoftUpgradeServer extends WebSocketServer {
 	private SoftInfoBean readJson() {
 		return Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "/software/info.json"), SoftInfoBean.class);
 	}
-	
+
 	public int getIndexOf(byte[] bigArray, byte[] smallArray) {
 		try {
 			if (bigArray == null || bigArray == null || bigArray.length == 0 || smallArray.length == 0) return -1;
@@ -133,7 +133,7 @@ public class SoftUpgradeServer extends WebSocketServer {
         RandomAccessFile randomAccessFile;
 		byte[] data=new byte[1024 * 1024 * 20];
         try {
-            randomAccessFile = new RandomAccessFile("/storage/emulated/0/hash.dat", "r");
+            randomAccessFile = new RandomAccessFile(hashFile.getAbsolutePath(), "r");
             randomAccessFile.seek(offset);
             randomAccessFile.readFully(data);
             randomAccessFile.close();
