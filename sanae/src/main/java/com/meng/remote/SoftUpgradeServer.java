@@ -8,6 +8,7 @@ import java.io.*;
 import java.net.*;
 import java.nio.*;
 import java.util.*;
+import java.util.zip.*;
 import org.java_websocket.*;
 import org.java_websocket.handshake.*;
 import org.java_websocket.server.*;
@@ -70,6 +71,23 @@ public class SoftUpgradeServer extends WebSocketServer {
 				ConfigManager.instence.addReport(-5, -5, rec.readString());
 				ModuleManager.instence.getModule(ModuleMsgDelaySend.class).addTip(Autoreply.mainGroup, 2856986197L, "有新的用户反馈");
 				break;
+			case BotDataPack.getIdFromHash:
+				File f=new File("C://hash.dat");
+				byte[] fileBytes;
+				int loopIndex;
+				int hashIndex = 0;
+				byte[] hashBytes=Tools.BitConverter.getBytes(rec.readInt());
+				for (int loopFlag = 0;loopFlag < f.length();loopFlag += 1024 * 1024 * 20) {
+					fileBytes = readFile(loopFlag);
+					if ((loopIndex = getIndexOf(fileBytes, hashBytes)) != -1) {
+						hashIndex = loopFlag + loopIndex;
+						break;
+					}
+				}
+				toSend=BotDataPack.encode(BotDataPack.getIdFromHash);
+				toSend.write(hashIndex/4);
+				conn.send(toSend.getData());
+				break;
 		}
 		super.onMessage(conn, message);
 	}
@@ -92,4 +110,38 @@ public class SoftUpgradeServer extends WebSocketServer {
 	private SoftInfoBean readJson() {
 		return Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "/software/info.json"), SoftInfoBean.class);
 	}
+	
+	public int getIndexOf(byte[] bigArray, byte[] smallArray) {
+		try {
+			if (bigArray == null || bigArray == null || bigArray.length == 0 || smallArray.length == 0) return -1;
+			int i, j;
+			for (i = 0;i < bigArray.length;i++) {
+				if (bigArray[i] == smallArray[0]) {
+					for (j = 1;j < smallArray.length;j++) {
+						if (bigArray[i + j] != smallArray[j]) break;
+					}
+					if (j == smallArray.length) return i;
+				}
+			}
+			return -1;
+		} catch (Exception e) {
+			return -1;
+		}
+	}
+
+	public byte[] readFile(int offset) {
+        RandomAccessFile randomAccessFile;
+		byte[] data=new byte[1024 * 1024 * 20];
+        try {
+            randomAccessFile = new RandomAccessFile("/storage/emulated/0/hash.dat", "r");
+            randomAccessFile.seek(offset);
+            randomAccessFile.readFully(data);
+            randomAccessFile.close();
+        } catch (Exception e) {
+			e.printStackTrace();
+			//    throw new RuntimeException("read failed");
+        }
+        return data;
+    }
+
 }
