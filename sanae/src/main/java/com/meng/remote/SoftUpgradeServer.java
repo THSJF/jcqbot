@@ -8,7 +8,6 @@ import java.io.*;
 import java.net.*;
 import java.nio.*;
 import java.util.*;
-import java.util.zip.*;
 import org.java_websocket.*;
 import org.java_websocket.handshake.*;
 import org.java_websocket.server.*;
@@ -77,12 +76,10 @@ public class SoftUpgradeServer extends WebSocketServer {
 				int loopIndex;
 				toSend = BotDataPack.encode(BotDataPack.getIdFromHash);
 				ArrayList<Integer> intValues=new ArrayList<>();
-				int rest=intValues.size();
 				while (rec.hasNext()) {
 					intValues.add(rec.readInt());
 				}
 				byte[][] hashs=new byte[intValues.size()][4];
-				byte[] ign=new byte[intValues.size()];
 				for (int i=0;i < intValues.size();++i) {
 					byte[] tmp=Tools.BitConverter.getBytes(intValues.get(i));
 					hashs[i][0] = tmp[0];
@@ -90,22 +87,21 @@ public class SoftUpgradeServer extends WebSocketServer {
 					hashs[i][2] = tmp[2];
 					hashs[i][3] = tmp[3];
 				}
-				for (int i=0;i < hashs.length;++i) {
-					if (ign[i] == 1) {
-						continue;
-					}
-					byte[] hashBytes = hashs[i];
-					for (long loopFlag = 0;loopFlag < hashFile.length();loopFlag += 1024 * 1024 * 20) {
-						fileBytes = readFile(loopFlag);
-						if ((loopIndex = getIndexOf(fileBytes, hashBytes)) != -1) {
-							toSend.write(Tools.BitConverter.toInt(hashBytes));
-							toSend.write((loopFlag + loopIndex) / 4);
-							ign[i] = 1;
-							if (rest-- == 0) {
-								break;
+				try {
+					for (int i=0;i < hashs.length;++i) {
+						byte[] hashBytes = hashs[i];
+						for (long loopFlag = 0;loopFlag < hashFile.length();loopFlag += 1024 * 1024 * 20) {
+							fileBytes = readFile(loopFlag);
+							if ((loopIndex = getIndexOf(fileBytes, hashBytes)) != -1) {
+								toSend.write(Tools.BitConverter.toInt(hashBytes));
+								toSend.write((loopFlag + loopIndex) / 4);
 							}
 						}
 					}
+				} catch (EOFException e) {
+					System.out.println("eof");
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 				conn.send(toSend.getData());
 				break;
@@ -150,18 +146,13 @@ public class SoftUpgradeServer extends WebSocketServer {
 		}
 	}
 
-	public byte[] readFile(long offset) {
+	public byte[] readFile(long offset) throws EOFException, FileNotFoundException, IOException {
         RandomAccessFile randomAccessFile;
 		byte[] data=new byte[1024 * 1024 * 20];
-        try {
-            randomAccessFile = new RandomAccessFile(hashFile.getAbsolutePath(), "r");
-            randomAccessFile.seek(offset);
-            randomAccessFile.readFully(data);
-            randomAccessFile.close();
-        } catch (Exception e) {
-			e.printStackTrace();
-			//    throw new RuntimeException("read failed");
-        }
+		randomAccessFile = new RandomAccessFile(hashFile.getAbsolutePath(), "r");
+		randomAccessFile.seek(offset);
+		randomAccessFile.readFully(data);
+		randomAccessFile.close();
         return data;
     }
 
