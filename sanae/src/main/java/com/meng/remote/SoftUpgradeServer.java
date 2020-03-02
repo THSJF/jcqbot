@@ -77,6 +77,7 @@ public class SoftUpgradeServer extends WebSocketServer {
 				int loopIndex;
 				toSend = BotDataPack.encode(BotDataPack.getIdFromHash);
 				ArrayList<Integer> intValues=new ArrayList<>();
+				int rest=intValues.size();
 				while (rec.hasNext()) {
 					intValues.add(rec.readInt());
 				}
@@ -94,12 +95,15 @@ public class SoftUpgradeServer extends WebSocketServer {
 						continue;
 					}
 					byte[] hashBytes = hashs[i];
-					for (int loopFlag = 0;loopFlag < hashFile.length();loopFlag += 1024 * 1024 * 20) {
+					for (long loopFlag = 0;loopFlag < hashFile.length();loopFlag += 1024 * 1024 * 20) {
 						fileBytes = readFile(loopFlag);
 						if ((loopIndex = getIndexOf(fileBytes, hashBytes)) != -1) {
 							toSend.write(Tools.BitConverter.toInt(hashBytes));
 							toSend.write((loopFlag + loopIndex) / 4);
 							ign[i] = 1;
+							if (rest-- == 0) {
+								break;
+							}
 						}
 					}
 				}
@@ -146,7 +150,7 @@ public class SoftUpgradeServer extends WebSocketServer {
 		}
 	}
 
-	public byte[] readFile(int offset) {
+	public byte[] readFile(long offset) {
         RandomAccessFile randomAccessFile;
 		byte[] data=new byte[1024 * 1024 * 20];
         try {
