@@ -75,17 +75,34 @@ public class SoftUpgradeServer extends WebSocketServer {
 			case BotDataPack.getIdFromHash:
 				byte[] fileBytes;
 				int loopIndex;
-				int hashIndex = 0;
-				byte[] hashBytes=Tools.BitConverter.getBytes(rec.readInt());
-				for (int loopFlag = 0;loopFlag < hashFile.length();loopFlag += 1024 * 1024 * 20) {
-					fileBytes = readFile(loopFlag);
-					if ((loopIndex = getIndexOf(fileBytes, hashBytes)) != -1) {
-						hashIndex = loopFlag + loopIndex;
-						break;
+				toSend = BotDataPack.encode(BotDataPack.getIdFromHash);
+				ArrayList<Integer> intValues=new ArrayList<>();
+				while (rec.hasNext()) {
+					intValues.add(rec.readInt());
+				}
+				byte[][] hashs=new byte[intValues.size()][4];
+				byte[] ign=new byte[intValues.size()];
+				for (int i=0;i < intValues.size();++i) {
+					byte[] tmp=Tools.BitConverter.getBytes(intValues.get(i));
+					hashs[i][0] = tmp[0];
+					hashs[i][1] = tmp[1];
+					hashs[i][2] = tmp[2];
+					hashs[i][3] = tmp[3];
+				}
+				for (int i=0;i < hashs.length;++i) {
+					if (ign[i] == 1) {
+						continue;
+					}
+					byte[] hashBytes = hashs[i];
+					for (int loopFlag = 0;loopFlag < hashFile.length();loopFlag += 1024 * 1024 * 20) {
+						fileBytes = readFile(loopFlag);
+						if ((loopIndex = getIndexOf(fileBytes, hashBytes)) != -1) {
+							toSend.write(Tools.BitConverter.toInt(hashBytes));
+							toSend.write((loopFlag + loopIndex) / 4);
+							ign[i] = 1;
+						}
 					}
 				}
-				toSend = BotDataPack.encode(BotDataPack.getIdFromHash);
-				toSend.write(hashIndex / 4);
 				conn.send(toSend.getData());
 				break;
 		}

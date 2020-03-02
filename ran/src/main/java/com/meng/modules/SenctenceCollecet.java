@@ -20,7 +20,7 @@ public class SenctenceCollecet extends BaseModule {
         if (!sbFile.exists()) {
             saveConfig();
         }
-        Type type = new TypeToken<RanCfgBean>() {
+        Type type = new TypeToken<SenBean>() {
         }.getType();
         senb = Autoreply.gson.fromJson(Tools.FileTool.readString(sbFile), type);
 		enable = true;
