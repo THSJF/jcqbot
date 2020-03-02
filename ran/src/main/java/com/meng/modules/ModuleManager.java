@@ -38,6 +38,7 @@ public class ModuleManager extends BaseModule {
 
 	@Override
 	public BaseModule load() {
+		modules.add(new SenctenceCollecet().load());
 		modules.add(new MGroupCounterChart().load());
 		modules.add(new MGroupCounter().load());
 		modules.add(new MUserCounter().load());
