@@ -101,10 +101,10 @@ public class NetConfig extends WebSocketClient {
 				//直播间说话 string(主播称呼) long(blid) string(说话者称呼) long(说话者bid)
 				break; 
 			case SanaeDataPack.opNewVideo:
-				Autoreply.sendMessage(Autoreply.mainGroup, 0, dataRec.readString() + "发布新视频:" + dataRec.readString() + "(av" + dataRec.readLong() + ")");
+				Autoreply.sendMessage(Autoreply.mainGroup, 0, dataRec.readString() + "发布新视频:" + dataRec.readString() + "(av" + dataRec.readInt() + ")");
 				break;
 			case SanaeDataPack.opNewArtical:
-				Autoreply.sendMessage(Autoreply.mainGroup, 0, dataRec.readString() + "发布新专栏:" + dataRec.readString() + "(cv" + dataRec.readLong() + ")");
+				Autoreply.sendMessage(Autoreply.mainGroup, 0, dataRec.readString() + "发布新专栏:" + dataRec.readString() + "(cv" + dataRec.readInt() + ")");
 				break;
 		}
 	}
