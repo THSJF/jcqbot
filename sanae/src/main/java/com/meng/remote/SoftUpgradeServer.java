@@ -79,6 +79,8 @@ public class SoftUpgradeServer extends WebSocketServer {
 				while (rec.hasNext()) {
 					intValues.add(rec.readInt());
 				}
+				int tasks=intValues.size();
+				byte[] didFlag=new byte[intValues.size()];
 				byte[][] hashs=new byte[intValues.size()][4];
 				for (int i=0;i < intValues.size();++i) {
 					byte[] tmp=Tools.BitConverter.getBytes(intValues.get(i));
@@ -88,14 +90,23 @@ public class SoftUpgradeServer extends WebSocketServer {
 					hashs[i][3] = tmp[3];
 				}
 				try {
-					for (int i=0;i < hashs.length;++i) {
-						byte[] hashBytes = hashs[i];
-						for (long loopFlag = 0;loopFlag < hashFile.length();loopFlag += 1024 * 1024 * 20) {
-							fileBytes = readFile(loopFlag);
+					for (long loopFlag = 0;loopFlag < hashFile.length();loopFlag += 1024 * 1024 * 20) {
+						fileBytes = readFile(loopFlag);
+						for (int i=0;i < hashs.length;++i) {
+							if (didFlag[i] == 1) {
+								continue;
+							}
+							byte[] hashBytes = hashs[i];
 							if ((loopIndex = getIndexOf(fileBytes, hashBytes)) != -1) {
 								toSend.write(Tools.BitConverter.toInt(hashBytes));
-								toSend.write((loopFlag + loopIndex) / 4);
+								toSend.write((int)(loopFlag + loopIndex) / 4);
+								System.out.println((int)(loopFlag + loopIndex) / 4);
+								didFlag[i] = 1;
+								tasks--;
 							}
+						}
+						if (tasks == 0) {
+							break;
 						}
 					}
 				} catch (EOFException e) {
