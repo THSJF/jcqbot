@@ -63,8 +63,8 @@ public class ModuleQAR extends BaseModule {
     }
 
 	private QA createQA() {
-		SpellCard spellCard=ModuleDiceImitate.spells[new Random().nextInt(ModuleDiceImitate.spells.length)];
-		int diff=spellCard.d;
+		int diff=new Random().nextInt(9);
+		SpellCard spellCard=ModuleManager.instence.getModule(ModuleDiceImitate.class).getSpellFromDiff(1, diff)[0];
 		SpellCard[] sps=ModuleManager.instence.getModule(ModuleDiceImitate.class).getSpellFromDiff(3, ~diff);
 		QA qa=new QA();
 		qa.a.add(spellCard.n);
@@ -104,8 +104,8 @@ public class ModuleQAR extends BaseModule {
 				sb.append("phamtasm关卡");
 				break;
 			default:
-			System.out.println(spellCard.n);
-			System.out.println(diff);
+				System.out.println(spellCard.n);
+				System.out.println(diff);
 		}
 		sb.append("中出现的是:");
 		qa.q = sb.toString();
