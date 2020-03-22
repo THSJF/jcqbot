@@ -19,6 +19,14 @@ public class ModuleDiceImitate extends BaseModule {
 	public static HashSet<SpellCard> memory=new HashSet<>();
 	public static HashSet<SpellCard> pachouli=new HashSet<>();
 
+	public SpellCard[] getSpellFromDiff(int count, int diffFlag) {
+		SpellCard[] spshs=new SpellCard[count];
+		for (int i=0;i < count;++i) {
+			spshs[i] = spells[new Random().nextInt(spells.length)];
+		}
+		return spshs;
+	}
+
 	@Override
 	public BaseModule load() {
 		spells = new SpellCard[]{};

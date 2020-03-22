@@ -27,6 +27,7 @@ public class ModuleManager extends BaseModule {
 		modules.add(new ModuleDiceImitate().load());
 		modules.add(new ModuleSeq());
 		modules.add(new ModuleGroupDic().load());
+		modules.add(new ModuleQAR().load());
 		instence = this;
 		enable = true;
 		return this;
