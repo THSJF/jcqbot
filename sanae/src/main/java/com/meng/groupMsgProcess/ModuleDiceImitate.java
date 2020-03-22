@@ -22,7 +22,12 @@ public class ModuleDiceImitate extends BaseModule {
 	public SpellCard[] getSpellFromDiff(int count, int diffFlag) {
 		SpellCard[] spshs=new SpellCard[count];
 		for (int i=0;i < count;++i) {
-			spshs[i] = spells[new Random().nextInt(spells.length)];
+			SpellCard splc;
+			do{
+				splc = spells[new Random().nextInt(spells.length)];
+			}while((splc.d & diffFlag) != 0);
+			spshs[i] = splc;
+			splc = null;
 		}
 		return spshs;
 	}

@@ -102,7 +102,10 @@ public class ModuleQAR extends BaseModule {
 				break;
 			case SpellCard.Ph:
 				sb.append("phamtasm关卡");
-				break;	
+				break;
+			default:
+			System.out.println(spellCard.n);
+			System.out.println(diff);
 		}
 		sb.append("中出现的是:");
 		qa.q = sb.toString();

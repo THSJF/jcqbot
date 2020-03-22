@@ -49,9 +49,9 @@ public class Commands {
 				if(CQ.getGroupMemberInfo(group,qqId).getAuthority()==2 || qqId==1789706995) {
 					if (args.length > 1) {
 						if (args[1].equals("on")) {
-							var.replace("running", true);
+							var.put("running", true);
 						} else if (args[1].equals("off")) {
-							var.replace("running", false);
+							var.put("running", false);
 							sendGroup(group, "那我就先去歇会啦");
 						}
 					} else {
@@ -321,14 +321,14 @@ public class Commands {
 				}
 				else if((msg.matches("草"))&&(!(Boolean) var.get("cao"))){
 					sendGroup(group,"草");
-					var.replace("cao",true);
+					var.put("cao",true);
 					new Thread(new Runnable(){
 
 							@Override
 							public void run() {
 								try {
 									Thread.sleep(10000);
-									var.replace("cao",false);
+									var.put("cao",false);
 								} catch (InterruptedException e) {
 									e.printStackTrace();
 								}
