@@ -63,9 +63,9 @@ public class ModuleQAR extends BaseModule {
     }
 
 	private QA createQA() {
-		int diff=new Random().nextInt(9);
-		SpellCard spellCard=ModuleManager.instence.getModule(ModuleDiceImitate.class).getSpellFromDiff(1, diff)[0];
-		SpellCard[] sps=ModuleManager.instence.getModule(ModuleDiceImitate.class).getSpellFromDiff(3, ~diff);
+		int diff=1 << new Random().nextInt(9);
+		SpellCard spellCard = ModuleManager.instence.getModule(ModuleDiceImitate.class).getSpellFromDiff(diff);
+		SpellCard[] sps = ModuleManager.instence.getModule(ModuleDiceImitate.class).getSpellFromNotDiff(3, diff);
 		QA qa=new QA();
 		qa.a.add(spellCard.n);
 		for (SpellCard spc:sps) {
@@ -107,7 +107,7 @@ public class ModuleQAR extends BaseModule {
 				System.out.println(spellCard.n);
 				System.out.println(diff);
 		}
-		sb.append("中出现的是:");
+		sb.append("中出现的是:\n");
 		qa.q = sb.toString();
 		return qa;
 	}

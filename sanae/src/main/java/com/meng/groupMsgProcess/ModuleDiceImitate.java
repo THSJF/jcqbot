@@ -19,15 +19,28 @@ public class ModuleDiceImitate extends BaseModule {
 	public static HashSet<SpellCard> memory=new HashSet<>();
 	public static HashSet<SpellCard> pachouli=new HashSet<>();
 
-	public SpellCard[] getSpellFromDiff(int count, int diffFlag) {
+	public SpellCard getSpellFromDiff(int diffFlag) {
+		SpellCard splc;
+		while (true) {
+			splc = spells[new Random().nextInt(spells.length)];
+			if ((splc.d & diffFlag) != 0) {
+				return splc;
+			}
+		}
+	}
+
+	public SpellCard[] getSpellFromNotDiff(int count, int diffFlag) {
 		SpellCard[] spshs=new SpellCard[count];
 		for (int i=0;i < count;++i) {
 			SpellCard splc;
-			do{
+			while (true) {
 				splc = spells[new Random().nextInt(spells.length)];
-			}while((splc.d & diffFlag) != 0);
-			spshs[i] = splc;
-			splc = null;
+				if ((splc.d & diffFlag) == 0) {
+					spshs[i] = splc;
+					splc = null;
+					break;
+				}
+			}
 		}
 		return spshs;
 	}
