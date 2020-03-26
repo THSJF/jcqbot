@@ -84,7 +84,7 @@ public class TH12GameData {
 		new SpellCard("魔法「紫云之兆」", "圣白莲", SpellCard.E | SpellCard.N),
 		new SpellCard("吉兆「紫色云路」", "圣白莲", SpellCard.H),
 		new SpellCard("吉兆「极乐的紫色云路」", "圣白莲", SpellCard.L),
-		new SpellCard("魔法「魔界蝶之妖香」", "圣白莲", SpellCard.E | SpellCard.N),
+		new SpellCard("魔法「魔界蝶的妖香」", "圣白莲", SpellCard.E | SpellCard.N),
 		new SpellCard("魔法「魔法之蝶」", "圣白莲", SpellCard.H | SpellCard.L),
 		new SpellCard("光魔「星辰漩涡」", "圣白莲", SpellCard.E | SpellCard.N),
 		new SpellCard("光魔「魔法银河」", "圣白莲", SpellCard.H | SpellCard.L),

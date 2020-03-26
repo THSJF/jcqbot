@@ -153,7 +153,7 @@ public class ModuleTHData extends BaseModule{
 	}
 
 	private void initSpellPs(){
-		spellCardInfoMap.put("月符「月光」","未填坑");
+	/*	spellCardInfoMap.put("月符「月光」","未填坑");
 		spellCardInfoMap.put("夜符「夜雀」","未填坑");
 		spellCardInfoMap.put("暗符「境界线」","未填坑");
 		spellCardInfoMap.put("冰符「冰瀑」","未填坑");
@@ -480,10 +480,10 @@ public class ModuleTHData extends BaseModule{
 		spellCardInfoMap.put("神秘「葛泉清水」","未填坑");
 		spellCardInfoMap.put("神秘「大和茅环」","未填坑");
 		spellCardInfoMap.put("天流「天水奇迹」","未填坑");
-		spellCardInfoMap.put("天龙「雨之源泉」","未填坑");
+		spellCardInfoMap.put("天龙「雨之源泉」","未填坑");*/
 		spellCardInfoMap.put("「信仰之山」","麻将山上麻将飞,麻将山下残机堆");
 		spellCardInfoMap.put("「风神之神德」","麻将山上麻将飞,麻将山下残机堆");
-		spellCardInfoMap.put("神符「如水眼之美丽源泉」","未填坑");
+		/*spellCardInfoMap.put("神符「如水眼之美丽源泉」","未填坑");
 		spellCardInfoMap.put("神符「结于杉木之古缘」","未填坑");
 		spellCardInfoMap.put("神符「神所踏足之御神渡」","未填坑");
 		spellCardInfoMap.put("开宴「二拜二拍一拜」","未填坑");
@@ -620,7 +620,7 @@ public class ModuleTHData extends BaseModule{
 		spellCardInfoMap.put("魔法「紫云之兆」","未填坑");
 		spellCardInfoMap.put("吉兆「紫色云路」","未填坑");
 		spellCardInfoMap.put("吉兆「极乐的紫色云路」","未填坑");
-		spellCardInfoMap.put("魔法「魔界蝶之妖香」","未填坑");
+		spellCardInfoMap.put("魔法「魔界蝶的妖香」","未填坑");
 		spellCardInfoMap.put("魔法「魔法之蝶」","未填坑");
 		spellCardInfoMap.put("光魔「星辰漩涡」","未填坑");
 		spellCardInfoMap.put("光魔「魔法银河」","未填坑");
@@ -778,7 +778,7 @@ public class ModuleTHData extends BaseModule{
 		spellCardInfoMap.put("兔符「浆果浆果团子」","未填坑");
 		spellCardInfoMap.put("兔符「团子影响力」","未填坑");
 		spellCardInfoMap.put("月见「九月的满月」","未填坑");
-		spellCardInfoMap.put("月见酒「月狂的九月」","未填坑");
+		spellCardInfoMap.put("月见酒「月狂的九月」","未填坑");*/
 		spellCardInfoMap.put("梦符「绯红色的噩梦」","东 方 跟 着 转");
 		spellCardInfoMap.put("梦符「绯红色的压迫噩梦」","东 方 跟 着 转");
 		spellCardInfoMap.put("梦符「蔚蓝色的愁梦」","东 方 跟 着 转");
@@ -786,25 +786,25 @@ public class ModuleTHData extends BaseModule{
 		spellCardInfoMap.put("梦符「愁永远之梦」","东 方 跟 着 转");
 		spellCardInfoMap.put("梦符「刈安色的迷梦」","东 方 跟 着 转");
 		spellCardInfoMap.put("梦符「刈安色的错综迷梦」","东 方 跟 着 转");
-		spellCardInfoMap.put("梦符「捕梦网」","未填坑");
+	/*	spellCardInfoMap.put("梦符「捕梦网」","未填坑");
 		spellCardInfoMap.put("梦符「苍蓝色的捕梦网」","未填坑");
-		spellCardInfoMap.put("梦符「梦我梦中」","未填坑");
+		spellCardInfoMap.put("梦符「梦我梦中」","未填坑");*/
 		spellCardInfoMap.put("月符「绀色的狂梦」","简单(?)的自机相关");
 		spellCardInfoMap.put("玉符「乌合之咒」","简单(?)的狙");
 		spellCardInfoMap.put("玉符「乌合的逆咒」","简单(?)的狙");
 		spellCardInfoMap.put("玉符「乌合的二重咒」","简单(?)的狙");
-		spellCardInfoMap.put("玉符「秽身探知型水雷」","未填坑");
-		spellCardInfoMap.put("玉符「秽身探知型水雷 改」","未填坑");
+	//	spellCardInfoMap.put("玉符「秽身探知型水雷」","未填坑");
+	//	spellCardInfoMap.put("玉符「秽身探知型水雷 改」","未填坑");
 		spellCardInfoMap.put("玉符「众神的弹冠」","绀珠传最简单符卡");
 		spellCardInfoMap.put("玉符「众神的光辉弹冠」","绀珠传最简单符卡（真）");
 		spellCardInfoMap.put("「孤翼的白鹭」","多动症shadiao");
-		spellCardInfoMap.put("狱符「地狱日食」","未填坑");
-		spellCardInfoMap.put("狱符「地狱之蚀」","未填坑");
+	//	spellCardInfoMap.put("狱符「地狱日食」","未填坑");
+	//	spellCardInfoMap.put("狱符「地狱之蚀」","未填坑");
 		spellCardInfoMap.put("狱符「闪光与条纹」","太野蛮了");
-		spellCardInfoMap.put("狱符「星与条纹」","未填坑");
+	/*	spellCardInfoMap.put("狱符「星与条纹」","未填坑");
 		spellCardInfoMap.put("狱炎「擦弹地狱火」","未填坑");
 		spellCardInfoMap.put("狱炎「擦弹的狱意」","未填坑");
-		spellCardInfoMap.put("地狱「条纹状的深渊」","未填坑");
+		spellCardInfoMap.put("地狱「条纹状的深渊」","未填坑");*/
 		spellCardInfoMap.put("「伪阿波罗」","简单(?)的固定弹");
 		spellCardInfoMap.put("「阿波罗捏造说」","简单(?)的固定弹");
 		spellCardInfoMap.put("「掌上的纯光」","简单(真)的角随固");
@@ -817,20 +817,20 @@ public class ModuleTHData extends BaseModule{
 		spellCardInfoMap.put("「地上秽的纯化」","简单(?)的狙");
 		spellCardInfoMap.put("纯符「单纯的子弹地狱」","简单(bu)的随机加固定\np1:这tm是终符?你在逗我\np2:这tm是终符?\np3:这tm...\np4:这...");
 		spellCardInfoMap.put("纯符「纯粹的弹幕地狱」","简单(bu)的随机加固定\np1:这tm是终符?你在逗我\np2:这tm是终符?\np3:这tm...\np4:这...");
-		spellCardInfoMap.put("蝴蝶「取而代之的蝴蝶」","未填坑");
+	/*	spellCardInfoMap.put("蝴蝶「取而代之的蝴蝶」","未填坑");
 		spellCardInfoMap.put("超特急「梦幻快车」","未填坑");
-		spellCardInfoMap.put("爬梦「爬行的子弹」","未填坑");
+		spellCardInfoMap.put("爬梦「爬行的子弹」","未填坑");*/
 		spellCardInfoMap.put("异界「逢魔之刻」","瞎了");
-		spellCardInfoMap.put("地球「邪秽在身」","未填坑");
+	/*	spellCardInfoMap.put("地球「邪秽在身」","未填坑");
 		spellCardInfoMap.put("月「阿波罗反射镜」","未填坑");
 		spellCardInfoMap.put("「用于杀人的纯粹弹幕」","未填坑");
 		spellCardInfoMap.put("异界「地狱的非理想弹幕」","未填坑");
 		spellCardInfoMap.put("地球「落向地狱的雨」","未填坑");
 		spellCardInfoMap.put("「用于逼死瓮中鼠的单纯弹幕」","未填坑");
 		spellCardInfoMap.put("月「月狂冲击」","未填坑");
-		spellCardInfoMap.put("「三位一体论狂想曲」","未填坑");
+		spellCardInfoMap.put("「三位一体论狂想曲」","未填坑");*/
 		spellCardInfoMap.put("「最初与最后的无名弹幕」","野蛮的二打一");
-		spellCardInfoMap.put("蝶符「细碎鳞粉」","未填坑");
+	/*	spellCardInfoMap.put("蝶符「细碎鳞粉」","未填坑");
 		spellCardInfoMap.put("蝶符「凤蝶的鳞粉」","未填坑");
 		spellCardInfoMap.put("蝶符「扑翅之夏」","未填坑");
 		spellCardInfoMap.put("蝶符「盛夏振翅」","未填坑");
@@ -895,7 +895,7 @@ public class ModuleTHData extends BaseModule{
 		spellCardInfoMap.put("石符「沉重的石之头婴儿」","未填坑");
 		spellCardInfoMap.put("溺符「三途的沦溺」","未填坑");
 		spellCardInfoMap.put("鬼符「魔鬼围城」","未填坑");
-		spellCardInfoMap.put("鬼符「饿鬼围城」","未填坑");
+		spellCardInfoMap.put("鬼符「饿鬼围城」","未填坑");*/
 		spellCardInfoMap.put("水符「分水的试练」","鸡你太美");
 		spellCardInfoMap.put("水符「分水的上级试炼」","鸡你太美");
 		spellCardInfoMap.put("水符「分水的顶级试炼」","鸡你太美");
@@ -905,7 +905,7 @@ public class ModuleTHData extends BaseModule{
 		spellCardInfoMap.put("鬼符「鬼渡的试练」","鸡你太美");
 		spellCardInfoMap.put("鬼符「鬼渡的上级试炼」","鸡你太美");
 		spellCardInfoMap.put("鬼符「鬼渡的狱级试炼」","鸡你太美");
-		spellCardInfoMap.put("龟符「龟甲地狱」","未填坑");
+	/*	spellCardInfoMap.put("龟符「龟甲地狱」","未填坑");
 		spellCardInfoMap.put("鬼符「搦手之畜生」","未填坑");
 		spellCardInfoMap.put("鬼符「搦手之犬畜生」","未填坑");
 		spellCardInfoMap.put("鬼符「搦手之鬼畜生」","未填坑");
@@ -928,11 +928,11 @@ public class ModuleTHData extends BaseModule{
 		spellCardInfoMap.put("埴轮「偶像造物」","未填坑");
 		spellCardInfoMap.put("「鬼形造形术」","未填坑");
 		spellCardInfoMap.put("「几何造物」","未填坑");
-		spellCardInfoMap.put("「Idola Diabolus」","未填坑");
+		spellCardInfoMap.put("「Idola Diabolus」","未填坑");*/
 		spellCardInfoMap.put("血战「血之分水岭」","鸡你太美");
 		spellCardInfoMap.put("血战「狱界视线」","鸡你太美");
 		spellCardInfoMap.put("血战「全灵鬼渡」","鸡你太美");
-		spellCardInfoMap.put("劲疾技「惊险射击」","未填坑");
+	/*	spellCardInfoMap.put("劲疾技「惊险射击」","未填坑");
 		spellCardInfoMap.put("劲疾技「闪电嘶鸣」","未填坑");
 		spellCardInfoMap.put("劲疾技「浓云」","未填坑");
 		spellCardInfoMap.put("劲疾技「兽性感染」","未填坑");
@@ -941,6 +941,6 @@ public class ModuleTHData extends BaseModule{
 		spellCardInfoMap.put("劲疾技「肌肉爆破」","未填坑");
 		spellCardInfoMap.put("「跟我来，不要怕」","未填坑");
 		spellCardInfoMap.put("「鬼形的乌合之众」","未填坑");
-		spellCardInfoMap.put("「鬼畜生的所业」","未填坑");
+		spellCardInfoMap.put("「鬼畜生的所业」","未填坑");*/
 	}
 }

@@ -11,7 +11,7 @@ import java.util.regex.*;
 
 public class MusicManager extends BaseModule {
 	public static String musicFolder="C://thbgm/";
-	private HashMap<Long,String> resultMap=new HashMap<>();
+	private HashMap<Long,QA> resultMap=new HashMap<>();
 
 	@Override
 	public BaseModule load() {
@@ -21,16 +21,13 @@ public class MusicManager extends BaseModule {
 
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
-		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_Music)){
+		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_Music)) {
 			return false;
 		}
+		judgeAnswer(fromGroup, fromQQ, msg);
 		if (msg.equals("原曲认知")) {
-			File musicFragment=createMusicCut(new Random().nextInt(16), 10, fromQQ);
+			File musicFragment=createMusicCut(new Random().nextInt(16), 10, fromGroup, fromQQ);
 			Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.record(musicFragment.getName()));	
-			return true;
-		}
-		if (msg.startsWith("原曲认知回答 ")) {
-		judgeAnswer(fromGroup, fromQQ, msg.substring(7));
 			return true;
 		}
 		if (msg.startsWith("原曲认知 ")) {
@@ -39,32 +36,32 @@ public class MusicManager extends BaseModule {
 				case "原曲认知 e":
 				case "原曲认知 easy":
 				case "原曲认知 Easy":
-					Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.record(createMusicCut(new Random().nextInt(16), 10, fromQQ).getName()));	
+					Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.record(createMusicCut(new Random().nextInt(16), 10, fromGroup, fromQQ).getName()));	
 					break;
 				case "原曲认知 N":
 				case "原曲认知 n":
 				case "原曲认知 normal":
 				case "原曲认知 Normal":
-					Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.record(createMusicCut(new Random().nextInt(16), 6, fromQQ).getName()));
+					Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.record(createMusicCut(new Random().nextInt(16), 6, fromGroup, fromQQ).getName()));
 					break;
 				case "原曲认知 H":
 				case "原曲认知 h":
 				case "原曲认知 hard":
 				case "原曲认知 Hard":
-					Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.record(createMusicCut(new Random().nextInt(16), 3, fromQQ).getName()));
+					Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.record(createMusicCut(new Random().nextInt(16), 3, fromGroup, fromQQ).getName()));
 					break;
 				case "原曲认知 L":
 				case "原曲认知 l":
 				case "原曲认知 lunatic":
 				case "原曲认知 Lunatic":
-					Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.record(createMusicCut(new Random().nextInt(16), 1, fromQQ).getName()));
+					Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.record(createMusicCut(new Random().nextInt(16), 1, fromGroup, fromQQ).getName()));
 					break;		
 			}
 		}
 		return false;
 	}
 
-	private File createMusicCut(int musicNum, int needSeconeds, long fromQQ) {
+	private File createMusicCut(int musicNum, int needSeconeds, long fromGroup,  long fromQQ) {
 		File[] games=new File(musicFolder).listFiles();
 		int game=new Random().nextInt(games.length);
 		File fmtFile = new File(musicFolder + games[game].getName() + "/thbgm.fmt");
@@ -99,61 +96,61 @@ public class MusicManager extends BaseModule {
 					new File(newFileName).delete();
 				}
 			});
+		QA qa = new QA();
+		qa.setTrueAns(0);
 		switch (games[game].getName()) {
 			case "th10":
-				resultMap.put(fromQQ, TH10GameData.musicName[musicNum]);
+				qa.a.add(TH10GameData.musicName[musicNum]);
 				break;
 			case "th15":
-				resultMap.put(fromQQ, TH15GameData.musicName[musicNum]);
+				qa.a.add(TH15GameData.musicName[musicNum]);
 				break;
 		}
+		randomMisic(qa.a);
+		qa.exangeAnswer();
+		resultMap.put(fromQQ, qa);
+		StringBuilder sb = new StringBuilder();
+		int i = 0;
+		sb.append("名字是:\n");
+		for (String s:qa.a) {
+			sb.append(i++).append(": ").append(s).append("\n");
+		}
+		sb.append("回答序号即可");
+		Autoreply.sendMessage(fromGroup, 0, sb.toString());
 		return resultFile;
 	}
 
-	private void judgeAnswer(long fromGroup, long fromQQ, String msg) {
-		if (resultMap.get(fromQQ) == null) {
-			return;
+	private void randomMisic(ArrayList<String> list) {
+		for (int i=0;i < 3 ;++i) {
+			while (true) {
+				String musicName=MDiceImitate.music[new Random().nextInt(MDiceImitate.music.length)];
+				if (!list.contains(musicName)) {
+					list.add(musicName);
+					break;
+				}
+			}
 		}
-		if (isContainChinese(msg)) {
-			String userAnswer=msg.replaceAll("[^\u4e00-\u9fa5]", "");
-			String answer=resultMap.get(fromQQ).replaceAll("[^\u4e00-\u9fa5]", "");
-			if (userAnswer.equals(answer)) {
-				Autoreply.sendMessage(fromGroup, fromQQ, "回答正确");
+	}
+
+	private void judgeAnswer(long fromGroup, long fromQQ, String msg) {
+		QA qar = resultMap.get(fromQQ);
+		if (qar != null && msg.equalsIgnoreCase("-qar")) {
+			Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.at(fromQQ) + "你还没有回答");
+			return ;
+		}
+		if (qar != null) {
+			int userAnser=-1;
+			try {
+				userAnser = Integer.parseInt(msg);
+			} catch (NumberFormatException e) {}
+			if (qar.getTrueAns().contains(userAnser) && qar.getTrueAns().size() == 1) {
+				Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.at(fromQQ) + "回答正确");
 			} else {
-				String orignal=resultMap.get(fromQQ);
-				String replaced=orignal.replaceAll("[^\u4e00-\u9fa5]", "");
-				if (orignal.equals(replaced)) {
-					Autoreply.sendMessage(fromGroup, fromQQ, "回答错误,答案是:" + resultMap.get(fromQQ));			
-				} else {
-					Autoreply.sendMessage(fromGroup, fromQQ, "回答错误,答案是:" + orignal + ",你也可以回答:" + replaced);
-				}
-			}		
-		} else {
-			String userAnswer=msg.replaceAll("[^a-zA-Z\\s]", "");
-			String answer=resultMap.get(fromQQ).replaceAll("[^a-zA-Z\\s]", "");
-			if (userAnswer.equalsIgnoreCase(answer)) {
-				Autoreply.sendMessage(fromGroup, fromQQ, "回答正确");
-			} else {
-				String orignal=resultMap.get(fromQQ);
-				String replaced=orignal.replaceAll("[^\u4e00-\u9fa5]", "");
-				if (orignal.equalsIgnoreCase(replaced)) {
-					Autoreply.sendMessage(fromGroup, fromQQ, "回答错误,答案是:" + resultMap.get(fromQQ));			
-				} else {
-					Autoreply.sendMessage(fromGroup, fromQQ, "回答错误,答案是:" + orignal + ",你也可以回答:" + replaced);
-				}
+				Autoreply.sendMessage(fromGroup, 0, String.format("%s回答错误", Autoreply.instance.CC.at(fromQQ)));
 			}
 		}
 		resultMap.remove(fromQQ);
 	}
-
-	private boolean isContainChinese(String str) {
-        Pattern p = Pattern.compile("[\u4e00-\u9fa5]");
-        Matcher m = p.matcher(str);
-        if (m.find()) {
-            return true;
-        }
-        return false;
-    }
 
 	private int getStartBytes(int musicNum, THfmt thfmt, int needSeconeds) {
 		MusicInfo muiscInfo=thfmt.musicInfos[musicNum];
