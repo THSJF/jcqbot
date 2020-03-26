@@ -18,16 +18,16 @@ public class ModuleTHData extends BaseModule{
 	@Override
 	public boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (msg.startsWith("-符卡查询 ")) {
-			SpellCard sc = ((ModuleTHData)ModuleManager.instence.getModule(ModuleTHData.class)).getSpellCard(msg.substring(6));
+			SpellCard sc = ModuleManager.instence.getModule(ModuleTHData.class).getSpellCard(msg.substring(6));
 			if (sc == null) {
 				Autoreply.sendMessage(fromGroup, 0, "没有找到这张符卡");
 				return true;
 			}
-			Autoreply.sendMessage(fromGroup, 0, ((ModuleTHData)ModuleManager.instence.getModule(ModuleTHData.class)).getSpellCardPs(sc));
+			Autoreply.sendMessage(fromGroup, 0, ModuleManager.instence.getModule(ModuleTHData.class).getSpellCardPs(sc));
 			return true;
 		}
 		if (msg.startsWith("-角色查询 ")) {
-			Autoreply.sendMessage(fromGroup, 0, ((ModuleTHData)ModuleManager.instence.getModule(ModuleTHData.class)).getCharaNick(msg.substring(6)));
+			Autoreply.sendMessage(fromGroup, 0, ModuleManager.instence.getModule(ModuleTHData.class).getCharaNick(msg.substring(6)));
 			return true;
 		}
 		return false;
