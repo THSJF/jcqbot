@@ -84,6 +84,7 @@ public class TimeTip implements Runnable {
 										e.printStackTrace();
 									}
 								}
+								ModuleManager.instence.getModule(ModuleMorning.class).reset();
 							}
 						});
 				}          

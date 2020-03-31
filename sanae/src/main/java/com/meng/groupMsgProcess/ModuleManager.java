@@ -11,6 +11,7 @@ public class ModuleManager extends BaseModule {
 	@Override
 	public BaseModule load() {
 		modules.add(new ModuleAdminMsg().load());
+		modules.add(new ModuleMorning().load());
 		modules.add(new ModuleGroupCounter().load());
 		modules.add(new ModuleMsgRefuse().load());
 		modules.add(new ModuleReport().load());
