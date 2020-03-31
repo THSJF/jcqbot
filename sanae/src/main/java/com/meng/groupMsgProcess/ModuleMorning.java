@@ -10,18 +10,18 @@ import java.util.*;
 
 public class ModuleMorning extends BaseModule {
 
-	private ArrayList<QQInfo> gotUp;
+	private ArrayList<GetUpBean> getUp;
 
 	@Override
 	public BaseModule load() {
-		Type type = new TypeToken<ArrayList<QQInfo>>() {
+		Type type = new TypeToken<ArrayList<GetUpBean>>() {
 		}.getType();
-		File gotUpF = new File(Autoreply.appDirectory + "/gotUp.json");
+		File gotUpF = new File(Autoreply.appDirectory + "/getUp.json");
 		if (!gotUpF.exists()) {
-			gotUp = new ArrayList<>();
+			getUp = new ArrayList<>();
 			saveConfig();
 		}
-        gotUp = Autoreply.gson.fromJson(Tools.FileTool.readString(gotUpF), type);
+        getUp = Autoreply.gson.fromJson(Tools.FileTool.readString(gotUpF), type);
 		enable = true;
 		return this;
 	}
@@ -29,30 +29,42 @@ public class ModuleMorning extends BaseModule {
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (msg.equals("早上好")) {
-			for (QQInfo qif:gotUp) {
-				if (qif.getQqId() == fromQQ) {
+			for (GetUpBean qif:getUp) {
+				if (qif.qq == fromQQ) {
 					return false;
 				}
 			}
-			QQInfo qi=Autoreply.CQ.getStrangerInfo(fromQQ);
-			if (qi != null) {
-				gotUp.add(qi);
+			GetUpBean qi=new GetUpBean();
+			qi.qq = fromQQ;
+			QQInfo qif=Autoreply.CQ.getStrangerInfo(fromQQ);
+			if (qif == null) {
+				qi.isBoy = false;
 			} else {
-				qi = new QQInfo();
-				qi.setQqId(fromQQ);
-				qi.setGender(1);
-				gotUp.add(qi);
+				qi.isBoy = qif.getGender() == 0;
 			}
-			Autoreply.sendMessage(fromGroup, 0, String.format("你是今天第%d位起床的%s哦", gotUp.size(), qi.getGender() == 0 ?"少年": "少女"));
+			qi.getUptimeStamp = System.currentTimeMillis();
+			getUp.add(qi);
+			Autoreply.sendMessage(fromGroup, 0, String.format("你是今天第%d位起床的%s哦", getUp.size(), qi.isBoy ?"少年": "少女"));
+		} else if (msg.equals("晚安")) {
+			for (GetUpBean qif:getUp) {
+				if (qif.qq == fromQQ) {
+					if (qif.getUptimeStamp == 0 || qif.isSleep) {
+						return false;
+					} else {
+						Autoreply.sendMessage(fromGroup, 0, "你今天清醒了" + secondToTime((System.currentTimeMillis() - qif.getUptimeStamp) / 1000));
+						qif.isSleep = true;
+					}
+				}
+			}
 		}
 		return false;
 	}
 
 	private void saveConfig() {
 		try {
-			FileOutputStream fos = new FileOutputStream(new File(Autoreply.appDirectory + "/gotUp.json"));
+			FileOutputStream fos = new FileOutputStream(new File(Autoreply.appDirectory + "/getUp.json"));
             OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-            writer.write(Autoreply.gson.toJson(gotUp));
+            writer.write(Autoreply.gson.toJson(getUp));
             writer.flush();
             fos.close();
         } catch (IOException e) {
@@ -61,6 +73,14 @@ public class ModuleMorning extends BaseModule {
     }
 
 	public void reset() {
-		gotUp.clear();
+		getUp.clear();
+	}
+
+	public String secondToTime(long second) {
+		long hours = second / 3600;            //转换小时
+		second = second % 3600;                //剩余秒数
+		long minutes = second / 60;            //转换分钟
+		second = second % 60;                //剩余秒数
+		return hours + "小时" + minutes + "分" + second + "秒";
 	}
 }
