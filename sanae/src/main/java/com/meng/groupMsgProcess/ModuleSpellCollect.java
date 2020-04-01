@@ -75,7 +75,7 @@ public class ModuleSpellCollect extends BaseModule {
 			addSpell(fromQQ, sc);
 			Autoreply.sendMessage(fromGroup, 0, String.format("%s获得了10信仰和 %s", ConfigManager.instence.getNickName(fromQQ), sc.n));
 			checkArchievement(fromGroup, fromQQ);
-			((ModuleFaith)ModuleManager.instence.getModule(ModuleFaith.class)).addFaith(fromQQ, 10);
+			ModuleManager.instence.getModule(ModuleFaith.class).addFaith(fromQQ, 10);
 			spelbean.todaySign.add(fromQQ);
 			saveBeanConfig();
 			return true;
@@ -109,7 +109,7 @@ public class ModuleSpellCollect extends BaseModule {
 			return true;	
 		}
 		if (msg.equals("-faith")) {
-			Autoreply.sendMessage(fromGroup, 0, "你的信仰是:" + ((ModuleFaith)ModuleManager.instence.getModule(ModuleFaith.class)).getFaith(fromQQ));
+			Autoreply.sendMessage(fromGroup, 0, "你的信仰是:" + ModuleManager.instence.getModule(ModuleFaith.class).getFaith(fromQQ));
 			return true;
 		}
 		return false;
@@ -126,7 +126,7 @@ public class ModuleSpellCollect extends BaseModule {
 			if (ac.getNewArchievement(ab, gotSpell)) {
 				ab.addArchievement(ac.archNum);
 				Autoreply.sendMessage(fromGroup, toQQ, "获得成就:" + ac.name + "\n获得奖励:" + ac.faith + "\n条件:" + ac.describe);	
-				((ModuleFaith)ModuleManager.instence.getModule(ModuleFaith.class)).addFaith(toQQ, ac.faith);
+				ModuleManager.instence.getModule(ModuleFaith.class).addFaith(toQQ, ac.faith);
 			}
 		}
 		saveBeanConfig();

@@ -136,10 +136,10 @@ public class ModuleDiceImitate extends BaseModule {
 											  new TouhouCharacter("依神女苑", "东方凭依华")},
 										  TH16GameData.charaName,
 										  TH17GameData.charaName);
-		cat.addAll(((ModuleTHData)ModuleManager.instence.getModule(ModuleTHData.class)).getCharaSpellCard("橙"));
-		cat.addAll(((ModuleTHData)ModuleManager.instence.getModule(ModuleTHData.class)).getCharaSpellCard("火焰猫燐"));
-		memory.addAll(((ModuleTHData)ModuleManager.instence.getModule(ModuleTHData.class)).getCharaSpellCard("古明地觉", "想起「恐怖的回忆」", "想起「恐怖催眠术」"));
-		pachouli.addAll(((ModuleTHData)ModuleManager.instence.getModule(ModuleTHData.class)).getCharaSpellCard("帕秋莉·诺蕾姬"));
+		cat.addAll(ModuleManager.instence.getModule(ModuleTHData.class).getCharaSpellCard("橙"));
+		cat.addAll(ModuleManager.instence.getModule(ModuleTHData.class).getCharaSpellCard("火焰猫燐"));
+		memory.addAll(ModuleManager.instence.getModule(ModuleTHData.class).getCharaSpellCard("古明地觉", "想起「恐怖的回忆」", "想起「恐怖催眠术」"));
+		pachouli.addAll(ModuleManager.instence.getModule(ModuleTHData.class).getCharaSpellCard("帕秋莉·诺蕾姬"));
 		enable = true;
 		return this;
 	}

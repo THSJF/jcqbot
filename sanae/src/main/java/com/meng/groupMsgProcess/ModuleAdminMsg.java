@@ -155,12 +155,12 @@ public class ModuleAdminMsg extends BaseModule {
 				for (int i=0;i < arr.length;++i) {
 					arr[i] = array[i + 2];
 				}
-				((ModuleGroupDic)ModuleManager.instence.getModule(ModuleGroupDic.class)).addKV(fromGroup, array[1], arr);
+				ModuleManager.instence.getModule(ModuleGroupDic.class).addKV(fromGroup, array[1], arr);
 				Autoreply.sendMessage(fromGroup, fromQQ, "KV已添加");
 				return true;
 			}
 			if (msg.startsWith("-removeDic ")) {
-				((ModuleGroupDic)ModuleManager.instence.getModule(ModuleGroupDic.class)).removeK(fromGroup, msg.substring(11));
+				ModuleManager.instence.getModule(ModuleGroupDic.class).removeK(fromGroup, msg.substring(11));
 				Autoreply.sendMessage(fromGroup, fromQQ, "Key已移除");
 				return true;
 			}
@@ -179,7 +179,7 @@ public class ModuleAdminMsg extends BaseModule {
 				}
 			}
 			if (msg.equals("-发言数据")) {
-				HashMap<Integer,Integer> hashMap = ((ModuleGroupCounter)ModuleManager.instence.getModule(ModuleGroupCounter.class)).getSpeak(fromGroup, Tools.CQ.getDate());
+				HashMap<Integer,Integer> hashMap = ModuleManager.instence.getModule(ModuleGroupCounter.class).getSpeak(fromGroup, Tools.CQ.getDate());
 				if (hashMap == null || hashMap.size() == 0) {
 					Autoreply.sendMessage(fromGroup, 0, "无数据");
 					return true;
@@ -193,14 +193,14 @@ public class ModuleAdminMsg extends BaseModule {
 				}
 				Autoreply.sendMessage(fromGroup, 0, sb.toString());
 				try {
-					File pic=((ModuleGroupCounter)ModuleManager.instence.getModule(ModuleGroupCounter.class)).dchart.check(((ModuleGroupCounter)ModuleManager.instence.getModule(ModuleGroupCounter.class)).groupsMap.get(fromGroup));
+					File pic=ModuleManager.instence.getModule(ModuleGroupCounter.class).dchart.check(((ModuleGroupCounter)ModuleManager.instence.getModule(ModuleGroupCounter.class)).groupsMap.get(fromGroup));
 					Autoreply.sendMessage(fromGroup, 0, Autoreply.CC.image(pic));
 					pic.delete();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 				try {
-					File pic=((ModuleGroupCounter)ModuleManager.instence.getModule(ModuleGroupCounter.class)).mchart.check(((ModuleGroupCounter)ModuleManager.instence.getModule(ModuleGroupCounter.class)).groupsMap.get(fromGroup));
+					File pic=ModuleManager.instence.getModule(ModuleGroupCounter.class).mchart.check(((ModuleGroupCounter)ModuleManager.instence.getModule(ModuleGroupCounter.class)).groupsMap.get(fromGroup));
 					Autoreply.sendMessage(fromGroup, 0, Autoreply.CC.image(pic));
 					pic.delete();
 				} catch (IOException e) {
@@ -213,7 +213,7 @@ public class ModuleAdminMsg extends BaseModule {
 					Autoreply.sendMessage(fromGroup, 0, "日期格式错误");
 					return true;
 				}
-				HashMap<Integer,Integer> hashMap = ((ModuleGroupCounter)ModuleManager.instence.getModule(ModuleGroupCounter.class)).getSpeak(fromGroup, msg.substring(6));
+				HashMap<Integer,Integer> hashMap = ModuleManager.instence.getModule(ModuleGroupCounter.class).getSpeak(fromGroup, msg.substring(6));
 				if (hashMap == null || hashMap.size() == 0) {
 					Autoreply.sendMessage(fromGroup, 0, "无数据");
 					return true;

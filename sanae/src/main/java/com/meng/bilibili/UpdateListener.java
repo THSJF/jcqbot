@@ -57,7 +57,7 @@ public class UpdateListener implements Runnable {
 		String userName = new JsonParser().parse(Tools.Network.getSourceCode("https://api.live.bilibili.com/live_user/v1/UserInfo/get_anchor_in_room?roomid=" + p.roomID)).getAsJsonObject().get("data").getAsJsonObject().get("info").getAsJsonObject().get("uname").getAsString();
         for (int i = 0, groupListSize = p.fans.size(); i < groupListSize; i++) {
             BiliUser.FansInGroup fans = p.fans.get(i);
-			if (((ModuleFaith)ModuleManager.instence.getModule(ModuleFaith.class)).getFaith(fans.qq) > 0) {
+			if (ModuleManager.instence.getModule(ModuleFaith.class).getFaith(fans.qq) > 0) {
 				Autoreply.sendMessage(fans.group, 0, String.format("%s你关注的up主「%s」发布了新视频\nAID:%d\n视频名:%s", Autoreply.CC.at(fans.qq), userName, vl.aid, vl.title));
 				try {
 					Thread.sleep(1000);
@@ -70,7 +70,7 @@ public class UpdateListener implements Runnable {
 		String userName = new JsonParser().parse(Tools.Network.getSourceCode("https://api.live.bilibili.com/live_user/v1/UserInfo/get_anchor_in_room?roomid=" + p.roomID)).getAsJsonObject().get("data").getAsJsonObject().get("info").getAsJsonObject().get("uname").getAsString();
 		for (int i = 0, groupListSize = p.fans.size(); i < groupListSize; i++) {
             BiliUser.FansInGroup fans = p.fans.get(i);
-			if (((ModuleFaith)ModuleManager.instence.getModule(ModuleFaith.class)).getFaith(fans.qq) > 0) {
+			if (ModuleManager.instence.getModule(ModuleFaith.class).getFaith(fans.qq) > 0) {
 				Autoreply.sendMessage(fans.group, 0, String.format("%s你关注的up主「%s」发布了新专栏\nCID:%d\n专栏名:%s", Autoreply.CC.at(fans.qq), userName, vl.id, vl.title));
 				try {
 					Thread.sleep(1000);

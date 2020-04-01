@@ -42,7 +42,7 @@ public class TimeTip implements Runnable {
 				if (c.get(Calendar.HOUR_OF_DAY) == 0) {
 					for (BiliUser bm:ConfigManager.instence.SanaeConfig.biliMaster.values()) {
 						for (BiliUser.FansInGroup fans:bm.fans) {
-							ModuleFaith mf=((ModuleFaith)ModuleManager.instence.getModule(ModuleFaith.class));
+							ModuleFaith mf=ModuleManager.instence.getModule(ModuleFaith.class);
 							if (mf.getFaith(fans.qq) > 0) {
 								mf.subFaith(fans.qq, 1);
 							}

@@ -194,14 +194,14 @@ public class RemoteWebSocket extends WebSocketServer {
 					qa40.r = null;
 				}
 				if (rec.hasNext()) {
-					qa40.l = (int)rec.readFile(new File(((ModuleQA)ModuleManager.instence.getModule(ModuleQA.class)).imagePath + ((ModuleQA)ModuleManager.instence.getModule(ModuleQA.class)).qaList.size() + ".jpg")).length();
+					qa40.l = (int)rec.readFile(new File(ModuleManager.instence.getModule(ModuleQA.class).imagePath + ModuleManager.instence.getModule(ModuleQA.class).qaList.size() + ".jpg")).length();
 				}
-				((ModuleQA)ModuleManager.instence.getModule(ModuleQA.class)).addQA(qa40);
+				ModuleManager.instence.getModule(ModuleQA.class).addQA(qa40);
 				toSend = BotDataPack.encode(BotDataPack.opTextNotify);
 				toSend.write("添加成功");
 				break;
 			case BotDataPack.opAllQuestion:
-				toSend = writeQA(((ModuleQA)ModuleManager.instence.getModule(ModuleQA.class)).qaList);
+				toSend = writeQA(ModuleManager.instence.getModule(ModuleQA.class).qaList);
 				break;
 			case BotDataPack.opSetQuestion:
 				QA qa43= new QA();
@@ -217,16 +217,16 @@ public class RemoteWebSocket extends WebSocketServer {
 					qa43.r = null;
 				}
 				if (rec.hasNext()) {
-					qa43.l = (int)rec.readFile(new File(((ModuleQA)ModuleManager.instence.getModule(ModuleQA.class)).imagePath + qa43.getId() + ".jpg")).length();
+					qa43.l = (int)rec.readFile(new File(ModuleManager.instence.getModule(ModuleQA.class).imagePath + qa43.getId() + ".jpg")).length();
 				}
-				((ModuleQA)ModuleManager.instence.getModule(ModuleQA.class)).setQA(qa43);
+				ModuleManager.instence.getModule(ModuleQA.class).setQA(qa43);
 				toSend = BotDataPack.encode(BotDataPack.opTextNotify);
 				toSend.write("修改成功");
 				break;
 			case BotDataPack.opQuestionPic:
 				toSend = BotDataPack.encode(BotDataPack.opQuestionPic);
 				int id = rec.readInt();
-				File img = new File(((ModuleQA)ModuleManager.instence.getModule(ModuleQA.class)).imagePath + id + ".jpg");
+				File img = new File(ModuleManager.instence.getModule(ModuleQA.class).imagePath + id + ".jpg");
 				toSend.write(id);
 				toSend.write(img);
 				break;

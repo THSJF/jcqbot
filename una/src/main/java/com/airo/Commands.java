@@ -89,7 +89,7 @@ public class Commands {
 		}
 
 		//检测是否开启
-		if(!(Boolean) var.get("running")) return;
+		if(!Variables.isRunning()) return;
 
 		//日常指令
 		switch (cmd) {

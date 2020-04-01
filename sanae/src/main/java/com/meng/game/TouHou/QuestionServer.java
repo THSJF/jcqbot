@@ -57,14 +57,14 @@ public class QuestionServer extends WebSocketServer {
 							qa40.r = null;
 						}
 						if (dataRec.hasNext()) {
-							qa40.l = (int)dataRec.readFile(new File(((ModuleQA)ModuleManager.instence.getModule(ModuleQA.class)).imagePath + ((ModuleQA)ModuleManager.instence.getModule(ModuleQA.class)).qaList.size() + ".jpg")).length();
+							qa40.l = (int)dataRec.readFile(new File(ModuleManager.instence.getModule(ModuleQA.class).imagePath + ((ModuleQA)ModuleManager.instence.getModule(ModuleQA.class)).qaList.size() + ".jpg")).length();
 						}
-						((ModuleQA)ModuleManager.instence.getModule(ModuleQA.class)).addQA(qa40);
+						ModuleManager.instence.getModule(ModuleQA.class).addQA(qa40);
 						sdp = SanaeDataPack.encode(SanaeDataPack.opNotification, dataRec);
 						sdp.write("添加成功");
 						break;
 					case SanaeDataPack.opAllQuestion:
-						sdp = writeQA(((ModuleQA)ModuleManager.instence.getModule(ModuleQA.class)).qaList);
+						sdp = writeQA(ModuleManager.instence.getModule(ModuleQA.class).qaList);
 						break;
 					case SanaeDataPack.opSetQuestion:
 						QA qa43= new QA();
@@ -80,16 +80,16 @@ public class QuestionServer extends WebSocketServer {
 							qa43.r = null;
 						}
 						if (dataRec.hasNext()) {
-							qa43.l = (int)dataRec.readFile(new File(((ModuleQA)ModuleManager.instence.getModule(ModuleQA.class)).imagePath + qa43.getId() + ".jpg")).length();
+							qa43.l = (int)dataRec.readFile(new File(ModuleManager.instence.getModule(ModuleQA.class).imagePath + qa43.getId() + ".jpg")).length();
 						}
-						((ModuleQA)ModuleManager.instence.getModule(ModuleQA.class)).setQA(qa43);
+						ModuleManager.instence.getModule(ModuleQA.class).setQA(qa43);
 						sdp = SanaeDataPack.encode(SanaeDataPack.opNotification, dataRec);
 						sdp.write("修改成功");
 						break;
 					case SanaeDataPack.opQuestionPic:
 						sdp = SanaeDataPack.encode(SanaeDataPack.opQuestionPic, dataRec);
 						int id = dataRec.readInt();
-						File img = new File(((ModuleQA)ModuleManager.instence.getModule(ModuleQA.class)).imagePath + id + ".jpg");
+						File img = new File(ModuleManager.instence.getModule(ModuleQA.class).imagePath + id + ".jpg");
 						sdp.write(id);
 						sdp.write(img);
 						break;

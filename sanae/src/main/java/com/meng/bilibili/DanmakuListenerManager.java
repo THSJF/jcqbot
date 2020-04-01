@@ -81,8 +81,8 @@ public class DanmakuListenerManager {
 			try {
 				JsonObject jobj=new JsonParser().parse(dp.body).getAsJsonObject();
 				if (jobj.get("cmd").getAsString().equals("DANMU_MSG")) {
-					JsonArray jaar=jobj.get("info").getAsJsonArray();
-					JsonArray jaar2=jaar.get(2).getAsJsonArray();
+				//	JsonArray jaar=jobj.get("info").getAsJsonArray();
+				//	JsonArray jaar2=jaar.get(2).getAsJsonArray();
 				/*	String danmakuText=jaar.get(1).getAsString();
 					String speakerName=jaar2.get(1).getAsString();
 					long speakerUid=jaar2.get(0).getAsLong();*/

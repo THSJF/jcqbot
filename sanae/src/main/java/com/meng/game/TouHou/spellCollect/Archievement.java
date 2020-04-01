@@ -41,7 +41,7 @@ public class Archievement {
 		this.describe = describe;
 		this.judge = judge;
 		for (String s:spells) {
-			spellsNeed.add(((ModuleTHData)ModuleManager.instence.getModule(ModuleTHData.class)).getSpellCard(s));
+			spellsNeed.add(ModuleManager.instence.getModule(ModuleTHData.class).getSpellCard(s));
 		}
 	}
 

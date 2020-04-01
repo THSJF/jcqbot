@@ -56,7 +56,7 @@ public class ModuleDiceCmd extends BaseModule {
 						Autoreply.sendMessage(fromGroup, 0, "我以后会称呼你为" + name);
 						return true;
 					case ".help":
-						Autoreply.sendMessage(fromGroup, 0, ((ModuleAdminMsg)ModuleManager.instence.getModule(ModuleAdminMsg.class)).userPermission.toString());
+						Autoreply.sendMessage(fromGroup, 0, ModuleManager.instence.getModule(ModuleAdminMsg.class).userPermission.toString());
 						return true;
 				}
 			} catch (NumberFormatException ne) {

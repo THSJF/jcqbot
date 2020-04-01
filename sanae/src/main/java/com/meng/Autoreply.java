@@ -130,13 +130,13 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 				sendMessage(Long.parseLong(strings[1]), 0, strings[2]);
 			}
 		}
-		ModuleFaith fm=(ModuleFaith)ModuleManager.instence.getModule(ModuleFaith.class);
+		ModuleFaith fm=ModuleManager.instence.getModule(ModuleFaith.class);
 		if (msg.startsWith("-qa a ")) {
 			if (fm.getFaith(fromQQ) <= 0) {
 				sendMessage(0, fromQQ, "你的信仰值不足以完成此操作");
 				return MSG_IGNORE;
 			}
-			QA qa=((ModuleQA)ModuleManager.instence.getModule(ModuleQA.class)).qaList.get(Integer.parseInt(msg.substring("-qa a ".length())));
+			QA qa=ModuleManager.instence.getModule(ModuleQA.class).qaList.get(Integer.parseInt(msg.substring("-qa a ".length())));
 			HashSet<Integer> trueAnswers=qa.getTrueAns();
 			StringBuilder sb=new StringBuilder();
 			sb.append("题目:\n");
@@ -339,7 +339,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
             value = CQ.sendPrivateMsg(fromQQ, msg);
         } else {
 			value = CQ.sendGroupMsg(fromGroup, msg);
-			((ModuleGroupCounter)ModuleManager.instence.getModule(ModuleGroupCounter.class)).onMsg(fromGroup, 0, "", 0);
+			ModuleManager.instence.getModule(ModuleGroupCounter.class).onMsg(fromGroup, 0, "", 0);
 			ins.remoteWebSocket.sendMsg(1, fromGroup, CQ.getLoginQQ(), msg, value);
         }
 		return value;

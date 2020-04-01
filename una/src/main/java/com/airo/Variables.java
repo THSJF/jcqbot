@@ -8,4 +8,9 @@ public class Variables {
      */
 
 	static HashMap<String,Object> var=new HashMap<>();
+	
+	static boolean isRunning(){
+		return(boolean)var.get("running");
+	}
+	
 }
