@@ -224,19 +224,19 @@ public class MAdminMsg extends BaseModule {
 			switch (str[1]) {
 				case "start":
 					try {
-						Autoreply.sendMessage(fromGroup, 0, start(9721948, Autoreply.instance.cookieManager.cookie.Hina));
+						Autoreply.sendMessage(fromGroup, 0, start(9721948, Autoreply.instance.cookieManager.getHina()));
 						Autoreply.sendMessage(Autoreply.mainGroup, 0, name + "开启了直播");
 					} catch (IOException e) {}
 					break;
 				case "stop":
 					try {
-						Autoreply.sendMessage(fromGroup, 0, stop(9721948, Autoreply.instance.cookieManager.cookie.Hina));
+						Autoreply.sendMessage(fromGroup, 0, stop(9721948, Autoreply.instance.cookieManager.getHina()));
 						Autoreply.sendMessage(Autoreply.mainGroup, 0, name + "关闭了直播");
 					} catch (IOException e) {}
 					break;
 				case "rename":
 					try {
-						Autoreply.sendMessage(fromGroup, 0, rename(9721948, Autoreply.instance.cookieManager.cookie.Hina, str[2]));
+						Autoreply.sendMessage(fromGroup, 0, rename(9721948, Autoreply.instance.cookieManager.getHina(), str[2]));
 						Autoreply.sendMessage(Autoreply.mainGroup, 0, name + "为直播改了名:" + str[2]);
 					} catch (IOException e) {}
 			}	
@@ -472,14 +472,6 @@ public class MAdminMsg extends BaseModule {
 					Autoreply.sendMessage(Long.parseLong(strings[1]), 0, strings[2]);
 					break;
 			}
-			return true;
-		}
-		if (strings[0].equals("cookie")) {
-			if (!Autoreply.instance.cookieManager.setCookie(strings[1], strings[2])) {
-				Autoreply.sendMessage(fromGroup, 0, "添加失败");
-				return true;
-			}
-			Autoreply.sendMessage(fromGroup, 0, "已为" + strings[1] + "设置cookie");
 			return true;
 		}
 		if (msg.startsWith("精神支柱[CQ:image")) {

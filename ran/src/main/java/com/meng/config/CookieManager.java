@@ -6,20 +6,61 @@ import com.meng.tools.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.nio.charset.*;
+import java.util.*;
 
 public class CookieManager {
 
     public Cookie cookie=new Cookie();
-
+	
 	public CookieManager() {
 		File jsonBaseConfigFile = new File(Autoreply.appDirectory + "cookie.json");
         if (!jsonBaseConfigFile.exists()) {
             saveConfig();
-		  }
+		}
         Type type = new TypeToken<Cookie>() {
-		  }.getType();
+		}.getType();
         cookie = Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "cookie.json"), type);
-	  }
+	}
+
+	public void setGrzx(String grzx) {
+		cookie.cookieMap.put(424494698, grzx);
+	}
+
+	public String getGrzx() {
+		return cookie.cookieMap.get(424494698);
+	}
+
+	public void setHina(String hina) {
+		cookie.cookieMap.put(64483321, hina);
+	}
+
+	public String getHina() {
+		return cookie.cookieMap.get(64483321);
+	}
+
+	public void setStar(String star) {
+		cookie.cookieMap.put(424461971, star);
+	}
+
+	public String getStar() {
+		return cookie.cookieMap.get(424461971);
+	}
+
+	public void setLuna(String luna) {
+		cookie.cookieMap.put(424444960, luna);
+	}
+
+	public String getLuna() {
+		return cookie.cookieMap.get(424444960);
+	}
+
+	public void setSunny(String sunny) {
+		cookie.cookieMap.put(424436973, sunny);
+	}
+
+	public String getSunny() {
+		return cookie.cookieMap.get(424436973);
+	}
 
 	public void saveConfig() {
         try {
@@ -29,67 +70,12 @@ public class CookieManager {
             writer.write(Autoreply.gson.toJson(cookie));
             writer.flush();
             fos.close();
-		  } catch (IOException e) {
+		} catch (IOException e) {
             e.printStackTrace();
-		  }  
-	  }
-
-	public String getCookie(String name) {
-		switch (name) {
-			case "Sunny":
-			  return cookie.Sunny;
-			case "Luna":
-			  return cookie.Luna;
-			case "Star":
-			  return cookie.Star;
-			case "XingHuo":
-			  return cookie.xinghuo;
-			case "Hina":
-			  return cookie.Hina;
-			case "grzx":
-			  return cookie.grzx;
-			default:
-			  return null;
-		  }
-	  }
-
-	public boolean setCookie(String name, String cookieStr) {
-		switch (name) {
-			case "Sunny":
-			  cookie.Sunny = cookieStr;
-			  saveConfig();
-			  return true;
-			case "Luna":
-			  cookie.Luna = cookieStr;
-			  saveConfig();
-			  return true;
-			case "Star":
-			  cookie.Star = cookieStr;
-			  saveConfig();
-			  return true;
-			case "XingHuo":
-			  cookie.xinghuo = cookieStr;
-			  saveConfig();
-			  return true;
-			case "Hina":
-			  cookie.Hina = cookieStr;
-			  saveConfig();
-			  return true;
-			case "grzx":
-			  cookie.grzx = cookieStr;
-			  saveConfig();
-			  return true;
-			default:
-			  return false;
-		  }
-	  }
-	  
-	public class Cookie {
-		public String Sunny="";
-		public String Luna="";
-		public String Star="";
-		public String xinghuo="";
-		public String Hina="";
-		public String grzx="";
+		}  
 	}
-  }
+
+	public class Cookie {
+		public HashMap<Integer,String> cookieMap=new HashMap<>();
+	}
+}

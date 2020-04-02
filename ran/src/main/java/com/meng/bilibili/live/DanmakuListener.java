@@ -100,9 +100,9 @@ public class DanmakuListener extends WebSocketClient {
 				Autoreply.instance.connectServer.broadcast(dataToSend.getData());
 				if (Autoreply.instance.danmakuListenerManager.containsMother(danmakuText) && danmakuText.startsWith("点歌")) {
 					try {
-						Autoreply.instance.naiManager.sendDanmaku(roomMaster.bliveRoom + "", Autoreply.instance.cookieManager.cookie.Sunny, "您点您妈呢");
-						Autoreply.instance.naiManager.sendDanmaku(roomMaster.bliveRoom + "", Autoreply.instance.cookieManager.cookie.Luna, "您点您妈呢");
-						Autoreply.instance.naiManager.sendDanmaku(roomMaster.bliveRoom + "", Autoreply.instance.cookieManager.cookie.Star, "您点您妈呢");				
+						Autoreply.instance.naiManager.sendDanmaku(roomMaster.bliveRoom + "", Autoreply.instance.cookieManager.getSunny(), "您点您妈呢");
+						Autoreply.instance.naiManager.sendDanmaku(roomMaster.bliveRoom + "", Autoreply.instance.cookieManager.getLuna(), "您点您妈呢");
+						Autoreply.instance.naiManager.sendDanmaku(roomMaster.bliveRoom + "", Autoreply.instance.cookieManager.getStar(), "您点您妈呢");				
 					} catch (Exception e) {
 
 					}

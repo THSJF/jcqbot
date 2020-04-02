@@ -141,7 +141,7 @@ public class LiveListener implements Runnable {
 
 	public void setBan(long fromGroup, String roomId, String blockId, String hour) {
 		if (Integer.parseInt(hour) == 0) {  
-			String jsonStr=Tools.Network.getSourceCode("https://api.live.bilibili.com/liveact/ajaxGetBlockList?roomid=" + roomId + "&page=1", Autoreply.instance.cookieManager.cookie.grzx);
+			String jsonStr=Tools.Network.getSourceCode("https://api.live.bilibili.com/liveact/ajaxGetBlockList?roomid=" + roomId + "&page=1", Autoreply.instance.cookieManager.getGrzx());
 			BanBean bb=new Gson().fromJson(jsonStr, BanBean.class);
 			long bid=Integer.parseInt(blockId);
 			String eventId="";
@@ -160,12 +160,12 @@ public class LiveListener implements Runnable {
 				liveHead.put("Connection", "keep-alive");
 				liveHead.put("Origin", "https://live.bilibili.com");
 				Connection connection = Jsoup.connect("https://api.live.bilibili.com/banned_service/v1/Silent/del_room_block_user");
-				String csrf = Tools.Network.cookieToMap(Autoreply.instance.cookieManager.cookie.grzx).get("bili_jct");
+				String csrf = Tools.Network.cookieToMap(Autoreply.instance.cookieManager.getGrzx()).get("bili_jct");
 				connection.userAgent(Autoreply.instance.userAgent)
 					.headers(liveHead)
 					.ignoreContentType(true)
 					.referrer("https://live.bilibili.com/" + roomId)
-					.cookies(Tools.Network.cookieToMap(Autoreply.instance.cookieManager.cookie.grzx))
+					.cookies(Tools.Network.cookieToMap(Autoreply.instance.cookieManager.getGrzx()))
 					.method(Connection.Method.POST)
 					.data("roomid", roomId)
 					.data("id", eventId)
@@ -205,12 +205,12 @@ public class LiveListener implements Runnable {
 				liveHead.put("Connection", "keep-alive");
 				liveHead.put("Origin", "https://live.bilibili.com");
 				Connection connection = Jsoup.connect("https://api.live.bilibili.com/banned_service/v2/Silent/add_block_user");
-				String csrf = Tools.Network.cookieToMap(Autoreply.instance.cookieManager.cookie.grzx).get("bili_jct");
+				String csrf = Tools.Network.cookieToMap(Autoreply.instance.cookieManager.getGrzx()).get("bili_jct");
 				connection.userAgent(Autoreply.instance.userAgent)
 					.headers(liveHead)
 					.ignoreContentType(true)
 					.referrer("https://live.bilibili.com/" + roomId)
-					.cookies(Tools.Network.cookieToMap(Autoreply.instance.cookieManager.cookie.grzx))
+					.cookies(Tools.Network.cookieToMap(Autoreply.instance.cookieManager.getGrzx()))
 					.method(Connection.Method.POST)
 					.data("hour", hour)
 					.data("roomid", roomId)

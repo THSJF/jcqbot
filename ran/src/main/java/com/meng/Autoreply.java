@@ -226,40 +226,12 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
             }
         }
 
-
         if (ConfigManager.instance.isNotReplyQQ(fromQQ)) {
             return MSG_IGNORE;
         }
         if (ConfigManager.instance.isNotReplyWord(msg)) {
             return MSG_IGNORE;
         }
-        if (fromQQ == 1033317031L && msg.startsWith("nai.")) {
-            ++RemoteWebSocket.botInfoBean.msgCmdPerSec;
-			String[] sarr = msg.split("\\.", 3);
-            PersonInfo pInfo = ConfigManager.instance.getPersonInfoFromName(sarr[1]);
-            if (pInfo != null) {
-                naiManager.checkXinghuo(fromGroup, pInfo.bliveRoom + "", fromQQ, sarr[2]);
-            } else {
-                naiManager.checkXinghuo(fromGroup, sarr[1], fromQQ, sarr[2]);
-            }
-            return MSG_IGNORE;
-        }
-		if (fromQQ == 1033317031L) {
-			++RemoteWebSocket.botInfoBean.msgCmdPerSec;
-			String[] strings = msg.split("\\.", 3);
-			if (strings[0].equals("cookie")) {
-				switch (strings[1]) {
-					case "XingHuo":
-						Autoreply.instance.cookieManager.setCookie("XingHuo", strings[2]);
-						break;
-					default:
-						Autoreply.sendMessage(fromGroup, 0, "名称不存在");
-						return MSG_IGNORE;
-				}
-				Autoreply.sendMessage(fromGroup, 0, "已为" + strings[1] + "设置cookie");
-				return MSG_IGNORE;
-			}
-		}
 		if (fromQQ == 2856986197L || fromQQ == 2565128043L) {
 			++RemoteWebSocket.botInfoBean.msgCmdPerSec;
 			if (msg.contains("setConnect")) {

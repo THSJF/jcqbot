@@ -45,6 +45,7 @@ public class ModuleMorning extends BaseModule {
 			qi.getUptimeStamp = System.currentTimeMillis();
 			getUp.add(qi);
 			Autoreply.sendMessage(fromGroup, 0, String.format("你是今天第%d位起床的%s哦", getUp.size(), qi.isBoy ?"少年": "少女"));
+			saveConfig();
 		} else if (msg.equals("晚安")) {
 			for (GetUpBean qif:getUp) {
 				if (qif.qq == fromQQ) {
@@ -53,6 +54,7 @@ public class ModuleMorning extends BaseModule {
 					} else {
 						Autoreply.sendMessage(fromGroup, 0, "你今天清醒了" + secondToTime((System.currentTimeMillis() - qif.getUptimeStamp) / 1000));
 						qif.isSleep = true;
+						saveConfig();
 					}
 				}
 			}

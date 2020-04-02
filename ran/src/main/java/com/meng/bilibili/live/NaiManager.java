@@ -12,18 +12,9 @@ public class NaiManager {
 
     private final String POST_URL = "http://api.live.bilibili.com/msg/send";
 
-    public void checkXinghuo(long fromGroup, String roomId, long fromQQ, String msg) {
-        try {
-            sendDanmaku(roomId, Autoreply.instance.cookieManager.cookie.xinghuo, msg);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Autoreply.sendMessage(fromGroup, fromQQ, roomId + "已奶");
-    }
-
 	public String sendChat(String roomId, String msg) {
 		try {
-            sendDanmaku(roomId, Autoreply.instance.cookieManager.cookie.Hina, msg);
+            sendDanmaku(roomId, Autoreply.instance.cookieManager.getHina(), msg);
 		} catch (IOException e) {
             return e.toString();
 		}
@@ -32,7 +23,7 @@ public class NaiManager {
 
 	public String grzxMsg(String roomId, String msg) {
 		try {
-            sendDanmaku(roomId, Autoreply.instance.cookieManager.cookie.grzx, msg);
+            sendDanmaku(roomId, Autoreply.instance.cookieManager.getGrzx(), msg);
 		} catch (IOException e) {
             return e.toString();
 		}
@@ -41,9 +32,9 @@ public class NaiManager {
 
     public void check(long fromGroup, String roomId, long fromQQ, String msg) {
         try {
-            sendDanmaku(roomId, Autoreply.instance.cookieManager.cookie.Sunny, msg);
-            sendDanmaku(roomId, Autoreply.instance.cookieManager.cookie.Luna, msg);
-            sendDanmaku(roomId, Autoreply.instance.cookieManager.cookie.Star, msg);
+            sendDanmaku(roomId, Autoreply.instance.cookieManager.getSunny(), msg);
+            sendDanmaku(roomId, Autoreply.instance.cookieManager.getLuna(), msg);
+            sendDanmaku(roomId, Autoreply.instance.cookieManager.getStar(), msg);
         } catch (IOException e) {
             e.printStackTrace();
         }

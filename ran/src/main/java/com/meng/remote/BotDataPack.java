@@ -78,7 +78,13 @@ public class BotDataPack {
 	public static final int removeBlackQQ = 50;
 	public static final int removeBlackGroup = 51;
 	public static final int setPersonInfo = 52;
-
+	public static final int opGetApp = 53;
+	public static final int opCrashLog = 54;
+	public static final int opUploadApk = 55;
+	public static final int sendToMaster = 56;
+	public static final int getIdFromHash = 57;
+	public static final int cookie = 58;
+	
 	public static BotDataPack encode(int opCode) {
 		return new BotDataPack(opCode);
 	}

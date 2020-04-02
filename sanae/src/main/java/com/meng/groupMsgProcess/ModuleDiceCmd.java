@@ -39,7 +39,7 @@ public class ModuleDiceCmd extends BaseModule {
 						Autoreply.sendMessage(fromGroup, 0, String.format("%s的疯狂发作-临时症状:\n1D10=%d\n症状: 逃避行为：调查员会用任何的手段试图逃离现在所处的位置，状态持续1D10=%d轮。", ConfigManager.instence.getNickName(fromQQ), Autoreply.ins.random.nextInt(11), Autoreply.ins.random.nextInt(11)));
 						return true;
 					case ".rd":
-						Autoreply.sendMessage(fromGroup, 0, String.format("由于%s %s骰出了: D100=%d", next(), ConfigManager.instence.getNickName(fromGroup, fromQQ), Autoreply.ins.random.nextInt()));
+						Autoreply.sendMessage(fromGroup, 0, String.format("由于%s %s骰出了: D100=%d", next(), ConfigManager.instence.getNickName(fromGroup, fromQQ), Autoreply.ins.random.nextInt(101)));
 						return true;
 					case ".nn":
 						String name = next();
