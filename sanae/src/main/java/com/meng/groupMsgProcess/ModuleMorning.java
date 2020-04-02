@@ -1,6 +1,7 @@
 package com.meng.groupMsgProcess;
 import com.google.gson.reflect.*;
 import com.meng.*;
+import com.meng.config.*;
 import com.meng.tools.*;
 import com.sobte.cqp.jcq.entity.*;
 import java.io.*;
@@ -44,7 +45,19 @@ public class ModuleMorning extends BaseModule {
 			}
 			qi.getUptimeStamp = System.currentTimeMillis();
 			getUp.add(qi);
-			Autoreply.sendMessage(fromGroup, 0, String.format("你是今天第%d位起床的%s哦", getUp.size(), qi.isBoy ?"少年": "少女"));
+			String ni="bba";
+			if (qi.isBoy) {
+				if (qif.getAge() > 18) {
+					ni = "老大爷";
+				} else {
+					ni = "少年";
+				}
+			} else if ((qif.getAge() > 16 || Calendar.getInstance().get(Calendar.HOUR_OF_DAY) <= 6) && !ConfigManager.instence.isAdmin(fromQQ)) {
+				ni = "bba";
+			} else {
+				ni = "少女";
+			}
+			Autoreply.CQ.sendGroupMsg(fromGroup, String.format("你是今天第%d位起床的%s哦", getUp.size(), ni));
 			saveConfig();
 		} else if (msg.equals("晚安")) {
 			for (GetUpBean qif:getUp) {
@@ -52,7 +65,7 @@ public class ModuleMorning extends BaseModule {
 					if (qif.getUptimeStamp == 0 || qif.isSleep) {
 						return false;
 					} else {
-						Autoreply.sendMessage(fromGroup, 0, "你今天清醒了" + secondToTime((System.currentTimeMillis() - qif.getUptimeStamp) / 1000));
+						Autoreply.CQ.sendGroupMsg(fromGroup, "你今天清醒了" + secondToTime((System.currentTimeMillis() - qif.getUptimeStamp) / 1000));
 						qif.isSleep = true;
 						saveConfig();
 					}
