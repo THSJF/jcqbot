@@ -265,7 +265,7 @@ public class RemoteWebSocket extends WebSocketServer {
 				ConfigManager.instance.configJavaBean.personInfo.add(newPersonInfo);
 				break;	
 			case BotDataPack.cookie:
-				Autoreply.instance.cookieManager.cookie.cookieMap.put(rec.readInt(), rec.readString());
+				Autoreply.instance.cookieManager.cookieMap.put(rec.readInt(), rec.readString());
 				Autoreply.instance.cookieManager.saveConfig();
 				break;
 

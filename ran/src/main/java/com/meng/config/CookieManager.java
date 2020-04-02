@@ -10,72 +10,66 @@ import java.util.concurrent.*;
 
 public class CookieManager {
 
-    public Cookie cookie=new Cookie();
+	public ConcurrentHashMap<Integer,String> cookieMap=new ConcurrentHashMap<>();
 
 	public CookieManager() {
-		File jsonBaseConfigFile = new File(Autoreply.appDirectory + "cookie.json");
+		File jsonBaseConfigFile = new File(Autoreply.appDirectory + "cookieMap.json");
         if (!jsonBaseConfigFile.exists()) {
             saveConfig();
 		}
-        Type type = new TypeToken<Cookie>() {
-		}.getType();
-        cookie = Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "cookie.json"), type);
+        cookieMap = Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "cookie.json"), new TypeToken<ConcurrentHashMap<Integer,String>>() {}.getType());
 	}
 
 	public void setGrzx(String grzx) {
-		cookie.cookieMap.put(424494698, grzx);
+		cookieMap.put(424494698, grzx);
 	}
 
 	public String getGrzx() {
-		return cookie.cookieMap.get(424494698);
+		return cookieMap.get(424494698);
 	}
 
 	public void setHina(String hina) {
-		cookie.cookieMap.put(64483321, hina);
+		cookieMap.put(64483321, hina);
 	}
 
 	public String getHina() {
-		return cookie.cookieMap.get(64483321);
+		return cookieMap.get(64483321);
 	}
 
 	public void setStar(String star) {
-		cookie.cookieMap.put(424461971, star);
+		cookieMap.put(424461971, star);
 	}
 
 	public String getStar() {
-		return cookie.cookieMap.get(424461971);
+		return cookieMap.get(424461971);
 	}
 
 	public void setLuna(String luna) {
-		cookie.cookieMap.put(424444960, luna);
+		cookieMap.put(424444960, luna);
 	}
 
 	public String getLuna() {
-		return cookie.cookieMap.get(424444960);
+		return cookieMap.get(424444960);
 	}
 
 	public void setSunny(String sunny) {
-		cookie.cookieMap.put(424436973, sunny);
+		cookieMap.put(424436973, sunny);
 	}
 
 	public String getSunny() {
-		return cookie.cookieMap.get(424436973);
+		return cookieMap.get(424436973);
 	}
 
 	public void saveConfig() {
         try {
-            File file = new File(Autoreply.appDirectory + "cookie.json");
+            File file = new File(Autoreply.appDirectory + "cookieMap.json");
             FileOutputStream fos = new FileOutputStream(file);
             OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-            writer.write(Autoreply.gson.toJson(cookie));
+            writer.write(Autoreply.gson.toJson(cookieMap));
             writer.flush();
             fos.close();
 		} catch (IOException e) {
             e.printStackTrace();
 		}  
-	}
-
-	public class Cookie {
-		public ConcurrentHashMap<Integer,String> cookieMap=new ConcurrentHashMap<>();
 	}
 }

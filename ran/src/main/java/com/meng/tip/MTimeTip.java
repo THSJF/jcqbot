@@ -55,7 +55,7 @@ public class MTimeTip extends BaseModule implements Runnable {
 
 							@Override
 							public void run() {
-								for (String s:Autoreply.instance.cookieManager.cookie.cookieMap.values()) {
+								for (String s:Autoreply.instance.cookieManager.cookieMap.values()) {
 									Tools.BilibiliTool.sendLiveSign(s);
 								}
 								try {
