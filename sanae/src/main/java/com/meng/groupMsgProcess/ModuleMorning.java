@@ -89,6 +89,7 @@ public class ModuleMorning extends BaseModule {
 
 	public void reset() {
 		getUp.clear();
+		saveConfig();
 	}
 
 	public String secondToTime(long second) {

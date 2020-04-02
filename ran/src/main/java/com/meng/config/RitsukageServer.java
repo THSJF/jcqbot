@@ -230,14 +230,9 @@ public class RitsukageServer extends WebSocketServer {
 			case RitsukageDataPack._33returnMD5overSpell:
 				break;
 			case RitsukageDataPack._34sendDanmaku:
-				try {
-					Autoreply.instance.naiManager.sendDanmaku(recievedDataPack.readNum(1) + "", recievedDataPack.readString(2), recievedDataPack.readString(1));
-					dataToSend = RitsukageDataPack.encode(RitsukageDataPack._0notification, recievedDataPack.getTimeStamp());
-					dataToSend.write(1, "发送完成");
-				} catch (IOException e) {
-					dataToSend = RitsukageDataPack.encode(RitsukageDataPack._0notification, recievedDataPack.getTimeStamp());
-					dataToSend.write(1, e.toString());
-				}
+				Autoreply.instance.naiManager.sendDanmaku(recievedDataPack.readNum(1) + "", recievedDataPack.readString(2), recievedDataPack.readString(1));
+				dataToSend = RitsukageDataPack.encode(RitsukageDataPack._0notification, recievedDataPack.getTimeStamp());
+				dataToSend.write(1, "发送完成");
 				break;
 			case RitsukageDataPack._35groupAdd:
 				PersonInfo pi35=ConfigManager.instance.getPersonInfoFromQQ(recievedDataPack.readNum(3));

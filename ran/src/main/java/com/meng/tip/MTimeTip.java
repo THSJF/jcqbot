@@ -51,6 +51,18 @@ public class MTimeTip extends BaseModule implements Runnable {
                 }
                 if (c.get(Calendar.HOUR_OF_DAY) == 6) {
                     Autoreply.sleeping = false;
+					Autoreply.instance.threadPool.execute(new Runnable(){
+
+							@Override
+							public void run() {
+								for (String s:Autoreply.instance.cookieManager.cookie.cookieMap.values()) {
+									Tools.BilibiliTool.sendLiveSign(s);
+								}
+								try {
+									Thread.sleep(1000);
+								} catch (InterruptedException e) {}
+							}
+						});
                 }
                 if (c.get(Calendar.HOUR_OF_DAY) % 3 == 0) {
                     tipedYYS = false;

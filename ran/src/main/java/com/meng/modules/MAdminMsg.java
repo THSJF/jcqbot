@@ -127,14 +127,14 @@ public class MAdminMsg extends BaseModule {
                 Autoreply.sendMessage(fromGroup, fromQQ, "本群没有默认配置");
                 return true;
             }
-            ConfigManager.instance.setFunctionEnabled(fromGroup,ModuleManager.ID_MainSwitch,true);
+            ConfigManager.instance.setFunctionEnabled(fromGroup, ModuleManager.ID_MainSwitch, true);
             Autoreply.sendMessage(fromGroup, fromQQ, "已启用");
             ConfigManager.instance.saveConfig();
 			return true;
-            }
- 
+		}
+
         if (msg.equals(".off")) {
-			ConfigManager.instance.setFunctionEnabled(fromGroup,ModuleManager.ID_MainSwitch,false);
+			ConfigManager.instance.setFunctionEnabled(fromGroup, ModuleManager.ID_MainSwitch, false);
 			Autoreply.sendMessage(fromGroup, 0, "已停用");
             return true;
         }
@@ -183,7 +183,7 @@ public class MAdminMsg extends BaseModule {
 			List<Group> glist=Autoreply.CQ.getGroupList();
 			for (Group g:glist) {
 				GroupConfig gc=ConfigManager.instance.getGroupConfig(g.getId());
-				if (!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_MainSwitch)) {
+				if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_MainSwitch)) {
 					continue;
 				}
 				Autoreply.sendMessage(gc.n, 0, broadcast, true);
@@ -224,19 +224,19 @@ public class MAdminMsg extends BaseModule {
 			switch (str[1]) {
 				case "start":
 					try {
-						Autoreply.sendMessage(fromGroup, 0, start(9721948, Autoreply.instance.cookieManager.getHina()));
+						Autoreply.sendMessage(fromGroup, 0, Tools.BilibiliTool.startLive(9721948, Autoreply.instance.cookieManager.getHina()));
 						Autoreply.sendMessage(Autoreply.mainGroup, 0, name + "开启了直播");
 					} catch (IOException e) {}
 					break;
 				case "stop":
 					try {
-						Autoreply.sendMessage(fromGroup, 0, stop(9721948, Autoreply.instance.cookieManager.getHina()));
+						Autoreply.sendMessage(fromGroup, 0, Tools.BilibiliTool.stopLive(9721948, Autoreply.instance.cookieManager.getHina()));
 						Autoreply.sendMessage(Autoreply.mainGroup, 0, name + "关闭了直播");
 					} catch (IOException e) {}
 					break;
 				case "rename":
 					try {
-						Autoreply.sendMessage(fromGroup, 0, rename(9721948, Autoreply.instance.cookieManager.getHina(), str[2]));
+						Autoreply.sendMessage(fromGroup, 0, Tools.BilibiliTool.renameLive(9721948, str[2], Autoreply.instance.cookieManager.getHina()));
 						Autoreply.sendMessage(Autoreply.mainGroup, 0, name + "为直播改了名:" + str[2]);
 					} catch (IOException e) {}
 			}	
@@ -495,87 +495,4 @@ public class MAdminMsg extends BaseModule {
         return false;
 	}
 
-	public String start(int roomID, String cookie) throws IOException {
-        Connection connection = Jsoup.connect("https://api.live.bilibili.com/room/v1/Room/startLive");
-        String csrf = Tools.Network.cookieToMap(cookie).get("bili_jct");
-        Map<String, String> liveHead = new HashMap<>();
-        liveHead.put("Host", "api.live.bilibili.com");
-        liveHead.put("Accept", "application/json, text/javascript, */*; q=0.01");
-        liveHead.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-        liveHead.put("Connection", "keep-alive");
-        liveHead.put("Origin", "https://link.bilibili.com");
-        connection.
-			userAgent(Autoreply.instance.userAgent).
-			headers(liveHead).
-			ignoreContentType(true).
-			referrer("https://link.bilibili.com/p/center/index").
-			cookies(Tools.Network.cookieToMap(cookie)).
-			method(Connection.Method.POST).
-			data("room_id", String.valueOf(roomID)).
-			data("platform", "pc").
-			data("area_v2", "235").
-			data("csrf_token", csrf).
-			data("csrf", csrf);
-        Connection.Response response = connection.execute();
-        JsonParser parser = new JsonParser();
-        JsonObject obj = parser.parse(response.body()).getAsJsonObject();
-		if (obj.get("code").getAsInt() == 0) {
-			return "开播成功";
-		}
-		return obj.get("message").getAsString();
-    }
-
-    public String stop(int roomID, String cookie) throws IOException {
-        Connection connection = Jsoup.connect("https://api.live.bilibili.com/room/v1/Room/stopLive");
-        String csrf = Tools.Network.cookieToMap(cookie).get("bili_jct");
-        Map<String, String> liveHead = new HashMap<>();
-        liveHead.put("Host", "api.live.bilibili.com");
-        liveHead.put("Accept", "application/json, text/javascript, */*; q=0.01");
-        liveHead.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-        liveHead.put("Connection", "keep-alive");
-        liveHead.put("Origin", "https://link.bilibili.com");
-        connection.
-			userAgent(Autoreply.instance.userAgent).
-			headers(liveHead).
-			ignoreContentType(true).
-			referrer("https://link.bilibili.com/p/center/index").
-			cookies(Tools.Network.cookieToMap(cookie)).
-			method(Connection.Method.POST).
-			data("room_id", String.valueOf(roomID)).
-			data("csrf_token", csrf).
-			data("csrf", csrf);
-        Connection.Response response = connection.execute();
-        JsonParser parser = new JsonParser();
-        JsonObject obj = parser.parse(response.body()).getAsJsonObject();
-		if (obj.get("code").getAsInt() == 0) {
-			return "关闭成功";
-		}
-		return obj.get("message").getAsString();
-    }
-
-    public String rename(int roomID, String cookie, String newName) throws IOException {
-        Connection connection = Jsoup.connect("https://api.live.bilibili.com/room/v1/Room/update");
-        String csrf = Tools.Network.cookieToMap(cookie).get("bili_jct");
-        Map<String, String> liveHead = new HashMap<>();
-        liveHead.put("Host", "api.live.bilibili.com");
-        liveHead.put("Accept", "application/json, text/javascript, */*; q=0.01");
-        liveHead.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-        liveHead.put("Connection", "keep-alive");
-        liveHead.put("Origin", "https://link.bilibili.com");
-        connection.
-			userAgent(Autoreply.instance.userAgent).
-			headers(liveHead).
-			ignoreContentType(true).
-			referrer("https://link.bilibili.com/p/center/index").
-			cookies(Tools.Network.cookieToMap(cookie)).
-			method(Connection.Method.POST).
-			data("room_id", String.valueOf(roomID)).
-			data("title", newName).
-			data("csrf_token", csrf).
-			data("csrf", csrf);
-        Connection.Response response = connection.execute();
-        JsonParser parser = new JsonParser();
-        JsonObject obj = parser.parse(response.body()).getAsJsonObject();
-        return obj.get("message").getAsString();
-    }
 }

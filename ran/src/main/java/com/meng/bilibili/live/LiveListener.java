@@ -50,7 +50,7 @@ public class LiveListener implements Runnable {
 		}
         if (personInfo.bliveRoom == 0) {
             if (personInfo.bid != 0) {
-                SpaceToLiveJavaBean sjb = new Gson().fromJson(Tools.Network.getSourceCode("https://api.live.bilibili.com/room/v1/Room/getRoomInfoOld?mid=" + personInfo.bid), SpaceToLiveJavaBean.class);
+                SpaceToLiveJavaBean sjb = new Gson().fromJson(Tools.BilibiliTool.getLiveRoomInfo(personInfo.bid), SpaceToLiveJavaBean.class);
                 if (sjb.data.roomid == 0) {
                     personInfo.bliveRoom = -1;
                     ConfigManager.instance.saveConfig();
@@ -80,7 +80,7 @@ public class LiveListener implements Runnable {
                     if (personInfo.bliveRoom == 0 || personInfo.bliveRoom == -1) {
                         continue;
 					}
-                    SpaceToLiveJavaBean sjb = new Gson().fromJson(Tools.Network.getSourceCode("https://api.live.bilibili.com/room/v1/Room/getRoomInfoOld?mid=" + personInfo.bid), SpaceToLiveJavaBean.class);
+                    SpaceToLiveJavaBean sjb = new Gson().fromJson(Tools.BilibiliTool.getLiveRoomInfo(personInfo.bid), SpaceToLiveJavaBean.class);
                     boolean living = sjb.data.liveStatus == 1;
 					if (living) {
 						if (Autoreply.instance.danmakuListenerManager.getListener(personInfo.bliveRoom) == null) {

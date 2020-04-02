@@ -6,12 +6,12 @@ import com.meng.tools.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.nio.charset.*;
-import java.util.*;
+import java.util.concurrent.*;
 
 public class CookieManager {
 
     public Cookie cookie=new Cookie();
-	
+
 	public CookieManager() {
 		File jsonBaseConfigFile = new File(Autoreply.appDirectory + "cookie.json");
         if (!jsonBaseConfigFile.exists()) {
@@ -76,6 +76,6 @@ public class CookieManager {
 	}
 
 	public class Cookie {
-		public HashMap<Integer,String> cookieMap=new HashMap<>();
+		public ConcurrentHashMap<Integer,String> cookieMap=new ConcurrentHashMap<>();
 	}
 }
