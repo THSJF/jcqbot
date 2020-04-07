@@ -17,7 +17,7 @@ public class CookieManager {
         if (!jsonBaseConfigFile.exists()) {
             saveConfig();
 		}
-        cookieMap = Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "cookie.json"), new TypeToken<ConcurrentHashMap<Integer,String>>() {}.getType());
+        cookieMap = Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "cookieMap.json"), new TypeToken<ConcurrentHashMap<Integer,String>>() {}.getType());
 	}
 
 	public void setGrzx(String grzx) {

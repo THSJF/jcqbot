@@ -5,20 +5,20 @@ import com.meng.bilibili.*;
 import com.meng.config.*;
 import com.meng.game.TouHou.*;
 import com.meng.groupMsgProcess.*;
+import com.meng.remote.*;
+import com.meng.timeTask.*;
 import com.meng.tip.*;
 import com.meng.tools.*;
 import com.sobte.cqp.jcq.entity.*;
 import com.sobte.cqp.jcq.event.*;
+import java.net.*;
 import java.util.*;
 import java.util.concurrent.*;
-import com.meng.remote.*;
-import java.net.*;
 
 public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
     public static Autoreply ins;
 	public MyRandom random = new MyRandom();
-	public TimeTip timeTip = new TimeTip();
 	public ModuleCQCode CQcodeManager = new ModuleCQCode();
     public GroupMemberChangerListener groupMemberChangerListener;
 
@@ -61,7 +61,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 		ConfigManager.instence.load();
 		groupMemberChangerListener = new GroupMemberChangerListener();
 		birthdayTip = new BirthdayTip();
-		threadPool.execute(Autoreply.ins.timeTip);
+		threadPool.execute(new TimeTaskManager());
 		threadPool.execute(new UpdateListener());
 		threadPool.execute(new LiveListener());
 		remoteWebSocket = new RemoteWebSocket();
@@ -87,7 +87,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 				}
 			});
 		try {
-			//new QuestionServer(9001).start();
+			//new QuestionServer(9961).start();
 		} catch (Exception e) {}
 		enable();
 		System.out.println("load success");
@@ -330,7 +330,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
     }
 
     public static int sendMessage(long fromGroup, long fromQQ, String msg) {
-		if (sleeping) {
+		if (sleeping || ConfigManager.instence.SanaeConfig.botOff.contains(fromGroup)) {
             return -1;
         }
 		++RemoteWebSocket.botInfoBean.msgSendPerSec;

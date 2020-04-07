@@ -105,6 +105,7 @@ public class ModuleDiceImitate extends BaseModule {
 			//th5
 			new TouhouCharacter("萨拉", "东方怪绮谈"),
 			new TouhouCharacter("露易兹", "东方怪绮谈"),
+			new TouhouCharacter("爱丽丝", "东方怪绮谈"),
 			new TouhouCharacter("雪", "东方怪绮谈"),
 			new TouhouCharacter("舞", "东方怪绮谈"),
 			new TouhouCharacter("梦子", "东方怪绮谈"),
