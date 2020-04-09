@@ -2,16 +2,14 @@ package com.meng.modules;
 
 import com.madgag.gif.fmsware.*;
 import com.meng.*;
+import com.meng.config.*;
 import com.meng.config.javabeans.*;
-import com.meng.messageProcess.*;
 import com.meng.tools.*;
+import java.awt.*;
+import java.awt.image.*;
 import java.io.*;
 import java.util.*;
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import com.meng.modules.*;
-import com.meng.config.*;
+import javax.imageio.*;
 
 
 public class MRepeater extends BaseModule {
@@ -26,7 +24,7 @@ public class MRepeater extends BaseModule {
 
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
-		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_Repeater)){
+		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_Repeater)) {
 			return false;
 		}
 		RepeaterBanner repeaterBanner = repeaters.get(fromGroup);
@@ -117,29 +115,29 @@ public class MRepeater extends BaseModule {
 		}
 
 		private boolean repeatEnd(long group, long qq, String msg) {
-			((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incRepeatBreaker(qq);
-			((MGroupCounter)ModuleManager.instance.getModule(MGroupCounter.class)).incRepeatBreaker(group);
+			ModuleManager.instance.getModule(MUserCounter.class).incRepeatBreaker(qq);
+			ModuleManager.instance.getModule(MGroupCounter.class).incRepeatBreaker(group);
 			return false;
 		}
 
 		private boolean repeatRunning(long group, long qq, String msg) {
-			((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incFudu(qq);
-			((MGroupCounter)ModuleManager.instance.getModule(MGroupCounter.class)).incFudu(group);
+			ModuleManager.instance.getModule(MUserCounter.class).incFudu(qq);
+			ModuleManager.instance.getModule(MGroupCounter.class).incFudu(group);
 			banCount--;
 			return false;
 		}
 
 		private boolean repeatStart(final long group, final long qq, final String msg, final File[] imageFiles) {
 			banCount = 6;
-			((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incFudujiguanjia(qq);
-			((MGroupCounter)ModuleManager.instance.getModule(MGroupCounter.class)).incFudu(group);
+			ModuleManager.instance.getModule(MUserCounter.class).incFudujiguanjia(qq);
+			ModuleManager.instance.getModule(MGroupCounter.class).incFudu(group);
 			Autoreply.instance.threadPool.execute(new Runnable() {
 					@Override
 					public void run() {
-					reply(group, qq, msg, imageFiles);
+						reply(group, qq, msg, imageFiles);
 					}
 				});
-			((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incFudu(Autoreply.CQ.getLoginQQ());
+			ModuleManager.instance.getModule(MUserCounter.class).incFudu(Autoreply.CQ.getLoginQQ());
 			return true;
 		}
 

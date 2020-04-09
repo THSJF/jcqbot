@@ -39,7 +39,9 @@ public class MBiliLinkInfo extends BaseModule {
             }
             Autoreply.sendMessage(fromGroup, 0, result);
             return true;
-        } else if (msg.startsWith("BV")) {
+        } else if (msg.startsWith("av") || msg.startsWith("AV")) {
+			Autoreply.sendMessage(fromGroup, fromQQ, processVideo(msg));
+		} else if (msg.startsWith("BV")) {
 			Autoreply.sendMessage(fromGroup, fromQQ, processVideo(String.valueOf(AvBvConverter.decode(msg))));
 		} else {
             int ind = msg.indexOf("http");

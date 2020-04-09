@@ -11,7 +11,6 @@ public class RanCfgBean {
     public HashSet<PersonInfo> personInfo = new HashSet<>();
     public HashSet<Long> masterList = new HashSet<>();
     public HashSet<Long> adminList = new HashSet<>();
-    public HashSet<Long> groupAutoAllowList = new HashSet<>();
-	public HashMap<Long,String> nicknameMap = new HashMap<>();
+    public HashMap<Long,String> nicknameMap = new HashMap<>();
 	public long ogg = 0;
 }

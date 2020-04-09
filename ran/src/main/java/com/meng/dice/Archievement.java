@@ -1,8 +1,7 @@
 package com.meng.dice;
 
+import com.meng.modules.*;
 import java.util.*;
-
-import com.meng.modules.MDiceImitate;
 
 public class Archievement {
 	public String name;
@@ -70,14 +69,15 @@ public class Archievement {
 				}
 				return false;
 			case 2:
-				String spellNameAll="";
+				StringBuilder sb=new StringBuilder();
 				for (String gotSpell:gotSpells) {
 					if (isPachouliSpell(gotSpell)) {
-						spellNameAll += gotSpell;
+					 sb.append(gotSpell);
 					}
 				}
+				String t=sb.toString();
 				for (String spellStr:spNeed) {
-					if (!spellNameAll.contains(spellStr)) {
+					if (!t.contains(spellStr)) {
 						return false;
 					}
 				}

@@ -75,7 +75,7 @@ public class MAdminMsg extends BaseModule {
 		userPermission.put("~coins", "查看幻币数量");
 		userPermission.put("幻币抽卡 [整数]", "使用本地幻币抽卡");
 		userPermission.put("购买符卡 [符卡名]", "购买指定符卡,除lastword");
-		userPermission.put("原曲认知 [E|N|H|L]", "原曲认知测试,回答时用\"原曲认知回答 答案\"进行回答，只能回答自己的问题");
+		userPermission.put("原曲认知 [E|N|H|L]", "原曲认知测试,只能回答自己的问题");
 
 		masterPermission.putAll(adminPermission);
 		masterPermission.putAll(userPermission);
@@ -157,22 +157,7 @@ public class MAdminMsg extends BaseModule {
         if (!ConfigManager.instance.isMaster(fromQQ) && Autoreply.CQ.getGroupMemberInfo(fromGroup, fromQQ).getAuthority() < 3) {
 			return false;
 		}
-		if (msg.startsWith("&#91;接收到新的加群申请&#93")) {
-			String num=msg.substring(msg.indexOf("申请编号：") + 5, msg.indexOf("已注册快捷") - 2);
-			long qqNum=Long.parseLong(msg.substring(msg.indexOf("用户：") + 3, msg.indexOf("验证消息") - 2));
-			PersonInfo pi=ConfigManager.instance.getPersonInfoFromQQ(qqNum);
-			if (pi != null) {
-				Autoreply.sendMessage(Autoreply.mainGroup, 0, "~申请审核 " + num + " True");
-				Autoreply.sendMessage(fromGroup, 0, "欢迎" + ConfigManager.instance.getNickName(qqNum));
-			} else if (ConfigManager.instance.isGroupAutoAllow(qqNum)) {
-				Autoreply.sendMessage(Autoreply.mainGroup, 0,  "~申请审核 " + num + " True");
-				Autoreply.sendMessage(fromGroup, 0, "此账号在自动同意列表中，已同意进群");
-				Autoreply.sendMessage(fromGroup, 0, "欢迎" + ConfigManager.instance.getNickName(qqNum));
-			} else if (ConfigManager.instance.isBlackQQ(qqNum)) {
-				Autoreply.sendMessage(fromGroup, 0, "~申请审核 " + num + " False 黑名单用户");
-			}
-			return true;
-		}
+
 		if (msg.startsWith("群广播:")) {
 			if (msg.contains("~") || msg.contains("～")) {
 				Autoreply.sendMessage(fromGroup, 0, "包含屏蔽的字符");
@@ -248,13 +233,15 @@ public class MAdminMsg extends BaseModule {
 			String uid=ss[2];
 			PersonInfo mas=ConfigManager.instance.getPersonInfoFromName(ss[1]);
 			if (mas != null) {
-				rid = mas.bliveRoom + "";
+				rid += mas.bliveRoom;
 			}
 			PersonInfo ban=ConfigManager.instance.getPersonInfoFromName(ss[2]);
 			if (ban != null) {
-				uid = ban.bid + "";
+				uid += ban.bid;
 			}
-			Autoreply.instance.liveListener.setBan(fromGroup, rid, uid, ss[3]);
+			if (Tools.BilibiliTool.setBan(Long.parseLong(rid), Long.parseLong(uid), ss[2])) {
+				Autoreply.sendMessage(Autoreply.mainGroup, 0, String.format("%s在%s中被禁言%s小时", uid, rid, ss[2]));
+			}
 			return true;
 		}
 		if (msg.startsWith("mother.")) {
@@ -293,85 +280,6 @@ public class MAdminMsg extends BaseModule {
 			ConfigManager.instance.configJavaBean.blackListQQ.addAll(qqs);
 			ConfigManager.instance.saveConfig();
 			Autoreply.sendMessage(fromGroup, fromQQ, sb.toString());
-			return true;
-		}
-		if (msg.startsWith("blackgroup")) {
-			StringBuilder sb = new StringBuilder();
-			String[] groups = msg.split(" ");
-			sb.append("黑名单群添加:");
-			int le = groups.length;
-			for (int i = 1; i < le; ++i) {
-				sb.append(groups[i]).append(" ");
-				ConfigManager.instance.configJavaBean.blackListGroup.add(Long.parseLong(groups[i]));
-			}
-			ConfigManager.instance.saveConfig();
-			Autoreply.sendMessage(fromGroup, fromQQ, sb.toString());
-			return true;
-		}
-		if (msg.startsWith("av更新时间:")) {
-			Autoreply.sendMessage(fromGroup, fromQQ, String.valueOf(((MBiliUpdate)ModuleManager.instance.getModule(MBiliUpdate.class)).getAVLastUpdateTime(msg.substring(7))));
-			return true;
-		}
-		if (msg.startsWith("avJson:")) {
-			Autoreply.sendMessage(fromGroup, fromQQ, ((MBiliUpdate)ModuleManager.instance.getModule(MBiliUpdate.class)).getAVJson(msg.substring(7)));
-			return true;
-		}
-		if (msg.startsWith("cv更新时间:")) {
-			Autoreply.sendMessage(fromGroup, fromQQ, String.valueOf(((MBiliUpdate)ModuleManager.instance.getModule(MBiliUpdate.class)).getCVLastUpdateTime(msg.substring(7))));
-			return true;
-		}
-		if (msg.startsWith("cvJson:")) {
-			Autoreply.sendMessage(fromGroup, fromQQ, ((MBiliUpdate)ModuleManager.instance.getModule(MBiliUpdate.class)).getCVJson(msg.substring(7)));
-			return true;
-		}
-		if (msg.startsWith("直播状态lid:")) {
-			String html = Tools.Network.getSourceCode("https://live.bilibili.com/" + msg.substring(8));
-			String jsonInHtml = html.substring(html.indexOf("{\"roomInitRes\":"), html.lastIndexOf("}") + 1);
-			JsonObject data = new JsonParser().parse(jsonInHtml).getAsJsonObject().get("baseInfoRes").getAsJsonObject().get("data").getAsJsonObject();
-			Autoreply.sendMessage(fromGroup, fromQQ, data.get("live_status").getAsInt() == 1 ? "true" : "false");
-			return true;
-		}
-		if (msg.startsWith("直播状态bid:")) {
-			SpaceToLiveJavaBean sjb = Autoreply.gson.fromJson(Tools.Network.getSourceCode("https://api.live.bilibili.com/room/v1/Room/getRoomInfoOld?mid=" + msg.substring(8)), SpaceToLiveJavaBean.class);
-			Autoreply.sendMessage(fromGroup, fromQQ, sjb.data.liveStatus == 1 ? "true" : "false");
-			return true;
-		}
-		if (msg.startsWith("获取直播间:")) {
-			Autoreply.sendMessage(fromGroup, fromQQ, Tools.Network.getSourceCode("https://api.live.bilibili.com/room/v1/Room/getRoomInfoOld?mid=" + msg.substring(6)));
-			return true;
-		}
-		if (msg.startsWith("add{")) {
-			PersonInfo personInfo;
-			try {
-				personInfo = Autoreply.gson.fromJson(msg.substring(3), PersonInfo.class);
-			} catch (Exception e) {
-				Autoreply.sendMessage(fromGroup, fromQQ, e.toString());
-				return true;
-			}
-			if (personInfo != null) {
-				ConfigManager.instance.configJavaBean.personInfo.add(personInfo);
-				ConfigManager.instance.saveConfig();
-				Autoreply.sendMessage(fromGroup, fromQQ, msg + "成功");
-			} else {
-				Autoreply.sendMessage(fromGroup, fromQQ, "一个玄学问题导致了失败");
-			}
-			return true;
-		}
-		if (msg.startsWith("del{")) {
-			PersonInfo p;
-			try {
-				p = Autoreply.gson.fromJson(msg.substring(3), PersonInfo.class);
-			} catch (Exception e) {
-				Autoreply.sendMessage(fromGroup, fromQQ, e.toString());
-				return true;
-			}
-			if (p != null) {
-				ConfigManager.instance.configJavaBean.personInfo.remove(p);
-				ConfigManager.instance.saveConfig();
-				Autoreply.sendMessage(fromGroup, fromQQ, msg + "成功");
-			} else {
-				Autoreply.sendMessage(fromGroup, fromQQ, "一个玄学问题导致了失败");
-			}
 			return true;
 		}
 		if (msg.startsWith("find:")) {
@@ -436,6 +344,9 @@ public class MAdminMsg extends BaseModule {
 			Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.image(new File(Autoreply.appDirectory + "pic\\alice.png")));
 			return true;
 		}
+		if (msg.equals("生成位置")) {
+			Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.location(35.594993, 118.869838, 15, "守矢神社", "此生无悔入东方 来世愿生幻想乡"));
+		}
 		if (msg.startsWith("生成位置")) {
 			String[] args = msg.split(",");
 			if (args.length == 6) {
@@ -475,11 +386,11 @@ public class MAdminMsg extends BaseModule {
 			return true;
 		}
 		if (msg.startsWith("精神支柱[CQ:image")) {
-			((MPicEdit)ModuleManager.instance.getModule(MPicEdit.class)).jingShenZhiZhuByPic(fromGroup, fromQQ, msg);
+			ModuleManager.instance.getModule(MPicEdit.class).jingShenZhiZhuByPic(fromGroup, fromQQ, msg);
 			return true;
 		}
 		if (msg.startsWith("神触[CQ:image")) {
-			((MPicEdit)ModuleManager.instance.getModule(MPicEdit.class)).shenChuByAt(fromGroup, fromQQ, msg);
+			ModuleManager.instance.getModule(MPicEdit.class).shenChuByAt(fromGroup, fromQQ, msg);
 			return true;
 		}
 		if (msg.startsWith("设置群头衔[CQ:at")) {

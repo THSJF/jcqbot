@@ -205,9 +205,9 @@ public class RemoteWebSocket extends WebSocketServer {
 				ConfigManager.instance.configJavaBean.adminList.add(admin);
 				Autoreply.sendMessage(Autoreply.mainGroup, 0, "添加admin" + admin);
 				break;
-			case BotDataPack.addGroupAllow:
+		/*	case BotDataPack.addGroupAllow:
 				ConfigManager.instance.addAutoAllow(rec.readLong());
-				break;
+				break;*/
 			case BotDataPack.addBlackQQ:
 				ConfigManager.instance.configJavaBean.blackListQQ.add(rec.readLong());
 				break;
@@ -244,9 +244,9 @@ public class RemoteWebSocket extends WebSocketServer {
 				ConfigManager.instance.configJavaBean.adminList.remove(ra);
 				Autoreply.sendMessage(Autoreply.mainGroup, 0, "移除admin" + ra);
 				break;
-			case BotDataPack.removeGroupAllow:
+		/*	case BotDataPack.removeGroupAllow:
 				ConfigManager.instance.removeAutoAllow(rec.readLong());
-				break;
+				break;*/
 			case BotDataPack.removeBlackQQ:
 				ConfigManager.instance.configJavaBean.blackListQQ.remove(rec.readLong());
 				break;

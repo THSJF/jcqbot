@@ -122,17 +122,15 @@ public class RitsukageDataPack {
 	//小律影→正邪  设置群头衔  n1:群号 n2:目标qq号 n3:有效时间，单位为秒，无限期写-1 s1:头衔内容
 	public static final short _38setSpecialTitle=38;
 	/*
-	//小律影→正邪  获得原曲认知问题 n1:需要的秒数
-	public static final short _39getMusicQueation=39;
-	//正邪→小律影 
-*/
+	 //小律影→正邪  获得原曲认知问题 n1:需要的秒数
+	 public static final short _39getMusicQueation=39;
+	 //正邪→小律影 
+	 */
 	/*******    希望小律影提供的    *******/
 	//小律影→正邪  加群审核 n1:加群申请id n2:群号 n3:qq号
 	public static final short _35groupAdd=35;
 	//正邪→小律影  回复加群审核 n1:加群申请id n2:是否同意(0拒绝 1同意) s1:同意或拒绝的理由 s2:此人的称呼(如果有)(优先使用.nn设置的称呼)
 	public static final short _36returnGroupAdd=36;
-
-
 
 	public static RitsukageDataPack encode(short opCode, long timeStamp) {
 		return new RitsukageDataPack(opCode, timeStamp);
@@ -146,12 +144,12 @@ public class RitsukageDataPack {
 		gson = Autoreply.gson;
 		data = new byte[headLength];
 		ritsukageBean = new RitsukageBean();
-		write(getBytes(data.length));
-		write(getBytes(headLength));
-		write(getBytes((short)1));
-		write(getBytes(timeStamp));
-		write(getBytes(ConfigManager.instance.configJavaBean.ogg));
-		write(getBytes(opCode));
+		write(Tools.BitConverter.getBytes(data.length));
+		write(Tools.BitConverter.getBytes(headLength));
+		write(Tools.BitConverter.getBytes((short)1));
+		write(Tools.BitConverter.getBytes(timeStamp));
+		write(Tools.BitConverter.getBytes(ConfigManager.instance.configJavaBean.ogg));
+		write(Tools.BitConverter.getBytes(opCode));
 	}   
 
 	private RitsukageDataPack(byte[] pack) {
@@ -255,7 +253,7 @@ public class RitsukageDataPack {
 			}
 		}
 		retData = Tools.ArrayTool.mergeArray(data, byteArray);
-		byte[] len=getBytes(retData.length);
+		byte[] len=Tools.BitConverter.getBytes(retData.length);
 		retData[0] = len[0];
 		retData[1] = len[1];
 		retData[2] = len[2];
@@ -264,27 +262,27 @@ public class RitsukageDataPack {
 	}
 
 	public int getLength() {
-		return readInt(data, 0);
+		return Tools.BitConverter.toInt(data, 0);
 	}  
 
 	public short getHeadLength() {
-		return readShort(data, 4);
+		return Tools.BitConverter.toShort(data, 4);
 	}
 
 	public short getVersion() {
-		return readShort(data, 6);
+		return Tools.BitConverter.toShort(data, 6);
 	}
 
 	public long getTimeStamp() {
-		return readLong(data, 8);
+		return Tools.BitConverter.toLong(data, 8);
 	}
 
 	public long getTarget() {
-		return readLong(data, 16);
+		return Tools.BitConverter.toLong(data, 16);
 	}
 
 	public short getOpCode() {
-		return readShort(data, 24);
+		return Tools.BitConverter.toShort(data, 24);
 	}
 
 	public void write(PersonInfo pi) {
@@ -302,6 +300,7 @@ public class RitsukageDataPack {
 	public void writeLongSet(HashSet<Long> hs) {
 		ritsukageLongSet = hs;
 	}
+
 	public void write(int argNum, long l) {
 		switch (argNum) {
 			case 1:
@@ -351,6 +350,8 @@ public class RitsukageDataPack {
 				return ritsukageBean.s1;
 			case 2:
 				return ritsukageBean.s2;
+			case 3:
+				return ritsukageBean.s3;
 		}
 		return null;
 	}
@@ -361,59 +362,7 @@ public class RitsukageDataPack {
 		}
 	}
 
-	private void saveFile(String name, byte[] bytes) {
-        try {
-            File file = new File(Autoreply.appDirectory + "jingshenzhizhu\\" + name + ".jpg");
-            FileOutputStream fos = new FileOutputStream(file);
-            fos.write(bytes, headLength, bytes.length - headLength);
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-	}
-
-	private byte[] getBytes(int i) {
-		byte[] bs=new byte[4];
-		bs[0] = (byte) ((i >> 0) & 0xff);
-		bs[1] = (byte) ((i >> 8) & 0xff);
-		bs[2] = (byte) ((i >> 16) & 0xff);
-		bs[3] = (byte) ((i >> 24) & 0xff);
-		return bs;	
-	}
-
-	private byte[] getBytes(long l) {
-		byte[] bs=new byte[8];
-		bs[0] = (byte) ((l >> 0) & 0xff);
-		bs[1] = (byte) ((l >> 8) & 0xff);
-		bs[2] = (byte) ((l >> 16) & 0xff);
-		bs[3] = (byte) ((l >> 24) & 0xff);
-		bs[4] = (byte) ((l >> 32) & 0xff);
-		bs[5] = (byte) ((l >> 40) & 0xff);
-		bs[6] = (byte) ((l >> 48) & 0xff);
-		bs[7] = (byte) ((l >> 56) & 0xff);
-		return bs;	
-	}
-
-	private byte[] getBytes(short s) {
-		byte[] bs=new byte[2];
-		bs[0] = (byte) ((s >> 0) & 0xff);
-		bs[1] = (byte) ((s >> 8) & 0xff) ;
-		return bs;	
-	}
-
-	private short readShort(byte[] data, int pos) {
-        return (short) ((data[pos] & 0xff) << 0 | (data[pos + 1] & 0xff) << 8);
-	}
-
-	private int readInt(byte[] data, int pos) {
-        return (data[pos] & 0xff) << 0 | (data[pos + 1] & 0xff) << 8 | (data[pos + 2] & 0xff) << 16 | (data[pos + 3] & 0xff) << 24;
-	}
-
-	private long readLong(byte[] data, int pos) {
-        return ((data[pos] & 0xffL) << 0) | (data[pos + 1] & 0xffL) << 8 | (data[pos + 2] & 0xffL) << 16 | (data[pos + 3] & 0xffL) << 24 | (data[pos + 4] & 0xffL) << 32 | (data[pos + 5] & 0xffL) << 40 | (data[pos + 6] & 0xffL) << 48 | (data[pos + 7] & 0xffL) << 56;
-	}
-	
-	class RitsukageBean {
+	private class RitsukageBean {
 		public String s1="";
 		public String s2="";
 		public String s3="";

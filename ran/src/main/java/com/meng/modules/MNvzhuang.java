@@ -17,24 +17,18 @@ public class MNvzhuang extends BaseModule {
 
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
-		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_NvZhuang)){
+		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_NvZhuang)) {
 			return false;
 		}
 		if (msg.equals("随机女装")) {
 			File[] files = (new File(Autoreply.appDirectory + "nvzhuang/")).listFiles();
 			File folder = (File) Tools.ArrayTool.rfa(files);
 			File[] pics = folder.listFiles();
-			((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incSetu(fromQQ);
-			((MGroupCounter)ModuleManager.instance.getModule(MGroupCounter.class)).incSetu(fromGroup);
-			((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incSetu(Autoreply.CQ.getLoginQQ());
 			Autoreply.instance.threadPool.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(pics)))));
 			return true;
 		} else if (msg.endsWith("女装")) {
 			File[] files = (new File(Autoreply.appDirectory + "nvzhuang/" + msg.replace("女装", ""))).listFiles();
 			if (files != null && files.length > 0) {
-				((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incSetu(fromQQ);
-				((MGroupCounter)ModuleManager.instance.getModule(MGroupCounter.class)).incSetu(fromGroup);
-				((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incSetu(Autoreply.CQ.getLoginQQ());
 				Autoreply.instance.threadPool.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files)))));
 			}
 			return true;
@@ -57,7 +51,6 @@ public class MNvzhuang extends BaseModule {
 			Autoreply.sendMessage(fromGroup, fromQQ, imgList.size() + "张图添加成功");
 			return true;
 		}
-
 		return false;
 	}
 }

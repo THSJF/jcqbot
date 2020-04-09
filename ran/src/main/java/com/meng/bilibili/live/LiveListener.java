@@ -92,15 +92,17 @@ public class LiveListener implements Runnable {
 						DanmakuListener dl=Autoreply.instance.danmakuListenerManager.getListener(personInfo.bliveRoom);
 						if (dl != null) {
 							dl.close();
+							Autoreply.instance.danmakuListenerManager.listener.remove(dl);
 						} 
 					}
                     LivePerson livePerson =livePersonMap.get(personInfo.bid);
 					if (livePerson == null) {
 						livePerson = new LivePerson();
+						livePersonMap.put(personInfo.bid,livePerson);
 					} 
 					livePerson.liveStartTimeStamp = System.currentTimeMillis();
                     livePerson.liveUrl = sjb.data.url;
-					livePerson.roomID = sjb.data.roomid + "";
+					livePerson.roomID = sjb.data.roomid;
                     if (livePerson.needTip) {
                         if (!livePerson.lastStatus && living) {
                             onStart(personInfo, livePerson);
@@ -139,110 +141,6 @@ public class LiveListener implements Runnable {
         saveLiveTime();
 	}
 
-	public void setBan(long fromGroup, String roomId, String blockId, String hour) {
-		if (Integer.parseInt(hour) == 0) {  
-			String jsonStr=Tools.Network.getSourceCode("https://api.live.bilibili.com/liveact/ajaxGetBlockList?roomid=" + roomId + "&page=1", Autoreply.instance.cookieManager.getGrzx());
-			BanBean bb=new Gson().fromJson(jsonStr, BanBean.class);
-			long bid=Integer.parseInt(blockId);
-			String eventId="";
-			for (BanBean.Data data:bb.data) {
-				if (data.uid == bid) {
-					eventId = data.id + "";
-					break;
-				}
-			}
-			Connection.Response response = null;
-			try {
-				Map<String, String> liveHead = new HashMap<>();
-				liveHead.put("Host", "api.live.bilibili.com");
-				liveHead.put("Accept", "application/json, text/javascript, */*; q=0.01");
-				liveHead.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-				liveHead.put("Connection", "keep-alive");
-				liveHead.put("Origin", "https://live.bilibili.com");
-				Connection connection = Jsoup.connect("https://api.live.bilibili.com/banned_service/v1/Silent/del_room_block_user");
-				String csrf = Tools.Network.cookieToMap(Autoreply.instance.cookieManager.getGrzx()).get("bili_jct");
-				connection.userAgent(Autoreply.instance.userAgent)
-					.headers(liveHead)
-					.ignoreContentType(true)
-					.referrer("https://live.bilibili.com/" + roomId)
-					.cookies(Tools.Network.cookieToMap(Autoreply.instance.cookieManager.getGrzx()))
-					.method(Connection.Method.POST)
-					.data("roomid", roomId)
-					.data("id", eventId)
-					.data("csrf_token", csrf)
-					.data("csrf", csrf)
-					.data("visit_id", "");
-				response = connection.execute();
-				if (response.statusCode() != 200) {
-					return;
-				}
-				JsonParser parser = new JsonParser();
-				JsonObject obj = parser.parse(response.body()).getAsJsonObject();
-				switch (obj.get("code").getAsInt()) {
-					case 0:
-						if (!obj.get("message").getAsString().equals("")) {
-							Autoreply.sendMessage(fromGroup, 0, obj.getAsJsonObject("message").getAsString());
-						} else {
-							Autoreply.sendMessage(fromGroup, 0, blockId + "在直播间" + roomId + "被禁言" + hour + "小时");
-						}
-						break;			
-					default:
-						Autoreply.sendMessage(fromGroup, 0, response.body());
-						break;
-				}
-			} catch (Exception e) {
-				if (response != null) {
-					Autoreply.sendMessage(fromGroup, 0, "服务器无回应");
-				}
-			} 
-		} else {
-			Connection.Response response = null;
-			try {
-				Map<String, String> liveHead = new HashMap<>();
-				liveHead.put("Host", "api.live.bilibili.com");
-				liveHead.put("Accept", "application/json, text/javascript, */*; q=0.01");
-				liveHead.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-				liveHead.put("Connection", "keep-alive");
-				liveHead.put("Origin", "https://live.bilibili.com");
-				Connection connection = Jsoup.connect("https://api.live.bilibili.com/banned_service/v2/Silent/add_block_user");
-				String csrf = Tools.Network.cookieToMap(Autoreply.instance.cookieManager.getGrzx()).get("bili_jct");
-				connection.userAgent(Autoreply.instance.userAgent)
-					.headers(liveHead)
-					.ignoreContentType(true)
-					.referrer("https://live.bilibili.com/" + roomId)
-					.cookies(Tools.Network.cookieToMap(Autoreply.instance.cookieManager.getGrzx()))
-					.method(Connection.Method.POST)
-					.data("hour", hour)
-					.data("roomid", roomId)
-					.data("block_uid", blockId)
-					.data("csrf_token", csrf)
-					.data("csrf", csrf)
-					.data("visit_id", "");
-				response = connection.execute();
-				if (response.statusCode() != 200) {
-					return;
-				}
-				JsonParser parser = new JsonParser();
-				JsonObject obj = parser.parse(response.body()).getAsJsonObject();
-				switch (obj.get("code").getAsInt()) {
-					case 0:
-						if (!obj.get("message").getAsString().equals("")) {
-							Autoreply.sendMessage(fromGroup, 0, obj.getAsJsonObject("message").getAsString());
-						} else {
-							Autoreply.sendMessage(fromGroup, 0, blockId + "在直播间" + roomId + "被禁言" + hour + "小时");
-						}
-						break;
-					default:
-						Autoreply.sendMessage(fromGroup, 0, response.body());
-						break;
-				}
-			} catch (Exception e) {
-				if (response != null) {
-					Autoreply.sendMessage(fromGroup, 0, "服务器无回应");
-				}
-			}
-		}
-	}
     private void tipStart(PersonInfo p) {
 		RitsukageDataPack dp=RitsukageDataPack.encode(RitsukageDataPack._4liveStart, System.currentTimeMillis());
 		dp.write(1, p.bliveRoom);
@@ -251,16 +149,8 @@ public class LiveListener implements Runnable {
 		SanaeDataPack sdp=SanaeDataPack.encode(SanaeDataPack.opLiveStart);
 		sdp.write(p.name).write(p.bliveRoom);
 		Autoreply.instance.sanaeServer.send(sdp);
-		if (!p.isTipLive()) {
-            return;
-		}
-        Autoreply.sendMessage(Autoreply.mainGroup, 0, p.name + "开始直播" + p.bliveRoom, true);
-        ArrayList<Long> groupList = ConfigManager.instance.getPersonInfoFromName(p.name).tipIn;
-        for (int i = 0, groupListSize = groupList.size(); i < groupListSize; i++) {
-            long group = groupList.get(i);
-            Autoreply.sendMessage(group, 0, p.name + "开始直播" + p.bliveRoom, true);
-		}
-	}
+		        Autoreply.sendMessage(Autoreply.mainGroup, 0, p.name + "开始直播" + p.bliveRoom, true);
+        	}
 
     private void tipFinish(PersonInfo p) {
 		RitsukageDataPack dp=RitsukageDataPack.encode(RitsukageDataPack._5liveStop, System.currentTimeMillis());
@@ -270,16 +160,8 @@ public class LiveListener implements Runnable {
 		SanaeDataPack sdp=SanaeDataPack.encode(SanaeDataPack.opLiveStop);
 		sdp.write(p.name).write(p.bliveRoom);
 		Autoreply.instance.sanaeServer.send(sdp);
-		if (!p.isTipLive()) {
-            return;
-		}
-        Autoreply.sendMessage(Autoreply.mainGroup, 0, p.name + "直播结束" + p.bliveRoom, true);
-        ArrayList<Long> groupList = ConfigManager.instance.getPersonInfoFromName(p.name).tipIn;
-        for (int i = 0, groupListSize = groupList.size(); i < groupListSize; i++) {
-            long group = groupList.get(i);
-            Autoreply.sendMessage(group, 0, p.name + "直播结束" + p.bliveRoom, true);
-		}
-	}
+		        Autoreply.sendMessage(Autoreply.mainGroup, 0, p.name + "直播结束" + p.bliveRoom, true);
+        	}
 
     public String getLiveTimeCount() {
         Iterator<Entry<String, Long>> iterator = liveTimeMap.entrySet().iterator();
@@ -310,26 +192,7 @@ public class LiveListener implements Runnable {
             return h + "时" + min + "分";
 		}
 	}
-	public class BanBean {
-		public int code;
-		public String msg;
-		public String  message;
-		public ArrayList<Data> data;
-
-		public class Data {
-			public long id;
-			public long roomid;
-			public long uid;
-			public int type;
-			public long adminid;
-			public String block_end_time;
-			public String ctime;
-			public String msg;
-			public String msg_time;
-			public String uname;
-			public String admin_name;
-		}
-	}
+	
     private void saveLiveTime() {
         try {
             File file = new File(Autoreply.appDirectory + "liveTime.json");

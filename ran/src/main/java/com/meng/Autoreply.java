@@ -443,9 +443,6 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
             if (personInfo != null) {
                 CQ.setGroupAddRequest(responseFlag, REQUEST_GROUP_ADD, REQUEST_ADOPT, null);
                 //        sendMessage(fromGroup, 0, "欢迎" + personInfo.name);
-            } else if (ConfigManager.instance.isGroupAutoAllow(fromQQ)) {
-                CQ.setGroupAddRequest(responseFlag, REQUEST_GROUP_ADD, REQUEST_ADOPT, null);
-                sendMessage(fromGroup, 0, "此账号在自动允许列表中，已同意进群");
             } else {
                 sendMessage(fromGroup, 0, "有人申请加群，绿帽赶紧瞅瞅");
             }

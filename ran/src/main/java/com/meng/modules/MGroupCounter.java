@@ -4,7 +4,6 @@ import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
 import com.meng.config.*;
-import com.meng.modules.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.nio.charset.*;
@@ -23,9 +22,7 @@ public class MGroupCounter extends BaseModule {
         public int repeatBreak = 0;
         public int pohai = 0;
         public int sp = 0;
-        public int setu = 0;
         public int mengEr = 0;
-        public int ban = 0;
         public int time = 0;
         public int grass = 0;
     }
@@ -63,7 +60,7 @@ public class MGroupCounter extends BaseModule {
 
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
-		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_GroupCount)){
+		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_GroupCount)) {
 			return false;
 		}
 		GroupInfo groupInfo = getBean(fromGroup);
@@ -90,11 +87,6 @@ public class MGroupCounter extends BaseModule {
     public void incPic(long qq) {
         GroupInfo groupInfo = getBean(qq);
         ++groupInfo.pic;
-    }
-
-    public void incSetu(long qq) {
-        GroupInfo groupInfo = getBean(qq);
-        ++groupInfo.setu;
     }
 
     public void incPohaitu(long qq) {
@@ -125,11 +117,6 @@ public class MGroupCounter extends BaseModule {
     public void incMengEr(long qq) {
         GroupInfo groupInfo = getBean(qq);
         ++groupInfo.mengEr;
-    }
-
-    public void incBanCount(long qq) {
-        GroupInfo groupInfo = getBean(qq);
-        ++groupInfo.ban;
     }
 
     public void decLife(long qq) {
@@ -170,9 +157,6 @@ public class MGroupCounter extends BaseModule {
         if (groupInfo.repeatBreak != 0) {
             stringBuilder.append("\n").append("打断复读").append(groupInfo.repeatBreak).append("次");
         }
-        if (groupInfo.setu != 0) {
-            stringBuilder.append("\n").append("色图").append(groupInfo.setu).append("次");
-        }
         if (groupInfo.sp != 0) {
             stringBuilder.append("\n").append("搜图").append(groupInfo.sp).append("次");
         }
@@ -181,9 +165,6 @@ public class MGroupCounter extends BaseModule {
         }
         if (groupInfo.mengEr != 0) {
             stringBuilder.append("\n").append("无悔发言").append(groupInfo.mengEr).append("次");
-        }
-        if (groupInfo.ban != 0) {
-            stringBuilder.append("\n").append("口球").append(groupInfo.ban).append("次");
         }
         if (groupInfo.time != 0) {
             stringBuilder.append("\n").append("时间").append(groupInfo.time).append("秒");
@@ -196,7 +177,6 @@ public class MGroupCounter extends BaseModule {
     }
 
     public String getTheFirst() {
-        int setu = 0;
         int pic = 0;
         int pohai = 0;
         int repeat = 0;
@@ -205,10 +185,8 @@ public class MGroupCounter extends BaseModule {
         int sp = 0;
         int speak = 0;
         int mengEr = 0;
-        int ban = 0;
         int time = 0;
         int grass = 0;
-        String setuq = null;
         String picq = null;
         String pohaiq = null;
         String repeatq = null;
@@ -217,7 +195,6 @@ public class MGroupCounter extends BaseModule {
         String spq = null;
         String speakq = null;
         String mengErq = null;
-        String banq = null;
         String timeq = null;
         String grassq = null;
 
@@ -230,10 +207,6 @@ public class MGroupCounter extends BaseModule {
             if (groupInfo.pic > pic) {
                 pic = groupInfo.pic;
                 picq = entry.getKey();
-            }
-            if (groupInfo.setu > setu) {
-                setu = groupInfo.setu;
-                setuq = entry.getKey();
             }
             if (groupInfo.pohai > pohai) {
                 pohai = groupInfo.pohai;
@@ -259,10 +232,6 @@ public class MGroupCounter extends BaseModule {
                 mengEr = groupInfo.mengEr;
                 mengErq = entry.getKey();
             }
-            if (groupInfo.ban > ban) {
-                ban = groupInfo.ban;
-                banq = entry.getKey();
-            }
             if (groupInfo.time < time) {
                 time = groupInfo.time;
                 timeq = entry.getKey();
@@ -278,9 +247,6 @@ public class MGroupCounter extends BaseModule {
         }
         if (picq != null) {
             sb.append("\n").append(picq).append("发图").append(pic).append("张");
-        }
-        if (setuq != null) {
-            sb.append("\n").append(setuq).append("色图").append(setu).append("次");
         }
         if (pohaiq != null) {
             sb.append("\n").append(pohaiq).append("迫害").append(pohai).append("次");
@@ -299,9 +265,6 @@ public class MGroupCounter extends BaseModule {
         }
         if (mengErq != null) {
             sb.append("\n").append(mengErq).append("无悔发言").append(mengEr).append("次");
-        }
-        if (banq != null) {
-            sb.append("\n").append(banq).append("口球").append(ban).append("次");
         }
         if (timeq != null) {
             sb.append("\n").append(timeq).append("时间").append(time).append("秒");

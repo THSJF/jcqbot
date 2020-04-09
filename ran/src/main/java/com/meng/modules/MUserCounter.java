@@ -24,18 +24,9 @@ public class MUserCounter extends BaseModule {
         public int repeatBreak = 0;
         public int pohai = 0;
         public int sp = 0;
-        public int setu = 0;
         public int mengEr = 0;
-        public int ban = 0;
-        public int gban = 0;
-        public int time = 0;
+		public int time = 0;
         public int grass = 0;
-        //     public ArrayList<Integer> count=new ArrayList<>(16);
-        //    UserInfo(){
-        //       for(int i=0;i<14;++i){
-        //           count.add(0);
-        //      }
-        // }
     }
 
 	@Override
@@ -73,7 +64,7 @@ public class MUserCounter extends BaseModule {
 
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
-		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_UserCount)){
+		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_UserCount)) {
 			return false;
 		}
 		if (msg.contains("艹") || msg.contains("草")) {
@@ -105,11 +96,6 @@ public class MUserCounter extends BaseModule {
     public void incPic(long qq) {
         UserInfo userInfo = getBean(qq);
         ++userInfo.pic;
-    }
-
-    public void incSetu(long qq) {
-        UserInfo userInfo = getBean(qq);
-        ++userInfo.setu;
     }
 
     public void incPohaitu(long qq) {
@@ -145,16 +131,6 @@ public class MUserCounter extends BaseModule {
     public void incMengEr(long qq) {
         UserInfo userInfo = getBean(qq);
         ++userInfo.mengEr;
-    }
-
-    public void incBanCount(long qq) {
-        UserInfo userInfo = getBean(qq);
-        ++userInfo.ban;
-    }
-
-    public void incGbanCount(long qq) {
-        UserInfo userInfo = getBean(qq);
-        ++userInfo.gban;
     }
 
     public void decLife(long qq) {
@@ -212,9 +188,6 @@ public class MUserCounter extends BaseModule {
 			if (userInfo.repeatBreak != 0 || userInfo2.repeatBreak != 0) {
 				stringBuilder.append("\n").append("打断复读").append(userInfo.repeatBreak + userInfo2.repeatBreak).append("次");
 			}
-			if (userInfo.setu != 0 || userInfo2.setu != 0) {
-				stringBuilder.append("\n").append("色图").append(userInfo.setu + userInfo2.setu).append("次");
-			}
 			if (userInfo.sp != 0 || userInfo2.sp != 0) {
 				stringBuilder.append("\n").append("搜图").append(userInfo.sp + userInfo2.sp).append("次");
 			}
@@ -223,12 +196,6 @@ public class MUserCounter extends BaseModule {
 			}
 			if (userInfo.mengEr != 0 || userInfo2.mengEr != 0) {
 				stringBuilder.append("\n").append("无悔发言").append(userInfo.mengEr + userInfo2.mengEr).append("次");
-			}
-			if (userInfo.ban != 0 || userInfo2.ban != 0) {
-				stringBuilder.append("\n").append("口球").append(userInfo.ban + userInfo2.ban).append("次");
-			}
-			if (userInfo.gban != 0 || userInfo2.gban != 0) {
-				stringBuilder.append("\n").append("给大佬递口球").append(userInfo.gban + userInfo2.gban).append("次");
 			}
 			if (userInfo.time != 0 || userInfo2.time != 0) {
 				stringBuilder.append("\n").append("时间").append(userInfo.time + userInfo2.time).append("秒");
@@ -261,9 +228,6 @@ public class MUserCounter extends BaseModule {
         if (userInfo.repeatBreak != 0) {
             stringBuilder.append("\n").append("打断复读").append(userInfo.repeatBreak).append("次");
         }
-        if (userInfo.setu != 0) {
-            stringBuilder.append("\n").append("色图").append(userInfo.setu).append("次");
-        }
         if (userInfo.sp != 0) {
             stringBuilder.append("\n").append("搜图").append(userInfo.sp).append("次");
         }
@@ -273,13 +237,7 @@ public class MUserCounter extends BaseModule {
         if (userInfo.mengEr != 0) {
             stringBuilder.append("\n").append("无悔发言").append(userInfo.mengEr).append("次");
         }
-        if (userInfo.ban != 0) {
-            stringBuilder.append("\n").append("口球").append(userInfo.ban).append("次");
-        }
-        if (userInfo.gban != 0) {
-            stringBuilder.append("\n").append("给大佬递口球").append(userInfo.gban).append("次");
-        }
-        if (userInfo.time != 0) {
+		if (userInfo.time != 0) {
             stringBuilder.append("\n").append("时间").append(userInfo.time).append("秒");
         }
         if (userInfo.grass != 0) {
@@ -289,7 +247,6 @@ public class MUserCounter extends BaseModule {
     }
 
     public String getTheFirst() {
-        int setu = 0;
         int pic = 0;
         int pohai = 0;
         int repeatStart = 0;
@@ -299,11 +256,9 @@ public class MUserCounter extends BaseModule {
         int sp = 0;
         int speak = 0;
         int mengEr = 0;
-        int ban = 0;
-        int time = 0;
+		int time = 0;
         int grass = 0;
-        long setuq = 0;
-        long picq = 0;
+		long picq = 0;
         long pohaiq = 0;
         long repeatStartq = 0;
         long repeatq = 0;
@@ -312,8 +267,7 @@ public class MUserCounter extends BaseModule {
         long spq = 0;
         long speakq = 0;
         long mengErq = 0;
-        long banq = 0;
-        long timeq = 0;
+		long timeq = 0;
         long grassq = 0;
 
         for (Entry<Long, UserInfo> entry : countMap.entrySet()) {
@@ -328,10 +282,6 @@ public class MUserCounter extends BaseModule {
             if (userInfo.pic > pic) {
                 pic = userInfo.pic;
                 picq = entry.getKey();
-            }
-            if (userInfo.setu > setu) {
-                setu = userInfo.setu;
-                setuq = entry.getKey();
             }
             if (userInfo.pohai > pohai) {
                 pohai = userInfo.pohai;
@@ -361,11 +311,7 @@ public class MUserCounter extends BaseModule {
                 mengEr = userInfo.mengEr;
                 mengErq = entry.getKey();
             }
-            if (userInfo.ban > ban) {
-                ban = userInfo.ban;
-                banq = entry.getKey();
-            }
-            if (userInfo.time < time) {
+			if (userInfo.time < time) {
                 time = userInfo.time;
                 timeq = entry.getKey();
             }
@@ -380,9 +326,6 @@ public class MUserCounter extends BaseModule {
         }
         if (picq != 0) {
             sb.append("\n").append(picq).append("发图").append(pic).append("张");
-        }
-        if (setuq != 0) {
-            sb.append("\n").append(setuq).append("色图").append(setu).append("次");
         }
         if (pohaiq != 0) {
             sb.append("\n").append(pohaiq).append("迫害").append(pohai).append("次");
@@ -404,9 +347,6 @@ public class MUserCounter extends BaseModule {
         }
         if (mengErq != 0) {
             sb.append("\n").append(mengErq).append("无悔发言").append(mengEr).append("次");
-        }
-        if (banq != 0) {
-            sb.append("\n").append(banq).append("口球").append(ban).append("次");
         }
         if (timeq != 0) {
             sb.append("\n").append(timeq).append("时间").append(time).append("秒");

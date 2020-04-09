@@ -68,11 +68,9 @@ public class TimeTaskManager implements Runnable {
 					Autoreply.ins.threadPool.execute(new Runnable() {
 							@Override
 							public void run() {
+								Autoreply.sendMessage(793236161L, 0, "莉莉晚");
 								List<Group> groupList=Autoreply.CQ.getGroupList();
 								for (Group g:groupList) {
-									if (g.getId() == 793236161L) {
-										Autoreply.sendMessage(g.getId(), 0, "莉莉晚");
-									}
 									if (Autoreply.sendMessage(g.getId(), 0, goodEvening) < 0) {
 										continue;
 									}
@@ -127,7 +125,7 @@ public class TimeTaskManager implements Runnable {
             Calendar c = Calendar.getInstance();
 			for (int i=0;i < taskList.size();++i) {
 				Task t=taskList.get(i);
-				if (c.get(Calendar.HOUR_OF_DAY) == t.getTime() / 100 && c.get(Calendar.MINUTE) == t.getTime() % 60) {
+				if (c.get(Calendar.HOUR_OF_DAY) == t.getTime() / 100 && c.get(Calendar.MINUTE) == t.getTime() % 100) {
 					t.onTime();
 				}
 			}

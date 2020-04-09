@@ -249,13 +249,11 @@ public class Tools {
 			Member ban = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, banQQ);
 			if (me.getAuthority() - ban.getAuthority() > 0) {
 				Autoreply.CQ.setGroupBan(fromGroup, banQQ, time);
-				((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incGbanCount(Autoreply.CQ.getLoginQQ());
 				return true;
 			} else {
 				Member ogg = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, ConfigManager.instance.configJavaBean.ogg);
 				if (ogg != null && ogg.getAuthority() - ban.getAuthority() > 0) {
 					Autoreply.sendMessage(Autoreply.mainGroup, 0, "~mutegroupuser " + fromGroup + " " + (time / 60) + " " + banQQ);
-					((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incGbanCount(Autoreply.CQ.getLoginQQ());
 					return true;
 				}
 			}
@@ -280,10 +278,8 @@ public class Tools {
 				Member ban = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, banQQ);
 				if (me.getAuthority() - ban.getAuthority() > 0) {
 					Autoreply.CQ.setGroupBan(fromGroup, banQQ, (int)time);
-					((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incGbanCount(Autoreply.CQ.getLoginQQ());
 				} else if (ogg != null && ogg.getAuthority() - ban.getAuthority() > 0) {
 					banqqs.append(" ").append(banQQ);
-					((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incGbanCount(Autoreply.CQ.getLoginQQ());
 				}
 			}
 			if (!banqqs.toString().equals("")) {
@@ -587,6 +583,75 @@ public class Tools {
 
 		public static String getUpstat(long uid) {
 			return Tools.Network.getSourceCode("https://api.bilibili.com/x/space/upstat?mid=" + uid + "&jsonp=jsonp");
+		}
+
+		public static boolean setBan(long roomId, long blockId, String hour) {
+			if (Integer.parseInt(hour) == 0) {  
+				String jsonStr=Tools.Network.getSourceCode("https://api.live.bilibili.com/liveact/ajaxGetBlockList?roomid=" + roomId + "&page=1", Autoreply.instance.cookieManager.getGrzx());
+				BanBean bb=new Gson().fromJson(jsonStr, BanBean.class);
+				String eventId="";
+				for (BanBean.Data data:bb.data) {
+					if (data.uid == blockId) {
+						eventId += data.id;
+						break;
+					}
+				}
+				Connection.Response response = null;
+				try {
+					Connection connection = Jsoup.connect("https://api.live.bilibili.com/banned_service/v1/Silent/del_room_block_user");
+					String csrf = Tools.Network.cookieToMap(Autoreply.instance.cookieManager.getGrzx()).get("bili_jct");
+					connection.userAgent(Autoreply.instance.userAgent)
+						.headers(liveHead)
+						.ignoreContentType(true)
+						.referrer("https://live.bilibili.com/" + roomId)
+						.cookies(Tools.Network.cookieToMap(Autoreply.instance.cookieManager.getGrzx()))
+						.method(Connection.Method.POST)
+						.data("roomid", String.valueOf(roomId))
+						.data("id", eventId)
+						.data("csrf_token", csrf)
+						.data("csrf", csrf)
+						.data("visit_id", "");
+					response = connection.execute();
+					if (response.statusCode() != 200) {
+						return false;
+					}
+					JsonObject obj = new JsonParser().parse(response.body()).getAsJsonObject();
+					if (obj.get("code").getAsInt() == 0 && obj.get("message").getAsString().equals("")) {
+						return true;
+					}
+				} catch (Exception e) {
+					return false;
+				} 
+			} else {
+				Connection.Response response = null;
+				try {
+					Connection connection = Jsoup.connect("https://api.live.bilibili.com/banned_service/v2/Silent/add_block_user");
+					String csrf = Tools.Network.cookieToMap(Autoreply.instance.cookieManager.getGrzx()).get("bili_jct");
+					connection.userAgent(Autoreply.instance.userAgent)
+						.headers(liveHead)
+						.ignoreContentType(true)
+						.referrer("https://live.bilibili.com/" + roomId)
+						.cookies(Tools.Network.cookieToMap(Autoreply.instance.cookieManager.getGrzx()))
+						.method(Connection.Method.POST)
+						.data("hour", hour)
+						.data("roomid", String.valueOf(roomId))
+						.data("block_uid", String.valueOf(blockId))
+						.data("csrf_token", csrf)
+						.data("csrf", csrf)
+						.data("visit_id", "");
+					response = connection.execute();
+					if (response.statusCode() != 200) {
+						return false;
+					}
+					JsonObject obj = new JsonParser().parse(response.body()).getAsJsonObject();
+					if (obj.get("code").getAsInt() == 0 && obj.get("message").getAsString().equals("")) {
+						return true;			
+					}
+				} catch (Exception e) {
+					return false;
+				}
+			}
+			return false;
 		}
 
 		public static void sendArticalJudge(long cvId, String msg, String cookie) {
@@ -987,6 +1052,26 @@ public class Tools {
 					System.out.println(response.body());
 				}
 			}
+		}
+	}
+	public class BanBean {
+		public int code;
+		public String msg;
+		public String  message;
+		public ArrayList<Data> data;
+
+		public class Data {
+			public long id;
+			public long roomid;
+			public long uid;
+			public int type;
+			public long adminid;
+			public String block_end_time;
+			public String ctime;
+			public String msg;
+			public String msg_time;
+			public String uname;
+			public String admin_name;
 		}
 	}
 }

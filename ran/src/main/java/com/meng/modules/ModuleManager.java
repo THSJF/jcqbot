@@ -2,7 +2,6 @@ package com.meng.modules;
 
 import com.meng.*;
 import com.meng.config.*;
-import com.meng.modules.*;
 import com.meng.tip.*;
 import java.io.*;
 import java.util.*;
@@ -51,13 +50,13 @@ public class ModuleManager extends BaseModule {
 		modules.add(new MMsgAt().load());
 		modules.add(new MBiliUpdate().load());
 		modules.add(new MDiceImitate().load());
+		modules.add(new MDiceCmd().load());
 		modules.add(new MSpellCollect().load());
 		modules.add(new MOcr().load());
 		modules.add(new MBarcode().load());
 		modules.add(new FanPoHaiManager().load());
 		modules.add(new ThreeManager().load());
 		modules.add(new MBanner().load());
-		modules.add(new MCQCodeProcess().load());
 		modules.add(new MusicManager().load());
 		modules.add(new MPicSearch().load());
 		modules.add(new MPicEdit().load());
@@ -69,7 +68,7 @@ public class ModuleManager extends BaseModule {
 		modules.add(new VirusManager().load());
 		modules.add(new MSeq().load());
 		//modules.add(new MGroupDic().load());
-		Autoreply.instance.threadPool.execute((MTimeTip)getModule(MTimeTip.class));
+		Autoreply.instance.threadPool.execute(getModule(MTimeTip.class));
 		instance = this;
 		enable = true;
 		return this;
@@ -88,19 +87,14 @@ public class ModuleManager extends BaseModule {
 		return false;
 	}
 
-	public BaseModule getModule(Class<?> baseModule) {
-		return getModule(baseModule.getSimpleName());
-	}
-
-	public BaseModule getModule(String simpleClassName) {
-		for (int i=0,s= modules.size();i < s;++i) {
+	public <T extends BaseModule> T getModule(Class<T> t) {
+		for (int i=0;i < modules.size();++i) {
 			BaseModule bm=modules.get(i);
-			if (bm.getClass().getSimpleName().equals(simpleClassName)) {
-				return bm;
+			if (bm.getClass().getSimpleName().equals(t.getSimpleName())) {
+				return (T)bm;
 			}
 		}
-		throw new RuntimeException("试图获取未加载的模块");
+		return null;
 	}
-
 }
 

@@ -11,6 +11,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import org.java_websocket.client.*;
 import org.java_websocket.handshake.*;
+import com.meng.tools.*;
 
 public class DanmakuListener extends WebSocketClient {
 
@@ -113,9 +114,11 @@ public class DanmakuListener extends WebSocketClient {
 					String blockid=ss[1];
 					PersonInfo pi=ConfigManager.instance.getPersonInfoFromName(blockid);
 					if (pi != null) {
-						blockid = pi.bid + "";
+						blockid += pi.bid;
 					}
-					Autoreply.instance.liveListener.setBan(Autoreply.mainGroup, roomMaster.bliveRoom + "", blockid, ss[2]);
+					if (Tools.BilibiliTool.setBan(roomMaster.bliveRoom, Long.parseLong(blockid), ss[2])) {
+						Autoreply.sendMessage(Autoreply.mainGroup, 0, String.format("%s在%d中被禁言%s小时", blockid, roomMaster.bliveRoom, ss[2]));
+					}
 					return;
 				}
 				String s=dealMsg(roomMaster.bliveRoom, speakerUid, danmakuText);
@@ -160,35 +163,19 @@ public class DanmakuListener extends WebSocketClient {
 		return null;
 	}
 
-	class Repeater {
+	private class Repeater {
 		private String lastMessageRecieved = "";
 		private boolean lastStatus = false;
 		private int repeatCount=0;
-
-		public Repeater() {
-
-		}
 
 		public String dealMsg(String msg) {
 			String b = null;
 			if (!lastStatus && lastMessageRecieved.equals(msg)) {
 				b = repeatStart(msg);
-			} else if (lastStatus && lastMessageRecieved.equals(msg)) {
-				b = repeatRunning(msg);
-			} else if (lastStatus && !lastMessageRecieved.equals(msg)) {
-				b = repeatEnd(msg);
-			}
+			} 
 			lastStatus = lastMessageRecieved.equals(msg);
 			lastMessageRecieved = msg;
 			return b;
-		}
-
-		private String repeatEnd(String msg) {
-			return null;
-		}
-
-		private String repeatRunning(String msg) {
-			return null;
 		}
 
 		private String repeatStart(String msg) {   
@@ -211,7 +198,9 @@ public class DanmakuListener extends WebSocketClient {
 				return newmsg.equals(msg) ? newmsg + " " : newmsg;
 			}
 		}
-	}public class DataPackage {
+	}
+
+	private class DataPackage {
 		public byte[] data;
 		private int pos=0;
 

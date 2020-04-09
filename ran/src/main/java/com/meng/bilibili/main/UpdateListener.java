@@ -76,7 +76,7 @@ public class UpdateListener implements Runnable {
 								}
                                 tip(String.valueOf(updater.bid), updater.name + "发布新视频" + vlist.aid + ":" + vlist.title);
 								Autoreply.instance.sanaeServer.send(SanaeDataPack.encode(SanaeDataPack.opNewVideo).write(updater.name).write(vlist.title).write(vlist.aid));
-								} else {
+							} else {
                                 updater.needTipVideo = true;
                             }
                             updater.lastVideo = vlist.created;
@@ -93,18 +93,10 @@ public class UpdateListener implements Runnable {
     }
 
     private void tip(String updater, String msg) {
-		if (ConfigManager.instance.getPersonInfoFromBid(Integer.parseInt(updater)).isTipVidoe()) {
-            Autoreply.sendMessage(Autoreply.mainGroup, 0, msg, true);
-            ArrayList<Long> groupList = ConfigManager.instance.getPersonInfoFromBid(Long.parseLong(updater)).tipIn;
-            if (groupList != null) {
-                for (long group : groupList) {
-                    Autoreply.sendMessage(group, 0, msg, true);
-                }
-            }
-        }
+		Autoreply.sendMessage(Autoreply.mainGroup, 0, msg, true);
     }
 
-	class UpdatePerson {
+	private class UpdatePerson {
 		public String name = "";
 		public int bid = 0;
 		public long lastVideo = 0;

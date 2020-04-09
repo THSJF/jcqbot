@@ -5,5 +5,5 @@ public class LivePerson {
 	public boolean lastStatus = false;
 	public boolean needTip = false;
 	public long liveStartTimeStamp = 0;
-	public String roomID="";
+	public long roomID=0;
 }

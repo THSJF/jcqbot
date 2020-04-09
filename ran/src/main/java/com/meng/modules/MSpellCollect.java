@@ -2,17 +2,14 @@ package com.meng.modules;
 
 import com.google.gson.reflect.*;
 import com.meng.*;
+import com.meng.config.*;
+import com.meng.dice.*;
 import com.meng.gameData.TouHou.zun.*;
 import com.meng.tools.*;
 import java.io.*;
-import java.lang.reflect.*;
 import java.nio.charset.*;
 import java.util.*;
 import java.util.concurrent.*;
-import com.meng.modules.*;
-import com.meng.config.*;
-import com.meng.dice.Archievement;
-import com.meng.dice.ArchievementBean;
 
 public class MSpellCollect extends BaseModule {
 	public ConcurrentHashMap<Long,HashSet<String>> userSpellsMap=new ConcurrentHashMap<>();
@@ -139,7 +136,7 @@ public class MSpellCollect extends BaseModule {
 
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
-		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_SpellCollect)){
+		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_SpellCollect)) {
 			return false;
 		}
 		if (msg.startsWith("#幻币转账") && fromQQ == ConfigManager.instance.configJavaBean.ogg) {
@@ -382,8 +379,8 @@ public class MSpellCollect extends BaseModule {
 			Autoreply.sendMessage(fromGroup, 0, "你有" + ((MCoinManager)ModuleManager.instance.getModule(MCoinManager.class)).getCoinsCount(fromQQ) + "个幻币");
 			return true;
 		}
-		
-		if(!ConfigManager.instance.isAdmin(fromQQ)){
+
+		if (!ConfigManager.instance.isAdmin(fromQQ)) {
 			return false;
 		}
 		if (msg.startsWith("移除成就 ")) {
@@ -392,7 +389,7 @@ public class MSpellCollect extends BaseModule {
 			ArchievementBean ab=archiMap.get(toQQ);
 			if (ab == null) {
 				ab = new ArchievementBean();
-			archiMap.put(toQQ, ab);
+				archiMap.put(toQQ, ab);
 			}
 			for (Archievement ac:archList) {
 				if (ac.name.equals(arch)) {

@@ -22,7 +22,7 @@ public class GroupMemberChangerListener {
             sendMessage(959615179L, 0, Autoreply.instance.CC.at(-1) + "熊加入了群" + fromGroup, true);
             return;
         }
-        if (!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_MainSwitch)) {
+        if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_MainSwitch)) {
             return;
         }
         if (personInfo != null) {
@@ -30,24 +30,11 @@ public class GroupMemberChangerListener {
         } else {
             sendMessage(fromGroup, 0, "欢迎新大佬", true);
         }
-		ConfigManager.instance.addAutoAllow(beingOperateQQ);
-		/*  if (fromGroup == 859561731L) { // 台长群
-		 sendMessage(859561731L, 0, "芳赛服务器炸了", true);
-		 try { sendMessage(859561731L, 0, CC.image(new File(appDirectory +
-		 "pic/sjf9961.jpg"))); } catch (IOException e) {
-		 e.printStackTrace(); }
-		 } */
     }
 
     public void checkDecrease(int subtype, int sendTime, final long fromGroup, final long fromQQ, long beingOperateQQ) {
         if (subtype == 1) {
-			//  if (beingOperateQQ == 2856986197L) {
-			//	if(fromGroup==Autoreply.mainGroup){
-			//		return;
-			//	}
-			//     Autoreply.CQ.setGroupLeave(fromGroup, false);
-			//    }
-            if (!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_MainSwitch)) {
+			if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_MainSwitch)) {
                 return;
             }
             if (ConfigManager.instance.isBlackQQ(beingOperateQQ)) {
@@ -74,7 +61,7 @@ public class GroupMemberChangerListener {
                 ConfigManager.instance.addBlack(fromGroup, fromQQ);
                 return;
             }
-            if (!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_MainSwitch)) {
+            if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_MainSwitch)) {
                 return;
             }
             if (ConfigManager.instance.isNotReplyQQ(beingOperateQQ)) {
@@ -82,7 +69,6 @@ public class GroupMemberChangerListener {
             }
             QQInfo qInfo = Autoreply.CQ.getStrangerInfo(beingOperateQQ);
             QQInfo qInfo2 = Autoreply.CQ.getStrangerInfo(fromQQ);
-            ConfigManager.instance.removeAutoAllow(beingOperateQQ);
             sendMessage(fromGroup, 0, ConfigManager.instance.getNickName(beingOperateQQ) + "(" + qInfo.getQqId() + ")" + "被" + ConfigManager.instance.getNickName(fromQQ) + "(" + qInfo2.getQqId() + ")" + "玩完扔莉", true);
         }
     }

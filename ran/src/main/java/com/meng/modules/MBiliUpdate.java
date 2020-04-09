@@ -2,12 +2,11 @@ package com.meng.modules;
 
 import com.google.gson.*;
 import com.meng.*;
-import com.meng.bilibili.main.NewArticleBean;
-import com.meng.bilibili.main.NewVideoBean;
+import com.meng.bilibili.main.*;
+import com.meng.config.*;
 import com.meng.config.javabeans.*;
 import com.meng.tools.*;
 import java.io.*;
-import com.meng.config.*;
 
 public class MBiliUpdate extends BaseModule {
 
@@ -86,37 +85,7 @@ public class MBiliUpdate extends BaseModule {
             }
         }
     }
-
-    public String getAVJson(String bid) {
-        return Tools.Network.getSourceCode("https://space.bilibili.com/ajax/member/getSubmitVideos?mid=" + bid + "&page=1&pagesize=1");
-    }
-
-    public long getAVLastUpdateTime(String bid) {
-        NewVideoBean.Data.Vlist vlist;
-        try {
-            vlist = new Gson().fromJson(Tools.Network.getSourceCode("https://space.bilibili.com/ajax/member/getSubmitVideos?mid=" + bid + "&page=1&pagesize=1").replace("\"3\":", "\"n3\":").replace("\"4\":", "\"n4\":"), NewVideoBean.class).data.vlist.get(0);
-        } catch (Exception e) {
-            System.out.println("no videos");
-            return 0;
-        }
-        return vlist.created;
-    }
-
-    public String getCVJson(String bid) {
-        return Tools.Network.getSourceCode("http://api.bilibili.com/x/space/article?mid=" + bid + "&pn=1&ps=1&sort=publish_time&jsonp=jsonp");
-    }
-
-    public long getCVLastUpdateTime(String bid) {
-        NewArticleBean.Data.Articles articles;
-        try {
-            articles = new Gson().fromJson(Tools.Network.getSourceCode("http://api.bilibili.com/x/space/article?mid=" + bid + "&pn=1&ps=1&sort=publish_time&jsonp=jsonp"), NewArticleBean.class).data.articles.get(0);
-        } catch (Exception e) {
-            System.out.println("no articles");
-            return 0;
-        }
-        return articles.publish_time;
-    }
-
+	
     private boolean isUpper(String msg) {
         for (PersonInfo cb : ConfigManager.instance.configJavaBean.personInfo) {
             if (msg.equals(cb.name) && cb.bid != 0) {

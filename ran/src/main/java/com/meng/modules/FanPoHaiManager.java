@@ -31,7 +31,6 @@ public class FanPoHaiManager extends BaseModule {
 					}
 					System.out.println("反迫害启动完成");
 					Autoreply.sleeping = false;
-					Autoreply.sendMessage(Autoreply.mainGroup, 0, "~reconnect");
 					Autoreply.instance.enable();
 				}
 			});
@@ -68,7 +67,7 @@ public class FanPoHaiManager extends BaseModule {
                     bpohai = simi > 0.95f;
                 }
             }
-            if (bpohai || msg.equals("[CQ:bface,p=11361,id=1188CED678E40F79A536C60658990EE7]")) {
+            if (bpohai) {
                 String folder = "";
                 PersonInfo personInfo = ConfigManager.instance.getPersonInfoFromQQ(fromQQ);
                 if (personInfo != null) {
@@ -76,9 +75,9 @@ public class FanPoHaiManager extends BaseModule {
                 }
                 File file = new File(folder);
                 if (msgId != -1) {
-                     if (ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_CheHuiMotu)) {
+					if (ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_CheHuiMotu)) {
                         Member me = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, Autoreply.CQ.getLoginQQ());
-                        Member ban = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, Autoreply.CQ.getLoginQQ());
+                        Member ban = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, fromQQ);
                         if (me.getAuthority() - ban.getAuthority() > 0) {
                             Autoreply.CQ.deleteMsg(msgId);
                         }
@@ -101,8 +100,8 @@ public class FanPoHaiManager extends BaseModule {
                     File[] files = file.listFiles();
                     if (files != null) {
                         Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files)));
-                        ((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incPohaitu(Autoreply.CQ.getLoginQQ());
-                        ((MGroupCounter)ModuleManager.instance.getModule(MGroupCounter.class)).incPohaitu(fromGroup);
+                        ModuleManager.instance.getModule(MUserCounter.class).incPohaitu(Autoreply.CQ.getLoginQQ());
+                        ModuleManager.instance.getModule(MGroupCounter.class).incPohaitu(fromGroup);
                     }
                     return true;
                 }

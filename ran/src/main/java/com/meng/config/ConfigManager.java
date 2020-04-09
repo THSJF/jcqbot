@@ -100,10 +100,6 @@ public class ConfigManager {
         return configJavaBean.adminList.contains(fromQQ) || configJavaBean.masterList.contains(fromQQ);
     }
 
-    public boolean isGroupAutoAllow(long fromQQ) {
-        return configJavaBean.groupAutoAllowList.contains(fromQQ) || configJavaBean.adminList.contains(fromQQ) || configJavaBean.masterList.contains(fromQQ);
-    }
-
     public GroupConfig getGroupConfig(long fromGroup) {
         for (GroupConfig gc : configJavaBean.groupConfigs) {
             if (fromGroup == gc.n) {
@@ -112,18 +108,6 @@ public class ConfigManager {
         }
         return null;
     }
-
-	public void addAutoAllow(long qq) {
-		configJavaBean.groupAutoAllowList.add(qq);
-		Autoreply.sendMessage(Autoreply.mainGroup, 0, "自动同意列表添加用户" + qq);
-		saveConfig();
-	}
-
-	public void removeAutoAllow(long qq) {
-		configJavaBean.groupAutoAllowList.remove(qq);
-		Autoreply.sendMessage(Autoreply.mainGroup, 0, "自动同意列表移除用户" + qq);
-		saveConfig();
-	}
 
     public boolean isNotReplyQQ(long qq) {
         return configJavaBean.QQNotReply.contains(qq) || configJavaBean.blackListQQ.contains(qq);

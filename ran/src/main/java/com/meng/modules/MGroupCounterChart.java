@@ -4,7 +4,6 @@ import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
 import com.meng.config.*;
-import com.meng.modules.*;
 import com.meng.tools.*;
 import java.awt.*;
 import java.io.*;
@@ -51,7 +50,7 @@ public class MGroupCounterChart extends BaseModule {
 
 	@Override
 	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
-		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_GroupCountChart)){
+		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_GroupCountChart)) {
 			return false;
 		}
 		GroupSpeak gs=groupsMap.get(fromGroup);
