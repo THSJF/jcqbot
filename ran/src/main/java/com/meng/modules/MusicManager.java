@@ -102,12 +102,24 @@ public class MusicManager extends BaseModule {
 			case "th10":
 				qa.a.add(TH10GameData.musicName[musicNum]);
 				break;
+			case "th11":
+				qa.a.add(TH11GameData.musicName[musicNum]);
+				break;
+			case "th12":
+				qa.a.add(TH12GameData.musicName[musicNum]);
+				break;
+			case "th14":
+				qa.a.add(TH14GameData.musicName[musicNum]);
+				break;
 			case "th15":
 				qa.a.add(TH15GameData.musicName[musicNum]);
 				break;
+			case "th16":
+				qa.a.add(TH16GameData.musicName[musicNum]);
+				break;
 		}
 		randomMisic(qa.a);
-		qa.exangeAnswer();
+		qa.exangeAnswer(0);
 		resultMap.put(fromQQ, qa);
 		StringBuilder sb = new StringBuilder();
 		int i = 0;
