@@ -7,6 +7,7 @@ import java.lang.reflect.*;
 import java.nio.charset.*;
 import java.util.*;
 import com.meng.tools.Tools;
+import com.meng.config.javabeans.*;
 
 public class MCoinManager extends BaseModule {
 	private HashMap<Long, Integer> countMap = new HashMap<>();
@@ -78,7 +79,10 @@ public class MCoinManager extends BaseModule {
 
 	public void exchangeCoins(long fromGroup, long fromQQ, int coins) {
 		if (subCoins(fromQQ, coins)) {
-			Autoreply.sendMessage(1023432971L, 0, "~addcoins " + coins + " " + fromQQ);
+			RitsukageDataPack rdp=RitsukageDataPack.encode(RitsukageDataPack._14coinsAdd,System.currentTimeMillis());
+			rdp.write(1,fromQQ);
+			Autoreply.instance.connectServer.broadcast(rdp.getData());
+		//	Autoreply.sendMessage(1023432971L, 0, "~addcoins " + coins + " " + fromQQ);
 			Autoreply.sendMessage(fromGroup, 0, "兑换" + coins + "个幻币至小律影");
 		} else {
 			Autoreply.sendMessage(fromGroup, 0, "兑换失败");

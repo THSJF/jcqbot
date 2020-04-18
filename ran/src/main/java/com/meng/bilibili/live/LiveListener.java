@@ -92,7 +92,6 @@ public class LiveListener implements Runnable {
 						DanmakuListener dl=Autoreply.instance.danmakuListenerManager.getListener(personInfo.bliveRoom);
 						if (dl != null) {
 							dl.close();
-							Autoreply.instance.danmakuListenerManager.listener.remove(dl);
 						} 
 					}
                     LivePerson livePerson =livePersonMap.get(personInfo.bid);
