@@ -16,16 +16,23 @@ public class BirthdayTip implements Runnable {
 	private File ageFile;
 	private HashMap<Long,Integer> memberMap=new HashMap<>();
 	public BirthdayTip() {
-		ageFile = new File(Autoreply.appDirectory + "/properties/birthday.json");
-        if (!ageFile.exists()) {
-            saveConfig();
+
+	}
+
+	private void read() {
+		if (ageFile == null) {
+			ageFile = new File(Autoreply.appDirectory + "/properties/birthday.json");
+		}
+		if (!ageFile.exists()) {
+            save();
         }
         memberMap = Autoreply.gson.fromJson(Tools.FileTool.readString(ageFile), new TypeToken<HashMap<Long,Integer>>() {}.getType());
 	}
 
 	@Override
 	public void run() {
-		while (true) {	
+		while (true) {
+			read();
 			Calendar c = Calendar.getInstance();
 			if (c.get(Calendar.HOUR_OF_DAY) == 8 && c.get(Calendar.MINUTE) == 10) {
 				List<Group> groups=Autoreply.CQ.getGroupList();
@@ -41,8 +48,9 @@ public class BirthdayTip implements Runnable {
 						memberMap.put(member.getQqId(), member.getAge());
 					}
 				}
-				saveConfig();
+				save();
 				tiped.clear();
+				memberMap.clear();
 			}
 			try {
 				Thread.sleep(60000);
@@ -52,7 +60,7 @@ public class BirthdayTip implements Runnable {
 		}
 	}
 
-	private void saveConfig() {
+	private void save() {
         try {
             FileOutputStream fos = new FileOutputStream(ageFile);
             OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
