@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
 import com.meng.config.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.lang.reflect.*;
@@ -11,7 +12,7 @@ import java.nio.charset.*;
 import java.util.*;
 import java.util.Map.*;
 
-public class MUserCounter extends BaseModule {
+public class MUserCounter extends BaseGroupModule {
     private HashMap<Long, UserInfo> countMap = new HashMap<>();
     private File file;
 
@@ -30,7 +31,7 @@ public class MUserCounter extends BaseModule {
     }
 
 	@Override
-	public BaseModule load() {
+	public MUserCounter load() {
 		file = new File(Autoreply.appDirectory + "properties\\UserCount.json");
         if (!file.exists()) {
             try {
@@ -58,12 +59,11 @@ public class MUserCounter extends BaseModule {
 					backupData();
 				}
 			});
-		enable = true;
 		return this;
     }
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_UserCount)) {
 			return false;
 		}

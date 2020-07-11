@@ -5,21 +5,20 @@ import com.meng.*;
 import com.meng.bilibili.main.*;
 import com.meng.config.*;
 import com.meng.config.javabeans.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.tools.*;
-import java.io.*;
 
-public class MBiliUpdate extends BaseModule {
+public class MBiliUpdate extends BaseGroupModule {
 
     private String[] words = new String[]{"更了吗", "出来更新", "什么时候更新啊", "在？看看更新", "怎么还不更新", "更新啊草绳"};
 
 	@Override
-	public BaseModule load() {
-		enable = true;
+	public MBiliUpdate load() {
 		return this;
 	}
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (msg.contains("今天更了吗") && isUpper(msg.substring(0, msg.indexOf("今天更了吗")))) {
             long videoUpdateTime = 0;
             long articalUpdateTime = 0;
@@ -85,7 +84,7 @@ public class MBiliUpdate extends BaseModule {
             }
         }
     }
-	
+
     private boolean isUpper(String msg) {
         for (PersonInfo cb : ConfigManager.instance.configJavaBean.personInfo) {
             if (msg.equals(cb.name) && cb.bid != 0) {

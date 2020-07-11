@@ -3,18 +3,18 @@ package com.meng.modules;
 import com.meng.*;
 import com.meng.config.*;
 import com.meng.config.javabeans.*;
-import com.meng.modules.*;
+import com.meng.SJFInterfaces.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
 
-public class ThreeManager extends BaseModule {
+public class ThreeManager extends BaseGroupModule {
 
 	private HashMap<Long,Boolean> changeMap=new HashMap<>();
 	private HashSet<Long> checkSet=new HashSet<>();
 
 	@Override
-    public BaseModule load() {
+    public ThreeManager load() {
 		checkSet.add(2487765013L);
 		checkSet.add(1033317031L);
 		checkSet.addAll(ConfigManager.instance.configJavaBean.adminList);
@@ -24,7 +24,6 @@ public class ThreeManager extends BaseModule {
 				checkSet.add(pi.qq);
 			}
 		}
-
         Autoreply.instance.threadPool.execute(new Runnable(){
 
 				@Override
@@ -61,14 +60,13 @@ public class ThreeManager extends BaseModule {
 					}
 				}
 			});
-		enable = true;
 		return this;
     }
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (changeMap.get(fromQQ) != null && changeMap.get(fromQQ)) {
-			Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image(((MPicEdit)ModuleManager.instance.getModule(MPicEdit.class)).jingShenZhiZhuByAt(fromGroup, 0, Autoreply.instance.CC.at(fromQQ))));
+			Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image(ModuleManager.instance.getGroupModule(MPicEdit.class).jingShenZhiZhuByAt(fromGroup, 0, Autoreply.instance.CC.at(fromQQ))));
 			changeMap.put(fromQQ, false);
 			return true;
 		}

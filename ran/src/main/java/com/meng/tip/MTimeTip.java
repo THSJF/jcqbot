@@ -3,12 +3,13 @@ package com.meng.tip;
 import com.meng.*;
 import com.meng.config.*;
 import com.meng.config.javabeans.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.modules.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.util.*;
 
-public class MTimeTip extends BaseModule implements Runnable {
+public class MTimeTip extends BaseGroupModule implements Runnable {
     private final long groupYuTang = 617745343L;
     private final long groupDNFmoDao = 424838564L;
     private final long groupXueXi = 312342896L;
@@ -18,8 +19,7 @@ public class MTimeTip extends BaseModule implements Runnable {
     private boolean tipedAlice = true;
 
 	@Override
-	public BaseModule load() {
-		enable = true;
+	public MTimeTip load() {
 		return this;
 	}
 
@@ -95,7 +95,7 @@ public class MTimeTip extends BaseModule implements Runnable {
     }
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (!tipedYYS && fromGroup == groupYuTang && fromQQ == YYS) {
             String[] strings = new String[]{"想吃YYS", "想食YYS", "想上YYS", Autoreply.instance.CC.at(1418780411L) + "老婆"};
             Autoreply.sendMessage(groupYuTang, 0, (String) Tools.ArrayTool.rfa(strings));

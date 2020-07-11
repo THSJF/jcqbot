@@ -2,21 +2,21 @@ package com.meng.modules;
 
 import com.meng.*;
 import com.meng.config.*;
+import com.meng.SJFInterfaces.*;
 import java.io.*;
 
-public class MDiceCmd extends BaseModule {
+public class MDiceCmd extends BaseGroupModule {
 
 	private String[] cmdMsg;
 	private int pos=0;
 
 	@Override
-	public BaseModule load() {
-		enable = true;
+	public MDiceCmd load() {
 		return this;
 	}
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (msg.charAt(0) != '.') {
 			return false;
 		}

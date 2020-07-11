@@ -3,24 +3,22 @@ package com.meng.modules;
 import com.meng.*;
 import com.meng.config.*;
 import com.meng.gameData.TouHou.zun.*;
-import com.meng.modules.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.util.*;
-import java.util.regex.*;
 
-public class MusicManager extends BaseModule {
+public class MusicManager extends BaseGroupModule {
 	public static String musicFolder="C://thbgm/";
 	private HashMap<Long,QA> resultMap=new HashMap<>();
 
 	@Override
-	public BaseModule load() {
-		enable = true;
+	public MusicManager load() {
 		return this;
 	}
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_Music)) {
 			return false;
 		}

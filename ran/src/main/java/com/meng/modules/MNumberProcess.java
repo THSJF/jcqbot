@@ -1,17 +1,17 @@
 package com.meng.modules;
 import com.meng.*;
+import com.meng.SJFInterfaces.*;
 import java.io.*;
 
-public class MNumberProcess extends BaseModule {
+public class MNumberProcess extends BaseGroupModule {
 
 	@Override
-	public BaseModule load() {
-		enable = true;
+	public MNumberProcess load() {
 		return this;
 	}
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (msg.startsWith("-int ")) {
 			try {
 				String[] args=msg.split(" ", 4);

@@ -2,19 +2,19 @@ package com.meng.modules;
 
 import com.google.gson.reflect.*;
 import com.meng.*;
+import com.meng.config.javabeans.*;
+import com.meng.SJFInterfaces.*;
+import com.meng.tools.*;
 import java.io.*;
-import java.lang.reflect.*;
 import java.nio.charset.*;
 import java.util.*;
-import com.meng.tools.Tools;
-import com.meng.config.javabeans.*;
 
-public class MCoinManager extends BaseModule {
+public class MCoinManager extends BaseGroupModule {
 	private HashMap<Long, Integer> countMap = new HashMap<>();
 	private File file;
 
 	@Override
-	public BaseModule load() {
+	public MCoinManager load() {
 		file = new File(Autoreply.appDirectory + "properties\\coins.json");
 		if (!file.exists()) {
 			saveData();
@@ -26,12 +26,11 @@ public class MCoinManager extends BaseModule {
 					backupData();
 				}
 			});
-		enable = true;
 		return this;
 	}
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (msg.equals("~coins")) {
 			Autoreply.sendMessage(fromGroup, 0, "你有" + getCoinsCount(fromQQ) + "个幻币");
 			return true;
@@ -79,10 +78,10 @@ public class MCoinManager extends BaseModule {
 
 	public void exchangeCoins(long fromGroup, long fromQQ, int coins) {
 		if (subCoins(fromQQ, coins)) {
-			RitsukageDataPack rdp=RitsukageDataPack.encode(RitsukageDataPack._14coinsAdd,System.currentTimeMillis());
-			rdp.write(1,fromQQ);
+			RitsukageDataPack rdp=RitsukageDataPack.encode(RitsukageDataPack._14coinsAdd, System.currentTimeMillis());
+			rdp.write(1, fromQQ);
 			Autoreply.instance.connectServer.broadcast(rdp.getData());
-		//	Autoreply.sendMessage(1023432971L, 0, "~addcoins " + coins + " " + fromQQ);
+			//	Autoreply.sendMessage(1023432971L, 0, "~addcoins " + coins + " " + fromQQ);
 			Autoreply.sendMessage(fromGroup, 0, "兑换" + coins + "个幻币至小律影");
 		} else {
 			Autoreply.sendMessage(fromGroup, 0, "兑换失败");

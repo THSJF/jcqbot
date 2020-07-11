@@ -3,25 +3,23 @@ package com.meng.modules;
 import com.google.gson.*;
 import com.meng.*;
 import com.meng.bilibili.live.*;
-import com.meng.bilibili.main.*;
 import com.meng.config.*;
 import com.meng.config.javabeans.*;
-import com.meng.remote.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.tools.*;
 import com.meng.tools.override.*;
 import com.sobte.cqp.jcq.entity.*;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
-import org.jsoup.*;
 
-public class MAdminMsg extends BaseModule {
+public class MAdminMsg extends BaseGroupModule {
 	private MyLinkedHashMap<String,String> masterPermission=new MyLinkedHashMap<>();
 	private MyLinkedHashMap<String,String> adminPermission=new MyLinkedHashMap<>();
 	public MyLinkedHashMap<String,String> userPermission=new MyLinkedHashMap<>();
 
 	@Override
-    public BaseModule load() {
+    public MAdminMsg load() {
 		masterPermission.put("小律影专用指令:setconnect", "");
 		masterPermission.put(".start|.stop", "总开关");
 		masterPermission.put("find:[QQ号]", "在配置文件中查找此人");
@@ -80,12 +78,11 @@ public class MAdminMsg extends BaseModule {
 		masterPermission.putAll(adminPermission);
 		masterPermission.putAll(userPermission);
 		adminPermission.putAll(userPermission);
-		enable = true;
 		return this;
 	}
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (fromQQ == 2856986197L || fromQQ == 2528419891L) {
 			if (msg.startsWith("bchat.")) {
 				String[] strs=msg.split("\\.", 3);
@@ -386,11 +383,11 @@ public class MAdminMsg extends BaseModule {
 			return true;
 		}
 		if (msg.startsWith("精神支柱[CQ:image")) {
-			ModuleManager.instance.getModule(MPicEdit.class).jingShenZhiZhuByPic(fromGroup, fromQQ, msg);
+			ModuleManager.instance.getGroupModule(MPicEdit.class).jingShenZhiZhuByPic(fromGroup, fromQQ, msg);
 			return true;
 		}
 		if (msg.startsWith("神触[CQ:image")) {
-			ModuleManager.instance.getModule(MPicEdit.class).shenChuByAt(fromGroup, fromQQ, msg);
+			ModuleManager.instance.getGroupModule(MPicEdit.class).shenChuByAt(fromGroup, fromQQ, msg);
 			return true;
 		}
 		if (msg.startsWith("设置群头衔[CQ:at")) {

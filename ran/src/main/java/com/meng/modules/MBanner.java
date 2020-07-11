@@ -2,24 +2,23 @@ package com.meng.modules;
 
 import com.meng.*;
 import com.meng.config.*;
-import com.meng.modules.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.tools.*;
 import com.sobte.cqp.jcq.entity.*;
 import java.io.*;
 import java.util.*;
 
-public class MBanner extends BaseModule {
+public class MBanner extends BaseGroupModule {
     public HashMap<Long, HashMap<Long, BanType>> banMap = new HashMap<>();
 
 	@Override
-	public BaseModule load() {
-		enable = true;
+	public MBanner load() {
 		return this;
 	}
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
-		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_Banner)){
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
+		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_Banner)) {
 			return false;
 		}
 		if (!ConfigManager.instance.isAdmin(fromQQ)) {

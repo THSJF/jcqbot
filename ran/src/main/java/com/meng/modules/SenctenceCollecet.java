@@ -1,44 +1,42 @@
 package com.meng.modules;
+
 import com.google.gson.reflect.*;
 import com.meng.*;
 import com.meng.config.*;
-import com.meng.config.javabeans.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.nio.charset.*;
 import java.util.*;
 
-public class SenctenceCollecet extends BaseModule {
+public class SenctenceCollecet extends BaseGroupModule {
 
 	private SenBean senb=new SenBean();
 	private File sbFile;
 
 	@Override
-	public BaseModule load() {
+	public SenctenceCollecet load() {
 		sbFile = new File(Autoreply.appDirectory + "sb.json");
         if (!sbFile.exists()) {
-            saveConfig();
+            save();
         }
-        Type type = new TypeToken<SenBean>() {
-        }.getType();
-        senb = Autoreply.gson.fromJson(Tools.FileTool.readString(sbFile), type);
-		enable = true;
+        senb = Autoreply.gson.fromJson(Tools.FileTool.readString(sbFile), new TypeToken<SenBean>() {}.getType());
 		return this;
 	}
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (msg.startsWith("c.add.") && ConfigManager.instance.isMaster(fromQQ)) {
 			senb.ketWord.add(msg.substring(6));
-			saveConfig();
+			save();
 			Autoreply.sendMessage(fromGroup, 0, "添加" + msg + "成功");
 			return true;
 		}
 		for (String s:senb.ketWord) {
 			if (msg.contains(s)) {
 				senb.colleted.add(msg);
-				saveConfig();
+				save();
 				break;
 			}
 		}
@@ -50,7 +48,7 @@ public class SenctenceCollecet extends BaseModule {
 		private HashSet<String> colleted=new HashSet<>();
 	}
 
-	private void saveConfig() {
+	private void save() {
 		try {
 			FileOutputStream fos = new FileOutputStream(sbFile);
             OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);

@@ -2,13 +2,21 @@ package com.meng.modules;
 
 import com.meng.*;
 import com.meng.config.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.tip.*;
-import java.io.*;
 import java.util.*;
+import java.io.*;
 
-public class ModuleManager extends BaseModule {
+public class ModuleManager extends BaseModule implements IGroupMessage, IPrivateMessage, IDiscussMessage, IGroupEvent, IFriendEvent {
+
 	public static ModuleManager instance;
-	private ArrayList<BaseModule> modules = new ArrayList<>();
+
+	private ArrayList<IGroupMessage> groupModules = new ArrayList<>();
+	private ArrayList<IPrivateMessage> privateModules = new ArrayList<>();
+	private ArrayList<IDiscussMessage> discussModules = new ArrayList<>();
+	private ArrayList<IHelpMessage> helpModules = new ArrayList<>();
+	private ArrayList<IGroupEvent> groupEventModules = new ArrayList<>();
+	private ArrayList<IFriendEvent> friendEventModules = new ArrayList<>();
 
 	public static final int ID_MainSwitch=0;
 	public static final int ID_Repeater = 1;
@@ -36,62 +44,189 @@ public class ModuleManager extends BaseModule {
 	public static final int ID_GroupCountChart=23;
 
 	@Override
-	public BaseModule load() {
-		modules.add(new SenctenceCollecet().load());
-		modules.add(new MGroupCounterChart().load());
-		modules.add(new MGroupCounter().load());
-		modules.add(new MUserCounter().load());
-		modules.add(new MTimeTip().load());
-		modules.add(new MAdminMsg().load());
-		modules.add(new MWarnMsg().load());
-		modules.add(new MRepeater().load());
-		modules.add(new MoShenFuSong().load());
-		modules.add(new MCoinManager().load());
-		modules.add(new MMsgAt().load());
-		modules.add(new MBiliUpdate().load());
-		modules.add(new MDiceImitate().load());
-		modules.add(new MDiceCmd().load());
-		modules.add(new MSpellCollect().load());
-		modules.add(new MOcr().load());
-		modules.add(new MBarcode().load());
-		modules.add(new FanPoHaiManager().load());
-		modules.add(new ThreeManager().load());
-		modules.add(new MBanner().load());
-		modules.add(new MusicManager().load());
-		modules.add(new MPicSearch().load());
-		modules.add(new MPicEdit().load());
-		modules.add(new MBiliLinkInfo().load());
-		modules.add(new MNumberProcess().load());
-		modules.add(new MSetu().load());
-		modules.add(new MPohaitu().load());
-		modules.add(new MNvzhuang().load());
-		modules.add(new VirusManager().load());
-		modules.add(new MSeq().load());
+	public ModuleManager load() {
+		loadModules(new SenctenceCollecet().load());
+		loadModules(new MGroupCounterChart().load());
+		loadModules(new MGroupCounter().load());
+		loadModules(new MUserCounter().load());
+		loadModules(new MTimeTip().load());
+		loadModules(new MAdminMsg().load());
+		loadModules(new MWarnMsg().load());
+		loadModules(new MRepeater().load());
+		loadModules(new MoShenFuSong().load());
+		loadModules(new MCoinManager().load());
+		loadModules(new MMsgAt().load());
+		loadModules(new MBiliUpdate().load());
+		loadModules(new MDiceImitate().load());
+		loadModules(new MDiceCmd().load());
+		loadModules(new MSpellCollect().load());
+		loadModules(new MOcr().load());
+		loadModules(new MBarcode().load());
+		loadModules(new FanPoHaiManager().load());
+		loadModules(new ThreeManager().load());
+		loadModules(new MBanner().load());
+		loadModules(new MusicManager().load());
+		loadModules(new MPicSearch().load());
+		loadModules(new MPicEdit().load());
+		loadModules(new MBiliLinkInfo().load());
+		loadModules(new MNumberProcess().load());
+		loadModules(new MSetu().load());
+		loadModules(new MPohaitu().load());
+		loadModules(new MNvzhuang().load());
+		loadModules(new VirusManager().load());
+		loadModules(new MSeq().load());
 		//modules.add(new MGroupDic().load());
-		Autoreply.instance.threadPool.execute(getModule(MTimeTip.class));
+		Autoreply.instance.threadPool.execute(getGroupModule(MTimeTip.class));
 		instance = this;
-		enable = true;
 		return this;
 	}
 
+	private void loadModules(Object module) {
+		if (module instanceof IGroupMessage) {
+			groupModules.add((IGroupMessage)module);
+		}
+		if (module instanceof IPrivateMessage) {
+			privateModules.add((IPrivateMessage)module);
+		}
+		if (module instanceof IDiscussMessage) {
+			discussModules.add((IDiscussMessage)module);
+		}
+		if (module instanceof IHelpMessage) {
+			helpModules.add((IHelpMessage)module);
+		}
+		if (module instanceof IGroupEvent) {
+			groupEventModules.add((IGroupEvent)module);
+		}
+		if (module instanceof IFriendEvent) {
+			friendEventModules.add((IFriendEvent)module);
+		}
+	}
+
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_MainSwitch)) {
 			return true;
 		}
-		for (int i=0;i < modules.size();++i) {
-			if (modules.get(i).onMsg(fromGroup, fromQQ, msg, msgId, imgs)) {
+		for (int i=0;i < groupModules.size();++i) {
+			if (groupModules.get(i).onGroupMessage(fromGroup, fromQQ, msg, msgId)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public <T extends BaseModule> T getModule(Class<T> t) {
-		for (int i=0;i < modules.size();++i) {
-			BaseModule bm=modules.get(i);
-			if (bm.getClass().getSimpleName().equals(t.getSimpleName())) {
-				return (T)bm;
+	@Override
+	public boolean onPrivateMsg(long fromQQ, String msg, int msgId) {
+		for (int i=0;i < privateModules.size();++i) {
+			if (privateModules.get(i).onPrivateMsg(fromQQ, msg, msgId)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean onDiscussMessage(long fromDiscuss, long fromQQ, String msg, int msgId) {
+		for (int i=0;i < discussModules.size();++i) {
+			if (discussModules.get(i).onDiscussMessage(fromDiscuss, fromQQ, msg, msgId)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+	@Override
+	public boolean onGroupFileUpload(int sendTime, long fromGroup, long fromQQ, String file) {
+		// TODO: Implement this method
+		return false;
+	}
+
+	@Override
+	public boolean onGroupAdminChange(int subtype, int sendTime, long fromGroup, long beingOperateQQ) {
+		// TODO: Implement this method
+		return false;
+	}
+
+	@Override
+	public boolean onGroupMemberDecrease(int subtype, int sendTime, long fromGroup, long fromQQ, long beingOperateQQ) {
+		// TODO: Implement this method
+		return false;
+	}
+
+	@Override
+	public boolean onGroupMemberIncrease(int subtype, int sendTime, long fromGroup, long fromQQ, long beingOperateQQ) {
+		// TODO: Implement this method
+		return false;
+	}
+
+	@Override
+	public boolean onRequestAddGroup(int subtype, int sendTime, long fromGroup, long fromQQ, String msg, String responseFlag) {
+		// TODO: Implement this method
+		return false;
+	}
+
+	@Override
+	public boolean onFriendAdd(int sendTime, long fromQQ) {
+		// TODO: Implement this method
+		return false;
+	}
+
+	@Override
+	public boolean onRequestAddFriend(int sendTime, long fromQQ, String msg, String responseFlag) {
+		// TODO: Implement this method
+		return false;
+	}
+
+	public <T extends IGroupMessage> T getGroupModule(Class<T> t) {
+		for (IGroupMessage m : groupModules) {
+			if (m.getClass() == t) {
+				return (T)m;
+			}
+		}
+		return null;
+	}
+
+	public <T extends IPrivateMessage> T getPrivateModule(Class<T> t) {
+		for (IPrivateMessage m : privateModules) {
+			if (m.getClass() == t) {
+				return (T)m;
+			}
+		}
+		return null;
+	}
+
+	public <T extends IDiscussMessage> T getDiscussModule(Class<T> t) {
+		for (IDiscussMessage m : discussModules) {
+			if (m.getClass() == t) {
+				return (T)m;
+			}
+		}
+		return null;
+	}
+
+	public <T extends IHelpMessage> T getHelpModule(Class<T> t) {
+		for (IHelpMessage m : helpModules) {
+			if (m.getClass() == t) {
+				return (T)m;
+			}
+		}
+		return null;
+	}
+
+	public <T extends IGroupEvent> T getGroupEventModule(Class<T> t) {
+		for (IGroupEvent m : groupEventModules) {
+			if (m.getClass() == t) {
+				return (T)m;
+			}
+		}
+		return null;
+	}
+
+	public <T extends IFriendEvent> T getFriendEventModule(Class<T> t) {
+		for (IFriendEvent m : friendEventModules) {
+			if (m.getClass() == t) {
+				return (T)m;
 			}
 		}
 		return null;

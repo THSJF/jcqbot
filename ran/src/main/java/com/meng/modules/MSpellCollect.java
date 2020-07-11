@@ -5,13 +5,14 @@ import com.meng.*;
 import com.meng.config.*;
 import com.meng.dice.*;
 import com.meng.gameData.TouHou.zun.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.nio.charset.*;
 import java.util.*;
 import java.util.concurrent.*;
 
-public class MSpellCollect extends BaseModule {
+public class MSpellCollect extends BaseGroupModule {
 	public ConcurrentHashMap<Long,HashSet<String>> userSpellsMap=new ConcurrentHashMap<>();
 	public ConcurrentHashMap<Long,ArchievementBean> archiMap=new ConcurrentHashMap<>();
 	private HashSet<Long> todayCard=new HashSet<>();
@@ -21,7 +22,7 @@ public class MSpellCollect extends BaseModule {
 	public ArrayList<Archievement> archList=new ArrayList<>();
 
 	@Override
-	public BaseModule load() {
+	public MSpellCollect load() {
 		spellFile = new File(Autoreply.appDirectory + "/properties/spells.json");
         if (!spellFile.exists()) {
             saveConfig();
@@ -130,12 +131,11 @@ public class MSpellCollect extends BaseModule {
 					}
 				}
 			});
-		enable = true;
 		return this;
 	}
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_SpellCollect)) {
 			return false;
 		}
@@ -183,7 +183,7 @@ public class MSpellCollect extends BaseModule {
 
 		if (msg.startsWith("幻币抽卡 ")) {
 			try {
-				int restCoins=ModuleManager.instance.getModule(MCoinManager.class).getCoinsCount(fromQQ);
+				int restCoins=ModuleManager.instance.getGroupModule(MCoinManager.class).getCoinsCount(fromQQ);
 				int useCoins=Integer.parseInt(msg.substring(5));
 				if (useCoins > restCoins) {
 					Autoreply.sendMessage(fromGroup, 0, "本地幻币不足");
@@ -211,7 +211,7 @@ public class MSpellCollect extends BaseModule {
 					sb.append("\n").append(s);
 				}
 				saveConfig();
-				ModuleManager.instance.getModule(MCoinManager.class).subCoins(fromQQ, useCoins);
+				ModuleManager.instance.getGroupModule(MCoinManager.class).subCoins(fromQQ, useCoins);
 				checkArchievement(fromGroup, fromQQ, gotSpellsSet);
 				if (sb.toString().length() > 200) {
 					Autoreply.sendMessage(fromGroup, fromQQ, "内容过长,不详细说明获得的符卡，但记录已保存");
@@ -231,7 +231,7 @@ public class MSpellCollect extends BaseModule {
 				return true;
 			}
 			Autoreply.sendMessage(fromGroup, 0, "签到成功,获得1幻币");
-			ModuleManager.instance.getModule(MCoinManager.class).addCoins(fromQQ, 1);
+			ModuleManager.instance.getGroupModule(MCoinManager.class).addCoins(fromQQ, 1);
 			todaySign.add(fromQQ);
 			return true;
 		}
@@ -271,7 +271,7 @@ public class MSpellCollect extends BaseModule {
 
 		if (msg.startsWith("购买符卡 ")) {
 			String spellName=msg.substring(5);
-			if (ModuleManager.instance.getModule(MCoinManager.class).getCoinsCount(fromQQ) < 40) {
+			if (ModuleManager.instance.getGroupModule(MCoinManager.class).getCoinsCount(fromQQ) < 40) {
 				Autoreply.sendMessage(fromGroup, 0, "幻币不足,需要40幻币");
 				return true;
 			}
@@ -285,7 +285,7 @@ public class MSpellCollect extends BaseModule {
 				Autoreply.sendMessage(fromGroup, 0, ConfigManager.instance.getNickName(fromQQ) + "获得了:" + spellName);
 				saveConfig();
 				checkArchievement(fromGroup, fromQQ, gotSpellSet);	
-				ModuleManager.instance.getModule(MCoinManager.class).subCoins(fromQQ, 40);
+				ModuleManager.instance.getGroupModule(MCoinManager.class).subCoins(fromQQ, 40);
 			} else {
 				Autoreply.sendMessage(fromGroup, 0, "符卡名错误");
 			}
@@ -368,7 +368,7 @@ public class MSpellCollect extends BaseModule {
 
 		if (msg.startsWith("幻币兑换 ")) {
 			try {
-				ModuleManager.instance.getModule(MCoinManager.class).exchangeCoins(fromGroup, fromQQ, Integer.parseInt(msg.substring(5)));
+				ModuleManager.instance.getGroupModule(MCoinManager.class).exchangeCoins(fromGroup, fromQQ, Integer.parseInt(msg.substring(5)));
 			} catch (Exception e) {
 				Autoreply.sendMessage(fromGroup, 0, e.toString());
 			}
@@ -376,7 +376,7 @@ public class MSpellCollect extends BaseModule {
 		}
 
 		if (msg.equals("~coins")) {
-			Autoreply.sendMessage(fromGroup, 0, "你有" + ModuleManager.instance.getModule(MCoinManager.class).getCoinsCount(fromQQ) + "个幻币");
+			Autoreply.sendMessage(fromGroup, 0, "你有" + ModuleManager.instance.getGroupModule(MCoinManager.class).getCoinsCount(fromQQ) + "个幻币");
 			return true;
 		}
 
@@ -451,7 +451,7 @@ public class MSpellCollect extends BaseModule {
 			if (ac.getNewArchievement(ab, gotSpell)) {
 				ab.addArchievement(ac.archNum);
 				Autoreply.sendMessage(fromGroup, toQQ, "获得成就:" + ac.name + "\n获得奖励:" + ac.coins + "\n条件:" + ac.describe);	
-				ModuleManager.instance.getModule(MCoinManager.class).addCoins(toQQ, ac.coins);
+				ModuleManager.instance.getGroupModule(MCoinManager.class).addCoins(toQQ, ac.coins);
 			}
 		}
 		saveArchiConfig();

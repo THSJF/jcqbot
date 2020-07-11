@@ -1,24 +1,21 @@
 package com.meng.modules;
 
 import com.meng.*;
-import com.meng.modules.*;
-import com.meng.tools.Tools;
-import com.meng.tools.Tools.ArrayTool;
-
+import com.meng.config.*;
+import com.meng.SJFInterfaces.*;
+import com.meng.tools.*;
 import java.io.*;
 import java.util.*;
-import com.meng.config.*;
 
-public class MoShenFuSong extends BaseModule {
+public class MoShenFuSong extends BaseGroupModule {
 
 	@Override
-	public BaseModule load() {
-		enable = true;
+	public MoShenFuSong load() {
 		return this;
 	}
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_MoShenFuSong)){
 			return false;
 		}

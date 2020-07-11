@@ -6,7 +6,7 @@ import com.meng.bilibili.main.*;
 import com.meng.config.*;
 import com.meng.config.javabeans.*;
 import com.meng.config.sanae.*;
-import com.meng.messageProcess.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.modules.*;
 import com.meng.remote.*;
 import com.meng.tip.*;
@@ -186,6 +186,9 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 
 				}
 			});
+		if (ModuleManager.instance.onPrivateMsg(fromQQ, msg, msgId)) {
+			++RemoteWebSocket.botInfoBean.msgCmdPerSec;
+		}
         return MSG_IGNORE;
     }
 
@@ -245,7 +248,10 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 			}
 		}
 
-		threadPool.execute(new MessageRunnable(fromGroup, fromQQ, msg, msgId, System.currentTimeMillis()));
+		if (ModuleManager.instance.onGroupMessage(fromGroup, fromQQ, msg, msgId)) {
+			++RemoteWebSocket.botInfoBean.msgCmdPerSec;
+		}
+
         return MSG_IGNORE;
     }
 
@@ -264,7 +270,9 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
     @Override
     public int discussMsg(int subtype, int msgId, long fromDiscuss, long fromQQ, String msg, int font) {
         // 这里处理消息
-
+		if (ModuleManager.instance.onDiscussMessage(fromDiscuss, fromQQ, msg, msgId)) {
+			++RemoteWebSocket.botInfoBean.msgCmdPerSec;
+		}
         return MSG_IGNORE;
     }
 
@@ -288,6 +296,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_MainSwitch)) {
             return MSG_IGNORE;
         }
+		ModuleManager.instance.onGroupFileUpload(sendTime, fromGroup, fromQQ, file);
 		//   fileInfoManager.check(subType, sendTime, fromGroup, fromQQ, file);
         return MSG_IGNORE;
     }
@@ -308,6 +317,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_MainSwitch)) {
             return MSG_IGNORE;
         }
+		ModuleManager.instance.onGroupAdminChange(subtype, sendTime, fromGroup, beingOperateQQ);
         if (subtype == 1) {
             sendMessage(fromGroup, 0, CC.at(beingOperateQQ) + "你绿帽子没莉");
         } else if (subtype == 2) {
@@ -497,7 +507,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
             if (msg.startsWith("red:")) {
                 msg = msg.substring(4);
 				++RemoteWebSocket.botInfoBean.msgSendPerSec;
-                if (ModuleManager.instance.getModule(MGroupDic.class).onMsg(fromGroup, fromQQ, msg, -1, null)) {
+                if (ModuleManager.instance.getGroupModule(MGroupDic.class).onGroupMessage(fromGroup, fromQQ, msg, -1)) {
                     return -1;
                 }
             }

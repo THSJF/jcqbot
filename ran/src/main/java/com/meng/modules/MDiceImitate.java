@@ -3,12 +3,12 @@ package com.meng.modules;
 import com.meng.*;
 import com.meng.config.*;
 import com.meng.gameData.TouHou.zun.*;
-import com.meng.modules.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.util.*;
 
-public class MDiceImitate extends BaseModule {
+public class MDiceImitate extends BaseGroupModule {
 	public static String[] spells;
 	public static String[] neta;
 	public static String[] music;
@@ -27,7 +27,7 @@ public class MDiceImitate extends BaseModule {
 	public static HashSet<String> pachouli=new HashSet<>();
 
 	@Override
-	public BaseModule load() {
+	public MDiceImitate load() {
 		spells = new String[]{};
 		spells = Tools.ArrayTool.mergeArray(spells, 
 											TH06GameData.spells,
@@ -160,12 +160,11 @@ public class MDiceImitate extends BaseModule {
 							   "「小恶灵复活」",
 							   "妖怪「火焰的车轮」"
 						   });
-		enable = true;
 		return this;
 	}
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		String[] ss = msg.split("\\.");
         if (ss.length > 1) {
             if (ss[0].equals("roll")) {

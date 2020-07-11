@@ -4,18 +4,18 @@ import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
 import com.meng.config.*;
-import com.meng.modules.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.nio.charset.*;
 import java.util.*;
 
-public class MSeq extends BaseModule {
+public class MSeq extends BaseGroupModule {
     private ArrayList<SeqBean> seqs=new ArrayList<>();
 	private HashMap<String, ArrayList<String>> jsonData = new HashMap<>();
 
 	@Override
-	public BaseModule load() {
+	public MSeq load() {
 		File jsonFile = new File(Autoreply.appDirectory + "seq.json");
         if (!jsonFile.exists()) {
             saveData();
@@ -32,12 +32,11 @@ public class MSeq extends BaseModule {
 			}
 			seqs.add(new SeqBean(content, flag));
 		}
-		enable = true;
 		return this;
 	}
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_Seq)){
 			return false;
 		}
@@ -47,11 +46,11 @@ public class MSeq extends BaseModule {
 			}
 			if (msg.equals(sb.content[sb.pos])) {
 				if (sb.flag == 1) {
-					((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).decLife(fromQQ);
-					((MGroupCounter)ModuleManager.instance.getModule(MGroupCounter.class)).decLife(fromGroup);
+					ModuleManager.instance.getGroupModule(MUserCounter.class).decLife(fromQQ);
+					ModuleManager.instance.getGroupModule(MGroupCounter.class).decLife(fromGroup);
 				} else if (sb.flag == 2) {
-					((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incMengEr(fromQQ);
-					((MGroupCounter)ModuleManager.instance.getModule(MGroupCounter.class)).incMengEr(fromGroup);
+					ModuleManager.instance.getGroupModule(MUserCounter.class).incMengEr(fromQQ);
+					ModuleManager.instance.getGroupModule(MGroupCounter.class).incMengEr(fromGroup);
 				}
 				++sb.pos;			
 				if (sb.pos < sb.content.length) {

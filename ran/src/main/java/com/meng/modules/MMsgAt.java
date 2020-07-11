@@ -1,19 +1,19 @@
 package com.meng.modules;
 import com.meng.*;
 import com.meng.config.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.tools.*;
 import java.io.*;
 
-public class MMsgAt extends BaseModule {
+public class MMsgAt extends BaseGroupModule {
 
 	@Override
-	public BaseModule load() {
-		enable = true;
+	public MMsgAt load() {
 		return this;
 	}
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (msg.contains("~") || msg.contains("～")) {
 			return false;
 		}

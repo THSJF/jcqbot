@@ -4,13 +4,14 @@ import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
 import com.meng.config.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.nio.charset.*;
 import java.util.*;
 import java.util.Map.*;
 
-public class MGroupCounter extends BaseModule {
+public class MGroupCounter extends BaseGroupModule {
     private HashMap<String, GroupInfo> countMap = new HashMap<>();
     private File file;
 
@@ -28,7 +29,7 @@ public class MGroupCounter extends BaseModule {
     }
 
 	@Override
-	public BaseModule load() {
+	public MGroupCounter load() {
 		file = new File(Autoreply.appDirectory + "properties\\GroupCount.json");
         if (!file.exists()) {
             try {
@@ -54,12 +55,11 @@ public class MGroupCounter extends BaseModule {
 					backupData();
 				}
 			});
-		enable = true;
 		return this;
     }
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_GroupCount)) {
 			return false;
 		}

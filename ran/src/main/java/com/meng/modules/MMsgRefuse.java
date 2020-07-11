@@ -2,15 +2,16 @@ package com.meng.modules;
 
 import com.meng.*;
 import com.meng.config.*;
-import java.util.concurrent.*;
+import com.meng.SJFInterfaces.*;
 import java.io.*;
+import java.util.concurrent.*;
 
-public class MMsgRefuse extends BaseModule {
+public class MMsgRefuse extends BaseGroupModule {
 
 	public ConcurrentHashMap<Long,FireWallBean> msgMap=new ConcurrentHashMap<>();
 
 	@Override
-	public BaseModule load() {
+	public MMsgRefuse load() {
 		Autoreply.instance.threadPool.execute(new Runnable(){
 
 				@Override
@@ -25,12 +26,11 @@ public class MMsgRefuse extends BaseModule {
 					}
 				}
 			});
-		enable = true;
 		return this;
 	}
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		
 		ConfigManager cm=ConfigManager.instance;
 		if (!cm.isNotReplyQQ(fromQQ) || cm.isNotReplyWord(msg)) {

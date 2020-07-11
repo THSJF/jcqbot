@@ -2,21 +2,21 @@ package com.meng.modules;
 
 import com.meng.*;
 import com.meng.config.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.tools.*;
 import com.sobte.cqp.jcq.entity.*;
 import java.io.*;
 import java.util.*;
 
-public class MNvzhuang extends BaseModule {
+public class MNvzhuang extends BaseGroupModule {
 
 	@Override
-	public BaseModule load() {
-		enable = true;
+	public MNvzhuang load() {
 		return this;
 	}
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_NvZhuang)) {
 			return false;
 		}

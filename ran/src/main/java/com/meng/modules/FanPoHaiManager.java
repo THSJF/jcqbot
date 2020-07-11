@@ -1,21 +1,22 @@
 package com.meng.modules;
 
 import com.meng.*;
+import com.meng.config.*;
 import com.meng.config.javabeans.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.tools.*;
 import com.sobte.cqp.jcq.entity.*;
 import java.io.*;
 import java.util.*;
-import javax.imageio.ImageIO;
-import com.meng.config.*;
+import javax.imageio.*;
 
-public class FanPoHaiManager extends BaseModule {
+public class FanPoHaiManager extends BaseGroupModule {
     private HashSet<FingerPrint> fingerPrints = new HashSet<>(64);
     private int pohaicishu = 0;
     private int alpohai = Autoreply.instance.random.nextInt(5) + 2;
 
 	@Override
-    public BaseModule load() {
+    public FanPoHaiManager load() {
 		Autoreply.instance.threadPool.execute(new Runnable() {
 				@Override
 				public void run() {
@@ -34,12 +35,11 @@ public class FanPoHaiManager extends BaseModule {
 					Autoreply.instance.enable();
 				}
 			});
-		enable = true;
 		return this;
     }
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		try {
             boolean bpohai = false;
             if (msg.contains("迫害") && !msg.contains("反迫害")) {
@@ -50,6 +50,19 @@ public class FanPoHaiManager extends BaseModule {
                     alpohai = Autoreply.instance.random.nextInt() % 5 + 2;
                 }
             }
+			File[] imgs=null;
+			List<CQImage> images = Autoreply.instance.CC.getCQImages(msg);
+			if (images.size() != 0) {
+				imgs = new File[images.size()];
+				for (int i = 0, imagesSize = images.size(); i < imagesSize; i++) {
+					CQImage image = images.get(i);
+					try {
+						imgs[i] = Autoreply.instance.fileTypeUtil.checkFormat(image.download(Autoreply.appDirectory + "downloadImages/", image.getMd5()));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
             // 判定图片相似度
             if (!bpohai && imgs != null) {
                 float simi = 0.0f;
@@ -100,8 +113,8 @@ public class FanPoHaiManager extends BaseModule {
                     File[] files = file.listFiles();
                     if (files != null) {
                         Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files)));
-                        ModuleManager.instance.getModule(MUserCounter.class).incPohaitu(Autoreply.CQ.getLoginQQ());
-                        ModuleManager.instance.getModule(MGroupCounter.class).incPohaitu(fromGroup);
+                        ModuleManager.instance.getGroupModule(MUserCounter.class).incPohaitu(Autoreply.CQ.getLoginQQ());
+                        ModuleManager.instance.getGroupModule(MGroupCounter.class).incPohaitu(fromGroup);
                     }
                     return true;
                 }

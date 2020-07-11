@@ -2,17 +2,16 @@ package com.meng.modules;
 
 import com.google.gson.reflect.*;
 import com.meng.*;
-import com.meng.modules.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.tools.*;
-import java.util.*;
 import java.io.*;
+import java.util.*;
 
-public class VirusManager extends BaseModule {
+public class VirusManager extends BaseGroupModule {
 	private ArrayList<VirusBean> vb=new ArrayList<>();
 
 	@Override
-	public BaseModule load() {
-		enable = true;
+	public VirusManager load() {
 		Autoreply.instance.threadPool.execute(new Runnable(){
 
 				@Override
@@ -30,7 +29,7 @@ public class VirusManager extends BaseModule {
 	}
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (msg.startsWith("-病毒 ")) {
 			Autoreply.sendMessage(fromGroup, 0, getV(msg.substring(4)));
 			return true;

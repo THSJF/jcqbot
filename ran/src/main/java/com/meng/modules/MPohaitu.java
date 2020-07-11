@@ -2,21 +2,21 @@ package com.meng.modules;
 
 import com.meng.*;
 import com.meng.config.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.tools.*;
 import com.sobte.cqp.jcq.entity.*;
 import java.io.*;
 import java.util.*;
 
-public class MPohaitu extends BaseModule {
+public class MPohaitu extends BaseGroupModule {
 
 	@Override
-	public BaseModule load() {
-		enable = true;
+	public MPohaitu load() {
 		return this;
 	}
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_PoHaiTu)){
 			return false;
 		}
@@ -45,9 +45,9 @@ public class MPohaitu extends BaseModule {
 			File[] files = (new File(Autoreply.appDirectory + "pohai/" + msg.replace("迫害图", ""))).listFiles();
 			if (files != null && files.length > 0) {
 				Autoreply.instance.threadPool.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files)))));
-				((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incPohaitu(fromQQ);
-				((MGroupCounter)ModuleManager.instance.getModule(MGroupCounter.class)).incPohaitu(fromGroup);
-				((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incPohaitu(Autoreply.CQ.getLoginQQ());
+				((MUserCounter)ModuleManager.instance.getGroupModule(MUserCounter.class)).incPohaitu(fromQQ);
+				((MGroupCounter)ModuleManager.instance.getGroupModule(MGroupCounter.class)).incPohaitu(fromGroup);
+				((MUserCounter)ModuleManager.instance.getGroupModule(MUserCounter.class)).incPohaitu(Autoreply.CQ.getLoginQQ());
 			}
 			return true;
 		}

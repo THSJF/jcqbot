@@ -2,22 +2,22 @@ package com.meng.modules;
 
 import com.google.gson.*;
 import com.meng.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.tools.*;
-import java.util.*;
 import java.io.*;
+import java.util.*;
 
-public class MBiliLinkInfo extends BaseModule {
+public class MBiliLinkInfo extends BaseGroupModule {
 
     private final String liveUrl = "live.bilibili.com/";
 
 	@Override
-	public BaseModule load() {
-		enable = true;
+	public MBiliLinkInfo load() {
 		return this;
 	}
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		String subedUrl;
         if (msg.startsWith("FromUriOpen@bilibili://")) {
             String subedString = null;

@@ -2,7 +2,7 @@ package com.meng.modules;
 
 import com.meng.*;
 import com.meng.config.*;
-import com.meng.modules.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.net.*;
@@ -11,19 +11,19 @@ import org.jsoup.*;
 import org.jsoup.helper.*;
 import org.jsoup.nodes.*;
 import org.jsoup.select.*;
+import com.sobte.cqp.jcq.entity.*;
 
-public class MPicSearch extends BaseModule {
+public class MPicSearch extends BaseGroupModule {
 
     private HashMap<Long, String> userNotSendPicture = new HashMap<>();
 
 	@Override
-	public BaseModule load() {
-		enable = true;
+	public MPicSearch load() {
 		return this;
 	}
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_PicSearch)){
 			return false;
 		}
@@ -36,15 +36,21 @@ public class MPicSearch extends BaseModule {
             sendMsg(0, fromQQ, "网站代号：\n0 H-Magazines\n2 H-Game CG\n3 DoujinshiDB\n5 pixiv Images\n8 Nico Nico Seiga\n9 Danbooru\n10 drawr Images\n11 Nijie Images\n12 Yande.re\n13 Openings.moe\n15 Shutterstock\n16 FAKKU\n18 H-Misc\n19 2D-Market\n20 MediBang\n21 Anime\n22 H-Anime\n23 Movies\n24 Shows\n25 Gelbooru\n26 Konachan\n27 Sankaku Channel\n28 Anime-Pictures.net\n29 e621.net\n30 Idol Complex\n31 bcy.net Illust\n32 bcy.net Cosplay\n33 PortalGraphics.net (Hist)\n34 deviantArt\n35 Pawoo.net\n36 Manga");
             return true;
         }
-        File imageFile = null;
-        if (imgs != null && imgs.length > 0) {
-            imageFile = imgs[0];
-        }
+		
+		CQImage cQImage = Autoreply.instance.CC.getCQImage(msg);
+		File imageFile=null;
+		
+		try {
+			imageFile = Autoreply.instance.fileTypeUtil.checkFormat(cQImage.download(Autoreply.appDirectory + "downloadImages/", cQImage.getMd5()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
         if (imageFile != null && (msg.toLowerCase().startsWith("sp"))) {
             try {
-                ((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incSearchPicture(fromQQ);
-                ((MGroupCounter)ModuleManager.instance.getModule(MGroupCounter.class)).incSearchPicture(fromGroup);
-                ((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incSearchPicture(Autoreply.CQ.getLoginQQ());
+                ModuleManager.instance.getGroupModule(MUserCounter.class).incSearchPicture(fromQQ);
+                ModuleManager.instance.getGroupModule(MGroupCounter.class).incSearchPicture(fromGroup);
+                ModuleManager.instance.getGroupModule(MUserCounter.class).incSearchPicture(Autoreply.CQ.getLoginQQ());
                 sendMsg(fromGroup, fromQQ, "土豆折寿中……");
                 int needPic = 1;
                 int database = 999;
@@ -65,9 +71,9 @@ public class MPicSearch extends BaseModule {
         } else if (imageFile != null && userNotSendPicture.get(fromQQ) != null) {
             try {
                 sendMsg(fromGroup, fromQQ, "土豆折寿中……");
-                ((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incSearchPicture(fromQQ);
-                ((MGroupCounter)ModuleManager.instance.getModule(MGroupCounter.class)).incSearchPicture(fromGroup);
-                ((MUserCounter)ModuleManager.instance.getModule(MUserCounter.class)).incSearchPicture(Autoreply.CQ.getLoginQQ());
+                ModuleManager.instance.getGroupModule(MUserCounter.class).incSearchPicture(fromQQ);
+                ModuleManager.instance.getGroupModule(MGroupCounter.class).incSearchPicture(fromGroup);
+                ModuleManager.instance.getGroupModule(MUserCounter.class).incSearchPicture(Autoreply.CQ.getLoginQQ());
                 int needPic = 1;
                 int database = 999;
                 if (userNotSendPicture.get(fromQQ).startsWith("sp.")) {

@@ -43,7 +43,7 @@ public class SanaeServer extends WebSocketServer {
 				sdp.write(Autoreply.gson.toJson(ConfigManager.instance.configJavaBean));
 				break;
 			case SanaeDataPack.opGameOverSpell:
-				sdp.write(ModuleManager.instance.getModule(MDiceImitate.class).md5RanStr(rsdp.readLong(), MDiceImitate.spells));
+				sdp.write(ModuleManager.instance.getGroupModule(MDiceImitate.class).md5RanStr(rsdp.readLong(), MDiceImitate.spells));
 				break;
 			case SanaeDataPack.opGameOverPersent:
 				String md5=Tools.Hash.MD5(String.valueOf(rsdp.readLong() + System.currentTimeMillis() / (24 * 60 * 60 * 1000)));
@@ -57,19 +57,19 @@ public class SanaeServer extends WebSocketServer {
 				}
 				break;
 			case SanaeDataPack.opIncSpeak:
-				ModuleManager.instance.getModule(MGroupCounter.class).incSpeak(rsdp.readLong());
-				ModuleManager.instance.getModule(MUserCounter.class).incSpeak(rsdp.readLong());
+				ModuleManager.instance.getGroupModule(MGroupCounter.class).incSpeak(rsdp.readLong());
+				ModuleManager.instance.getGroupModule(MUserCounter.class).incSpeak(rsdp.readLong());
 				break;
 			case SanaeDataPack.opIncRepeat:
-				ModuleManager.instance.getModule(MGroupCounter.class).incFudu(rsdp.readLong());
-				ModuleManager.instance.getModule(MUserCounter.class).incFudu(rsdp.readLong());
+				ModuleManager.instance.getGroupModule(MGroupCounter.class).incFudu(rsdp.readLong());
+				ModuleManager.instance.getGroupModule(MUserCounter.class).incFudu(rsdp.readLong());
 				break;
 			case SanaeDataPack.opIncRepeatStart:
-				ModuleManager.instance.getModule(MUserCounter.class).incFudujiguanjia(rsdp.readLong());
+				ModuleManager.instance.getGroupModule(MUserCounter.class).incFudujiguanjia(rsdp.readLong());
 				break;
 			case SanaeDataPack.opIncRepeatBreak:
-				ModuleManager.instance.getModule(MGroupCounter.class).incRepeatBreaker(rsdp.readLong());
-				ModuleManager.instance.getModule(MUserCounter.class).incRepeatBreaker(rsdp.readLong());
+				ModuleManager.instance.getGroupModule(MGroupCounter.class).incRepeatBreaker(rsdp.readLong());
+				ModuleManager.instance.getGroupModule(MUserCounter.class).incRepeatBreaker(rsdp.readLong());
 				break;
 			case SanaeDataPack.opSetNick:
 				ConfigManager.instance.setNickName(rsdp.readLong(), rsdp.readString());

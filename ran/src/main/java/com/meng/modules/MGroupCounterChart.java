@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
 import com.meng.config.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.tools.*;
 import java.awt.*;
 import java.io.*;
@@ -15,12 +16,12 @@ import org.jfree.chart.axis.*;
 import org.jfree.chart.plot.*;
 import org.jfree.data.time.*;   
 
-public class MGroupCounterChart extends BaseModule {
+public class MGroupCounterChart extends BaseGroupModule {
 	public HashMap<Long,GroupSpeak> groupsMap = new HashMap<>(32);
 	private File historyFile;
 
 	@Override
-	public BaseModule load() {
+	public MGroupCounterChart load() {
 		historyFile = new File(Autoreply.appDirectory + "properties\\GroupCount2.json");
         if (!historyFile.exists()) {
             try {
@@ -40,7 +41,6 @@ public class MGroupCounterChart extends BaseModule {
 					saveData();
 				}
 			});
-		enable = true;
 		return this;
 	}
 	public class GroupSpeak {
@@ -49,7 +49,7 @@ public class MGroupCounterChart extends BaseModule {
 	}
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_GroupCountChart)) {
 			return false;
 		}

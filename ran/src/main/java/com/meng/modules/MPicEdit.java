@@ -1,33 +1,28 @@
 package com.meng.modules;
 
+import com.meng.*;
+import com.meng.config.*;
+import com.meng.SJFInterfaces.*;
 import com.sobte.cqp.jcq.entity.*;
+import java.awt.*;
+import java.awt.image.*;
 import java.io.*;
 import java.net.*;
-import javax.imageio.ImageIO;
-
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
-import com.meng.modules.*;
-import com.meng.Autoreply;
-import com.meng.config.*;
+import javax.imageio.*;
 
 
-public class MPicEdit extends BaseModule {
+public class MPicEdit extends BaseGroupModule {
 
 	public JingShenZhiZhuManager jszzm=new JingShenZhiZhuManager();
 	public ShenChuManager scm=new ShenChuManager();
 
 	@Override
-	public BaseModule load() {
-		enable = true;
+	public MPicEdit load() {
 		return this;
 	}
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_PicEdit)){
 			return false;
 		}

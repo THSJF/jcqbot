@@ -4,7 +4,7 @@ import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
 import com.meng.config.*;
-import com.meng.modules.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.lang.reflect.*;
@@ -12,24 +12,23 @@ import java.nio.charset.*;
 import java.util.*;
 import java.util.regex.*;
 
-public class MGroupDic extends BaseModule {
+public class MGroupDic extends BaseGroupModule {
 
     private HashMap<Long, DicReplyGroup> groupMap = new HashMap<>();
     private HashMap<String, ArrayList<String>> dic = new HashMap<>();
 
 	@Override
-	public BaseModule load() {
+	public MGroupDic load() {
         File dicFile = new File(Autoreply.appDirectory + "dic\\dic.json");
         if (!dicFile.exists()) {
             saveDic(dicFile, dic);
         }
         dic = new Gson().fromJson(Tools.FileTool.readString(dicFile), new TypeToken<HashMap<String, ArrayList<String>>>() {}.getType());
-		enable = true;
 		return this;
 	}
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_GroupDic)) {
 			return false;
 		}

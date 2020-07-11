@@ -158,7 +158,7 @@ public class RitsukageServer extends WebSocketServer {
 			case RitsukageDataPack._20pic:
 				dataToSend = RitsukageDataPack.encode(RitsukageDataPack._21returnPic, recievedDataPack.getTimeStamp());
 				try { 
-					File jpg=ModuleManager.instance.getModule(MPicEdit.class).jingShenZhiZhuByAt(-1, -1, Autoreply.instance.CC.at(recievedDataPack.readNum(1)));
+					File jpg=ModuleManager.instance.getGroupModule(MPicEdit.class).jingShenZhiZhuByAt(-1, -1, Autoreply.instance.CC.at(recievedDataPack.readNum(1)));
 					long filelength = jpg.length();
 					byte[] filecontent = new byte[(int) filelength];
 					FileInputStream in = new FileInputStream(jpg);
@@ -174,7 +174,7 @@ public class RitsukageServer extends WebSocketServer {
 			case RitsukageDataPack._22pic2:
 				dataToSend = RitsukageDataPack.encode(RitsukageDataPack._21returnPic, recievedDataPack.getTimeStamp());
 				try { 
-					File jpg=ModuleManager.instance.getModule(MPicEdit.class).shenChuByAt(-1, -1, Autoreply.instance.CC.at(recievedDataPack.readNum(1)));
+					File jpg=ModuleManager.instance.getGroupModule(MPicEdit.class).shenChuByAt(-1, -1, Autoreply.instance.CC.at(recievedDataPack.readNum(1)));
 					long filelength = jpg.length();
 					byte[] filecontent = new byte[(int) filelength];
 					FileInputStream in = new FileInputStream(jpg);
@@ -203,13 +203,13 @@ public class RitsukageServer extends WebSocketServer {
 				break;
 			case RitsukageDataPack._26MD5neta:
 				dataToSend = RitsukageDataPack.encode(RitsukageDataPack._27returnMD5neta, recievedDataPack.getTimeStamp());
-				dataToSend.write(1, ModuleManager.instance.getModule(MDiceImitate.class).md5RanStr(recievedDataPack.readNum(1), MDiceImitate.neta));
+				dataToSend.write(1, ModuleManager.instance.getGroupModule(MDiceImitate.class).md5RanStr(recievedDataPack.readNum(1), MDiceImitate.neta));
 				break;
 			case RitsukageDataPack._27returnMD5neta:
 				break;
 			case RitsukageDataPack._28MD5music:
 				dataToSend = RitsukageDataPack.encode(RitsukageDataPack._29returnMD5music, recievedDataPack.getTimeStamp());
-				dataToSend.write(1, ModuleManager.instance.getModule(MDiceImitate.class).md5RanStr(recievedDataPack.readNum(1), MDiceImitate.music));
+				dataToSend.write(1, ModuleManager.instance.getGroupModule(MDiceImitate.class).md5RanStr(recievedDataPack.readNum(1), MDiceImitate.music));
 				break;
 			case RitsukageDataPack._29returnMD5music:
 				break;
@@ -218,14 +218,14 @@ public class RitsukageServer extends WebSocketServer {
 				if (Tools.Hash.MD5(String.valueOf(recievedDataPack.readNum(1) + System.currentTimeMillis() / (24 * 60 * 60 * 1000))).charAt(0) == '0') {
 					dataToSend.write(1, "八云紫");
 				} else {
-					dataToSend.write(1, ModuleManager.instance.getModule(MDiceImitate.class).md5RanStr(recievedDataPack.readNum(1), MDiceImitate.name));
+					dataToSend.write(1, ModuleManager.instance.getGroupModule(MDiceImitate.class).md5RanStr(recievedDataPack.readNum(1), MDiceImitate.name));
 				}
 				break;
 			case RitsukageDataPack._31returnMD5grandma:
 				break;
 			case RitsukageDataPack._32MD5overSpell:
 				dataToSend = RitsukageDataPack.encode(RitsukageDataPack._33returnMD5overSpell, recievedDataPack.getTimeStamp());
-				dataToSend.write(1, ModuleManager.instance.getModule(MDiceImitate.class).md5RanStr(recievedDataPack.readNum(1), MDiceImitate.spells));
+				dataToSend.write(1, ModuleManager.instance.getGroupModule(MDiceImitate.class).md5RanStr(recievedDataPack.readNum(1), MDiceImitate.spells));
 				break;
 			case RitsukageDataPack._33returnMD5overSpell:
 				break;

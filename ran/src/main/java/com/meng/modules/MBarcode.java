@@ -4,7 +4,9 @@ import com.google.zxing.*;
 import com.google.zxing.common.*;
 import com.google.zxing.qrcode.decoder.*;
 import com.meng.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.tools.*;
+import com.sobte.cqp.jcq.entity.*;
 import com.sobte.cqp.jcq.message.*;
 import java.awt.*;
 import java.awt.geom.*;
@@ -13,16 +15,30 @@ import java.io.*;
 import java.util.*;
 import javax.imageio.*;
 
-public class MBarcode extends BaseModule {
+import java.util.List;
+
+public class MBarcode extends BaseGroupModule {
 
 	@Override
-	public BaseModule load() {
-		enable = true;
+	public MBarcode load() {
 		return this;
 	}
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
+		File[] imgs = null;
+		List<CQImage> images = Autoreply.instance.CC.getCQImages(msg);
+        if (images.size() != 0) {
+            imgs = new File[images.size()];
+            for (int i = 0, imagesSize = images.size(); i < imagesSize; i++) {
+				CQImage image = images.get(i);
+                try {
+                    imgs[i] = Autoreply.instance.fileTypeUtil.checkFormat(image.download(Autoreply.appDirectory + "downloadImages/", image.getMd5()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 		if (imgs == null) {
             return false;
         }

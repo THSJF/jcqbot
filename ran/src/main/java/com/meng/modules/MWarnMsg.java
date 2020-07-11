@@ -2,7 +2,7 @@ package com.meng.modules;
 
 import com.meng.*;
 import com.meng.config.*;
-import com.meng.modules.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.tools.*;
 import com.sobte.cqp.jcq.entity.*;
 import java.io.*;
@@ -10,7 +10,7 @@ import java.util.*;
 
 import static com.meng.Autoreply.sendMessage;
 
-public class MWarnMsg extends BaseModule {
+public class MWarnMsg extends BaseGroupModule {
     private String lastMsg = "  ";
     private long lastSender = 2;
     private String[] warningMsgs = new String[]{
@@ -72,13 +72,12 @@ public class MWarnMsg extends BaseModule {
 	};
 
 	@Override
-    public BaseModule load() {
-		enable = true;
+    public MWarnMsg load() {
 		return this;
     }
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		boolean b = false;
         if (lastMsg.equals(msg) && isConmandMessage(msg)) {
             b = processRepeat(fromGroup, fromQQ, msg);

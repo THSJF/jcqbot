@@ -3,7 +3,10 @@ package com.meng.modules;
 import com.google.gson.*;
 import com.google.gson.annotations.*;
 import com.meng.*;
+import com.meng.config.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.tools.*;
+import com.sobte.cqp.jcq.entity.*;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.*;
@@ -14,9 +17,8 @@ import javax.crypto.*;
 import javax.crypto.spec.*;
 import javax.net.ssl.*;
 import org.json.*;
-import com.meng.config.*;
 
-public class MOcr extends BaseModule {
+public class MOcr extends BaseGroupModule {
 
     // appid, secretid secretkey请到http://open.youtu.qq.com/获取
     // 请正确填写把下面的APP_ID、SECRET_ID和SECRET_KEY
@@ -27,13 +29,12 @@ public class MOcr extends BaseModule {
     public Youtu faceYoutu = new Youtu(APP_ID, SECRET_ID, SECRET_KEY, Youtu.API_YOUTU_END_POINT, USER_ID);
 
 	@Override
-	public BaseModule load() {
-		enable = true;
+	public MOcr load() {
 		return this;
 	}
 
 	@Override
-	protected boolean processMsg(long fromGroup, long fromQQ, String msg, int msgId, File[] imgs) {
+	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_OCR)) {
 			return false;
 		}
@@ -42,8 +43,10 @@ public class MOcr extends BaseModule {
 		}
 		JSONObject response;
         try {
-            if (imgs[0] != null) {
-                response = faceYoutu.GeneralOcr(imgs[0].getAbsolutePath());
+			CQImage cQImage = Autoreply.instance.CC.getCQImage(msg);
+			File imgf=Autoreply.instance.fileTypeUtil.checkFormat(cQImage.download(Autoreply.appDirectory + "downloadImages/", cQImage.getMd5()));
+            if (imgf != null) {
+                response = faceYoutu.GeneralOcr(imgf.getAbsolutePath());
             } else {
                 return false;
             }
