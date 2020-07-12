@@ -2,7 +2,7 @@ package com.meng.config.javabeans;
 
 import java.util.*;
 
-public class RanCfgBean {
+public class ConfigHolder {
     public HashSet<GroupConfig> groupConfigs = new HashSet<>();
     public HashSet<Long> QQNotReply = new HashSet<>();
     public HashSet<Long> blackListQQ = new HashSet<>();

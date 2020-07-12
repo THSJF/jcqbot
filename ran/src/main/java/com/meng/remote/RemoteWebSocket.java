@@ -175,7 +175,7 @@ public class RemoteWebSocket extends WebSocketServer {
 				break;
 			case BotDataPack.getConfig:
 				toSend = BotDataPack.encode(rec.getOpCode());
-				toSend.write(Autoreply.gson.toJson(ConfigManager.instance.configJavaBean));
+				toSend.write(Autoreply.gson.toJson(ConfigManager.instance.configHolder));
 				break;
 			case BotDataPack.opEnableFunction:
 				ConfigManager.instance.setFunctionEnabled(rec.readLong(), rec.readInt(), rec.readInt() == 1);
@@ -183,40 +183,40 @@ public class RemoteWebSocket extends WebSocketServer {
 			case BotDataPack.addGroup:
 				GroupConfig g1c=new GroupConfig();
 				g1c.n = rec.readLong();
-				ConfigManager.instance.configJavaBean.groupConfigs.add(g1c);
+				ConfigManager.instance.configHolder.groupConfigs.add(g1c);
 				Autoreply.sendMessage(Autoreply.mainGroup, 0, "添加群" + g1c.n);
 				break;
 			case BotDataPack.addNotReplyUser:
-				ConfigManager.instance.configJavaBean.QQNotReply.add(rec.readLong());
+				ConfigManager.instance.configHolder.QQNotReply.add(rec.readLong());
 				break;
 			case BotDataPack.addNotReplyWord:
-				ConfigManager.instance.configJavaBean.wordNotReply.add(rec.readString());
+				ConfigManager.instance.configHolder.wordNotReply.add(rec.readString());
 				break;
 			case BotDataPack.addPersonInfo:
-				ConfigManager.instance.configJavaBean.personInfo.add(Autoreply.gson.fromJson(rec.readString(), PersonInfo.class));
+				ConfigManager.instance.configHolder.personInfo.add(Autoreply.gson.fromJson(rec.readString(), PersonInfo.class));
 				break;
 			case BotDataPack.addMaster:
 				long master=rec.readLong();
-				ConfigManager.instance.configJavaBean.masterList.add(master);
+				ConfigManager.instance.configHolder.masterList.add(master);
 				Autoreply.sendMessage(Autoreply.mainGroup, 0, "添加master" + master);
 				break;
 			case BotDataPack.addAdmin:
 				long admin=rec.readLong();
-				ConfigManager.instance.configJavaBean.adminList.add(admin);
+				ConfigManager.instance.configHolder.adminList.add(admin);
 				Autoreply.sendMessage(Autoreply.mainGroup, 0, "添加admin" + admin);
 				break;
 		/*	case BotDataPack.addGroupAllow:
 				ConfigManager.instance.addAutoAllow(rec.readLong());
 				break;*/
 			case BotDataPack.addBlackQQ:
-				ConfigManager.instance.configJavaBean.blackListQQ.add(rec.readLong());
+				ConfigManager.instance.configHolder.blackListQQ.add(rec.readLong());
 				break;
 			case BotDataPack.addBlackGroup:
-				ConfigManager.instance.configJavaBean.blackListGroup.add(rec.readLong());
+				ConfigManager.instance.configHolder.blackListGroup.add(rec.readLong());
 				break;
 			case BotDataPack.removeGroup:
 				long gcn=rec.readLong();
-				Iterator<GroupConfig> iterator=ConfigManager.instance.configJavaBean.groupConfigs.iterator();
+				Iterator<GroupConfig> iterator=ConfigManager.instance.configHolder.groupConfigs.iterator();
 				while (iterator.hasNext()) {
 					GroupConfig gc=iterator.next();
 					if (gc.n == gcn) {
@@ -226,43 +226,43 @@ public class RemoteWebSocket extends WebSocketServer {
 				}
 				break;
 			case BotDataPack.removeNotReplyUser:
-				ConfigManager.instance.configJavaBean.QQNotReply.remove(rec.readLong());
+				ConfigManager.instance.configHolder.QQNotReply.remove(rec.readLong());
 				break;
 			case BotDataPack.removeNotReplyWord:
-				ConfigManager.instance.configJavaBean.wordNotReply.remove(rec.readString());
+				ConfigManager.instance.configHolder.wordNotReply.remove(rec.readString());
 				break;
 			case BotDataPack.removePersonInfo:
-				ConfigManager.instance.configJavaBean.personInfo.remove(Autoreply.gson.fromJson(rec.readString(), PersonInfo.class));
+				ConfigManager.instance.configHolder.personInfo.remove(Autoreply.gson.fromJson(rec.readString(), PersonInfo.class));
 				break;
 			case BotDataPack.removeMaster:
 				long rm=rec.readLong();
-				ConfigManager.instance.configJavaBean.masterList.remove(rm);
+				ConfigManager.instance.configHolder.masterList.remove(rm);
 				Autoreply.sendMessage(Autoreply.mainGroup, 0, "移除master" + rm);
 				break;
 			case BotDataPack.removeAdmin:
 				long ra=rec.readLong();
-				ConfigManager.instance.configJavaBean.adminList.remove(ra);
+				ConfigManager.instance.configHolder.adminList.remove(ra);
 				Autoreply.sendMessage(Autoreply.mainGroup, 0, "移除admin" + ra);
 				break;
 		/*	case BotDataPack.removeGroupAllow:
 				ConfigManager.instance.removeAutoAllow(rec.readLong());
 				break;*/
 			case BotDataPack.removeBlackQQ:
-				ConfigManager.instance.configJavaBean.blackListQQ.remove(rec.readLong());
+				ConfigManager.instance.configHolder.blackListQQ.remove(rec.readLong());
 				break;
 			case BotDataPack.removeBlackGroup:
-				ConfigManager.instance.configJavaBean.blackListGroup.remove(rec.readLong());
+				ConfigManager.instance.configHolder.blackListGroup.remove(rec.readLong());
 				break;
 			case BotDataPack.setPersonInfo:
 				PersonInfo oldPersonInfo = Autoreply.gson.fromJson(rec.readString(), PersonInfo.class);
 				PersonInfo newPersonInfo = Autoreply.gson.fromJson(rec.readString(), PersonInfo.class);
-				for (PersonInfo pi : ConfigManager.instance.configJavaBean.personInfo) {
+				for (PersonInfo pi : ConfigManager.instance.configHolder.personInfo) {
 					if (pi.name.equals(oldPersonInfo.name) && pi.qq == oldPersonInfo.qq && pi.bid == oldPersonInfo.bid && pi.bliveRoom == oldPersonInfo.bliveRoom) {
-						ConfigManager.instance.configJavaBean.personInfo.remove(oldPersonInfo);
+						ConfigManager.instance.configHolder.personInfo.remove(oldPersonInfo);
 						break;
 					}
 				}
-				ConfigManager.instance.configJavaBean.personInfo.add(newPersonInfo);
+				ConfigManager.instance.configHolder.personInfo.add(newPersonInfo);
 				break;	
 			case BotDataPack.cookie:
 				Autoreply.instance.cookieManager.cookieMap.put(rec.readInt(), rec.readString());

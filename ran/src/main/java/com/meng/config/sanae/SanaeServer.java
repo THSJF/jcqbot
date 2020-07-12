@@ -40,7 +40,7 @@ public class SanaeServer extends WebSocketServer {
 		SanaeDataPack sdp = SanaeDataPack.encode(rsdp);
 		switch (rsdp.getOpCode()) {
 			case SanaeDataPack.opConfigFile:
-				sdp.write(Autoreply.gson.toJson(ConfigManager.instance.configJavaBean));
+				sdp.write(Autoreply.gson.toJson(ConfigManager.instance.configHolder));
 				break;
 			case SanaeDataPack.opGameOverSpell:
 				sdp.write(ModuleManager.instance.getGroupModule(MDiceImitate.class).md5RanStr(rsdp.readLong(), MDiceImitate.spells));

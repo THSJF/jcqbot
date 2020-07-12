@@ -261,7 +261,7 @@ public class MAdminMsg extends BaseGroupModule {
 				long qq = qqs.get(i);
 				sb.append(qq).append(" ");
 			}
-			ConfigManager.instance.configJavaBean.QQNotReply.addAll(qqs);
+			ConfigManager.instance.configHolder.QQNotReply.addAll(qqs);
 			ConfigManager.instance.saveConfig();
 			Autoreply.sendMessage(fromGroup, fromQQ, sb.toString());
 			return true;
@@ -274,7 +274,7 @@ public class MAdminMsg extends BaseGroupModule {
 				long qq = qqs.get(i);
 				sb.append(qq).append(" ");
 			}
-			ConfigManager.instance.configJavaBean.blackListQQ.addAll(qqs);
+			ConfigManager.instance.configHolder.blackListQQ.addAll(qqs);
 			ConfigManager.instance.saveConfig();
 			Autoreply.sendMessage(fromGroup, fromQQ, sb.toString());
 			return true;
@@ -282,7 +282,7 @@ public class MAdminMsg extends BaseGroupModule {
 		if (msg.startsWith("find:")) {
 			String name = msg.substring(5);
 			HashSet<PersonInfo> hashSet = new HashSet<>();
-			for (PersonInfo personInfo : ConfigManager.instance.configJavaBean.personInfo) {
+			for (PersonInfo personInfo : ConfigManager.instance.configHolder.personInfo) {
 				if (personInfo.name.contains(name)) {
 					hashSet.add(personInfo);
 				}

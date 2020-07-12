@@ -27,7 +27,7 @@ public class LiveListener implements Runnable {
 		Autoreply.instance.threadPool.execute(new Runnable() {
 				@Override
 				public void run() {
-					for (PersonInfo cb : ConfigManager.instance.configJavaBean.personInfo) {
+					for (PersonInfo cb : ConfigManager.instance.configHolder.personInfo) {
 						checkPerson(cb);
 					}
 					loadFinish = true;
@@ -76,7 +76,7 @@ public class LiveListener implements Runnable {
                     Thread.sleep(1000);
                     continue;
 				}
-                for (PersonInfo personInfo : ConfigManager.instance.configJavaBean.personInfo) {
+                for (PersonInfo personInfo : ConfigManager.instance.configHolder.personInfo) {
                     if (personInfo.bliveRoom == 0 || personInfo.bliveRoom == -1) {
                         continue;
 					}

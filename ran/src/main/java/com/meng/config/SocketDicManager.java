@@ -25,7 +25,7 @@ public class SocketDicManager implements Runnable {
 
     private void check() {
         try {
-            ServerSocket serverSocket = new ServerSocket(configManager.portConfig.dicPort);
+            ServerSocket serverSocket = new ServerSocket(9911);
             while (true) {
                 Autoreply.instance.threadPool.execute(new SocketDicRunnable(configManager, serverSocket));
                 Thread.sleep(10);

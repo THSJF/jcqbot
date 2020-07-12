@@ -10,8 +10,7 @@ public class PersonInfo extends Object {
 
     @Override
     public int hashCode() {
-		int i=0;
-        return super.hashCode();
+        return name.hashCode() + (int)qq;
     }
 
     @Override

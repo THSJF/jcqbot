@@ -139,7 +139,7 @@ public class MSpellCollect extends BaseGroupModule {
 		if (!ConfigManager.instance.getGroupConfig(fromGroup).isSpellCollectEnable()) {
 			return false;
 		}
-		if (msg.startsWith("#幻币转账") && fromQQ == ConfigManager.instance.configJavaBean.ogg) {
+		if (msg.startsWith("#幻币转账") && fromQQ == ConfigManager.instance.configHolder.ogg) {
 			List<Long> chan=Autoreply.instance.CC.getAts(msg);
 			if (!ConfigManager.instance.isMaster(chan.get(1))) {
 				return false;

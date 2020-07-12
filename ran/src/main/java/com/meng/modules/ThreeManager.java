@@ -17,9 +17,9 @@ public class ThreeManager extends BaseGroupModule {
     public ThreeManager load() {
 		checkSet.add(2487765013L);
 		checkSet.add(1033317031L);
-		checkSet.addAll(ConfigManager.instance.configJavaBean.adminList);
-		checkSet.addAll(ConfigManager.instance.configJavaBean.masterList);
-		for (PersonInfo pi:ConfigManager.instance.configJavaBean.personInfo) {
+		checkSet.addAll(ConfigManager.instance.configHolder.adminList);
+		checkSet.addAll(ConfigManager.instance.configHolder.masterList);
+		for (PersonInfo pi:ConfigManager.instance.configHolder.personInfo) {
 			if (pi.qq != 0) {
 				checkSet.add(pi.qq);
 			}

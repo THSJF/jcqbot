@@ -9,26 +9,22 @@ import com.meng.tools.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.nio.charset.*;
+import com.meng.SJFInterfaces.*;
 
-public class ConfigManager {
+public class ConfigManager implements INeedPersistent {
+
 	public static ConfigManager instance;
-    public RanCfgBean configJavaBean = new RanCfgBean();
-    public PortConfig portConfig = new PortConfig();
+    public ConfigHolder configHolder = new ConfigHolder();
 	private GroupConfig emptyConfig = new GroupConfig();
-	
+
     public ConfigManager() {
 		instance = this;
-        portConfig = Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "grzxEditConfig.json"), PortConfig.class);
-        File jsonBaseConfigFile = new File(Autoreply.appDirectory + "configV3.json");
-        if (!jsonBaseConfigFile.exists()) {
-            saveConfig();
-        }
-        configJavaBean = Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "configV3.json"), RanCfgBean.class);
+        DataPersistenter.read(this);
 		Autoreply.instance.threadPool.execute(new SocketDicManager(this));
     }
 
 	public boolean containsGroup(long group) {
-		for (GroupConfig gf:configJavaBean.groupConfigs) {
+		for (GroupConfig gf:configHolder.groupConfigs) {
 			if (gf.n == group) {
 				return true;
 			}
@@ -48,16 +44,16 @@ public class ConfigManager {
 
 	public void setNickName(long qq, String nickname) {
 		if (nickname != null) {
-			configJavaBean.nicknameMap.put(qq, nickname);
+			configHolder.nicknameMap.put(qq, nickname);
 		} else {
-			configJavaBean.nicknameMap.remove(qq);
+			configHolder.nicknameMap.remove(qq);
 		}
 		saveConfig();
 	}
 
 	public String getNickName(long qq) {
 		String nick=null;
-		nick = configJavaBean.nicknameMap.get(qq);
+		nick = configHolder.nicknameMap.get(qq);
 		if (nick == null) {
 			PersonInfo pi=getPersonInfoFromQQ(qq);
 			if (pi == null) {
@@ -71,7 +67,7 @@ public class ConfigManager {
 
 	public String getNickName(long group, long qq) {
 		String nick=null;
-		nick = configJavaBean.nicknameMap.get(qq);
+		nick = configHolder.nicknameMap.get(qq);
 		if (nick == null) {
 			PersonInfo pi=getPersonInfoFromQQ(qq);
 			if (pi == null) {
@@ -84,15 +80,15 @@ public class ConfigManager {
 	}
 
     public boolean isMaster(long fromQQ) {
-        return configJavaBean.masterList.contains(fromQQ);
+        return configHolder.masterList.contains(fromQQ);
     }
 
     public boolean isAdmin(long fromQQ) {
-        return configJavaBean.adminList.contains(fromQQ) || configJavaBean.masterList.contains(fromQQ);
+        return configHolder.adminList.contains(fromQQ) || configHolder.masterList.contains(fromQQ);
     }
 
     public GroupConfig getGroupConfig(long fromGroup) {
-        for (GroupConfig gc : configJavaBean.groupConfigs) {
+        for (GroupConfig gc : configHolder.groupConfigs) {
             if (fromGroup == gc.n) {
                 return gc;
             }
@@ -101,19 +97,19 @@ public class ConfigManager {
     }
 
     public boolean isNotReplyQQ(long qq) {
-        return configJavaBean.QQNotReply.contains(qq) || configJavaBean.blackListQQ.contains(qq);
+        return configHolder.QQNotReply.contains(qq) || configHolder.blackListQQ.contains(qq);
     }
 
     public boolean isBlackQQ(long qq) {
-        return configJavaBean.blackListQQ.contains(qq);
+        return configHolder.blackListQQ.contains(qq);
     }
 
     public boolean isBlackGroup(long qq) {
-        return configJavaBean.blackListGroup.contains(qq);
+        return configHolder.blackListGroup.contains(qq);
     }
 
     public boolean isNotReplyWord(String word) {
-        for (String nrw : configJavaBean.wordNotReply) {
+        for (String nrw : configHolder.wordNotReply) {
             if (word.contains(nrw)) {
                 return true;
             }
@@ -122,7 +118,7 @@ public class ConfigManager {
     }
 
     public PersonInfo getPersonInfoFromQQ(long qq) {
-        for (PersonInfo pi : configJavaBean.personInfo) {
+        for (PersonInfo pi : configHolder.personInfo) {
             if (pi.qq == qq) {
                 return pi;
             }
@@ -131,7 +127,7 @@ public class ConfigManager {
     }
 
     public PersonInfo getPersonInfoFromName(String name) {
-        for (PersonInfo pi : configJavaBean.personInfo) {
+        for (PersonInfo pi : configHolder.personInfo) {
             if (pi.name.equals(name)) {
                 return pi;
             }
@@ -140,7 +136,7 @@ public class ConfigManager {
     }
 
     public PersonInfo getPersonInfoFromBid(long bid) {
-        for (PersonInfo pi : configJavaBean.personInfo) {
+        for (PersonInfo pi : configHolder.personInfo) {
             if (pi.bid == bid) {
                 return pi;
             }
@@ -149,7 +145,7 @@ public class ConfigManager {
     }
 
 	public PersonInfo getPersonInfoFromLiveId(long lid) {
-        for (PersonInfo pi : configJavaBean.personInfo) {
+        for (PersonInfo pi : configHolder.personInfo) {
             if (pi.bliveRoom == lid) {
                 return pi;
 			}
@@ -158,11 +154,11 @@ public class ConfigManager {
 	}
 
     public void addBlack(long group, final long qq) {
-        configJavaBean.blackListQQ.add(qq);
-        configJavaBean.blackListGroup.add(group);
-        for (GroupConfig groupConfig : configJavaBean.groupConfigs) {
+        configHolder.blackListQQ.add(qq);
+        configHolder.blackListGroup.add(group);
+        for (GroupConfig groupConfig : configHolder.groupConfigs) {
             if (groupConfig.n == group) {
-                configJavaBean.groupConfigs.remove(groupConfig);
+                configHolder.groupConfigs.remove(groupConfig);
                 break;
             }
         }
@@ -183,28 +179,38 @@ public class ConfigManager {
     }
 
 	public void setOgg(long qqNum) {
-		configJavaBean.ogg = qqNum;
+		configHolder.ogg = qqNum;
 		saveConfig();
 	}
 
-	class PortConfig {
-		public int configPort = 0;
-		public int dicPort = 0;
+	
+	@Override
+	public String getPersistentName() {
+		return "configV3.json";
 	}
 
+	@Override
+	public Class<?> getDataClass() {
+		return ConfigHolder.class;
+	}
+
+	@Override
+	public ConfigHolder getDataBean() {
+		return configHolder;
+	}
+
+	@Override
+	public void setDataBean(Object o) {
+		if (o.getClass() != getDataClass()) {
+			throw new RuntimeException("bean类型错误");
+		}
+		configHolder = (ConfigHolder) o;
+	}
+	
     public void saveConfig() {
 		SanaeDataPack sdp = SanaeDataPack.encode(SanaeDataPack.opConfigFile);
-		sdp.write(Autoreply.gson.toJson(ConfigManager.instance.configJavaBean));
+		sdp.write(Autoreply.gson.toJson(ConfigManager.instance.configHolder));
 		Autoreply.instance.sanaeServer.send(sdp);
-        try {
-            File file = new File(Autoreply.appDirectory + "configV3.json");
-            FileOutputStream fos = new FileOutputStream(file);
-            OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-            writer.write(Autoreply.gson.toJson(configJavaBean));
-            writer.flush();
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        DataPersistenter.save(this);
     }
 }

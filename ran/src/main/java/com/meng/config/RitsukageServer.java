@@ -40,7 +40,7 @@ public class RitsukageServer extends WebSocketServer {
 	public void onMessage(WebSocket conn, ByteBuffer message) {
 		++RemoteWebSocket.botInfoBean.recFrom;
 		RitsukageDataPack dp=RitsukageDataPack.decode(message.array());
-		if (dp.getTarget() == ConfigManager.instance.configJavaBean.ogg) {
+		if (dp.getTarget() == ConfigManager.instance.configHolder.ogg) {
 			oggProcess(conn, dp);
 		}
 	}

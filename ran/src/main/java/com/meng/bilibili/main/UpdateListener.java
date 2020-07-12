@@ -13,7 +13,7 @@ public class UpdateListener implements Runnable {
     private ArrayList<UpdatePerson> updatePerson = new ArrayList<>();
 
     public UpdateListener() {
-        for (PersonInfo cb : ConfigManager.instance.configJavaBean.personInfo) {
+        for (PersonInfo cb : ConfigManager.instance.configHolder.personInfo) {
             addPerson(cb);
         }
     }
