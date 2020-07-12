@@ -26,14 +26,13 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
     public static Autoreply instance;
     public String createdImageFolder;
     public Random random = new Random();
-    public CQCodeCC CC = new CQCodeCC();
+    public static CQCodeCC CC = new CQCodeCC();
 	public NaiManager naiManager;
 	//private FileInfoManager fileInfoManager = new FileInfoManager();
 	public ZanManager zanManager;
     public UpdateListener updateListener;
     public LiveListener liveListener;
-	public GroupMemberChangerListener groupMemberChangerListener;
-    public FileTypeUtil fileTypeUtil = new FileTypeUtil();
+	public FileTypeUtil fileTypeUtil = new FileTypeUtil();
 	public CookieManager cookieManager;
 	public DanmakuListenerManager danmakuListenerManager;
 	public RitsukageServer connectServer;
@@ -45,10 +44,6 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 	public static long mainGroup=1023432971l;
 	public static Gson gson;
 	public static boolean sleeping=true;
-
-	private static String lastSend=" ";
-	private static String lastSend2="  ";
-	private static boolean tipedBreak = false;
 
     public static void main(String[] args) {
         CQ = new CoolQ(1000);
@@ -81,7 +76,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 		ModuleManager.instance.load();
 		cookieManager = new CookieManager();
         long startTime = System.currentTimeMillis();
-        groupMemberChangerListener = new GroupMemberChangerListener();
+
         zanManager = new ZanManager();
         liveListener = new LiveListener();
         updateListener = new UpdateListener();
@@ -146,7 +141,6 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
      */
     @Override
     public int privateMsg(int subType, final int msgId, final long fromQQ, final String msg, int font) {
-        // 这里处理消息
         // if (fromQQ != 2856986197L) {
         // return MSG_IGNORE;
         // }
@@ -181,9 +175,6 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 							return;
 						}
 					}
-
-
-
 				}
 			});
 		if (ModuleManager.instance.onPrivateMsg(fromQQ, msg, msgId)) {
@@ -214,44 +205,14 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         // if (fromGroup != 617745343L)
         // return MSG_IGNORE;
         // 如果消息来自匿名者
-		remoteWebSocket.sendMsg(1, fromGroup, fromQQ, msg, msgId);
-		++RemoteWebSocket.botInfoBean.msgPerSec;
-        if (fromQQ == 80000000L && !fromAnonymous.equals("")) {
+		if (fromQQ == 80000000L && !fromAnonymous.equals("")) {
             // 将匿名用户信息放到 anonymous 变量中
             // Anonymous anonymous = CQ.getAnonymous(fromAnonymous);
             // CQ.setGroupBan(fromGroup, anonymous.getAid(), 60);
         }
-
-        if (ConfigManager.instance.isBlackQQ(fromQQ)) {
-            System.out.println("black:" + fromQQ);
-            if (Tools.CQ.ban(fromGroup, fromQQ, 300)) {
-                sendMessage(fromGroup, fromQQ, "嘘 别说话");
-            }
-        }
-
-        if (ConfigManager.instance.isNotReplyQQ(fromQQ)) {
-            return MSG_IGNORE;
-        }
-        if (ConfigManager.instance.isNotReplyWord(msg)) {
-            return MSG_IGNORE;
-        }
-		if (fromQQ == 2856986197L || fromQQ == 2565128043L) {
-			++RemoteWebSocket.botInfoBean.msgCmdPerSec;
-			if (msg.contains("setConnect")) {
-				try {
-					ConfigManager.instance.setOgg(CC.getAt(msg));
-					sendMessage(fromGroup, 0, "设置连接" + CC.getAt(msg));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				return MSG_IGNORE;
-			}
-		}
-
 		if (ModuleManager.instance.onGroupMessage(fromGroup, fromQQ, msg, msgId)) {
 			++RemoteWebSocket.botInfoBean.msgCmdPerSec;
 		}
-
         return MSG_IGNORE;
     }
 
@@ -269,7 +230,6 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
      */
     @Override
     public int discussMsg(int subtype, int msgId, long fromDiscuss, long fromQQ, String msg, int font) {
-        // 这里处理消息
 		if (ModuleManager.instance.onDiscussMessage(fromDiscuss, fromQQ, msg, msgId)) {
 			++RemoteWebSocket.botInfoBean.msgCmdPerSec;
 		}
@@ -289,15 +249,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
      */
     @Override
     public int groupUpload(int subType, int sendTime, long fromGroup, long fromQQ, String file) {
-        // GroupFile com.meng.groupFile = CQ.getGroupFile(file);
-        // if (com.meng.groupFile == null) { // 解析群文件信息，如果失败直接忽略该消息
-        // return MSG_IGNORE;
-        // }
-        if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_MainSwitch)) {
-            return MSG_IGNORE;
-        }
-		ModuleManager.instance.onGroupFileUpload(sendTime, fromGroup, fromQQ, file);
-		//   fileInfoManager.check(subType, sendTime, fromGroup, fromQQ, file);
+     	ModuleManager.instance.onGroupFileUpload(sendTime, fromGroup, fromQQ, file);
         return MSG_IGNORE;
     }
 
@@ -313,16 +265,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
      */
     @Override
     public int groupAdmin(int subtype, int sendTime, long fromGroup, long beingOperateQQ) {
-        // 这里处理消息
-        if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_MainSwitch)) {
-            return MSG_IGNORE;
-        }
 		ModuleManager.instance.onGroupAdminChange(subtype, sendTime, fromGroup, beingOperateQQ);
-        if (subtype == 1) {
-            sendMessage(fromGroup, 0, CC.at(beingOperateQQ) + "你绿帽子没莉");
-        } else if (subtype == 2) {
-            sendMessage(fromGroup, 0, CC.at(beingOperateQQ) + "群主给了你个绿帽子");
-        }
         return MSG_IGNORE;
     }
 
@@ -339,8 +282,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
      */
     @Override
     public int groupMemberDecrease(int subtype, int sendTime, long fromGroup, long fromQQ, long beingOperateQQ) {
-        // 这里处理消息
-        groupMemberChangerListener.checkDecrease(subtype, sendTime, fromGroup, fromQQ, beingOperateQQ);
+       	ModuleManager.instance.onGroupMemberDecrease(subtype, sendTime, fromGroup, fromQQ, beingOperateQQ);
         return MSG_IGNORE;
     }
 
@@ -357,11 +299,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
      */
     @Override
     public int groupMemberIncrease(int subtype, int sendTime, long fromGroup, long fromQQ, long beingOperateQQ) {
-        // 这里处理消息
-        if (beingOperateQQ == CQ.getLoginQQ()) {
-            return MSG_IGNORE;
-        }
-        groupMemberChangerListener.checkIncrease(subtype, sendTime, fromGroup, fromQQ, beingOperateQQ);
+		ModuleManager.instance.onGroupMemberIncrease(subtype, sendTime, fromGroup, fromQQ, beingOperateQQ);
         return MSG_IGNORE;
     }
 
@@ -376,8 +314,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
      */
     @Override
     public int friendAdd(int subtype, int sendTime, long fromQQ) {
-        // 这里处理消息
-
+		ModuleManager.instance.onFriendAdd(sendTime, fromQQ);
         return MSG_IGNORE;
     }
 
@@ -394,31 +331,8 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
      */
     @Override
     public int requestAddFriend(int subtype, int sendTime, final long fromQQ, String msg, final String responseFlag) {
-        // 这里处理消息
-        if (ConfigManager.instance.isNotReplyQQ(fromQQ)) {
-            threadPool.execute(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							Thread.sleep(2000);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-						CQ.setFriendAddRequest(responseFlag, REQUEST_REFUSE, "");
-						sendMessage(0, 2856986197L, "拒绝了" + fromQQ + "加为好友");
-					}
-				});
-            return MSG_IGNORE;
-        }
-        /*
-         * REQUEST_ADOPT 通过 REQUEST_REFUSE 拒绝
-         */
-        //    QQInfo qInfo = CQ.getStrangerInfo(fromQQ);
-        //    CQ.setFriendAddRequest(responseFlag, REQUEST_ADOPT, qInfo.getNick()); //
-        // sendMessage(0, fromQQ, "本体2856986197");
-        sendMessage(0, 2856986197L, fromQQ + "把我加为好友");
-        // 同意好友添加请求
-        return MSG_IGNORE;
+		ModuleManager.instance.onRequestAddFriend(sendTime, fromQQ, msg, responseFlag);
+		return MSG_IGNORE;
     }
 
     /**
@@ -441,45 +355,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
          * REQUEST_ADOPT 通过 REQUEST_REFUSE 拒绝 REQUEST_GROUP_ADD 群添加
          * REQUEST_GROUP_INVITE 群邀请
          */
-        System.out.println("groupAdd");
-        if (subtype == 1) {
-            if (ConfigManager.instance.isBlackQQ(fromQQ)) {
-                CQ.setGroupAddRequest(responseFlag, REQUEST_GROUP_ADD, REQUEST_ADOPT, null);
-                Tools.CQ.ban(fromGroup, fromQQ, 2592000);
-                sendMessage(fromGroup, fromQQ, "不要问为什么你会进黑名单，你干了什么自己知道");
-                return MSG_IGNORE;
-            }
-            PersonInfo personInfo = ConfigManager.instance.getPersonInfoFromQQ(fromQQ);
-            if (personInfo != null) {
-                CQ.setGroupAddRequest(responseFlag, REQUEST_GROUP_ADD, REQUEST_ADOPT, null);
-                //        sendMessage(fromGroup, 0, "欢迎" + personInfo.name);
-            } else {
-                sendMessage(fromGroup, 0, "有人申请加群，绿帽赶紧瞅瞅");
-            }
-        } else if (subtype == 2) {
-            if (ConfigManager.instance.isBlackQQ(fromQQ) || ConfigManager.instance.isBlackGroup(fromGroup)) {
-                threadPool.execute(new Runnable() {
-						@Override
-						public void run() {
-							try {
-								Thread.sleep(2000);
-							} catch (InterruptedException e) {
-								e.printStackTrace();
-							}
-							CQ.setGroupAddRequest(responseFlag, REQUEST_GROUP_ADD, REQUEST_REFUSE, "");
-							sendMessage(0, 2856986197L, "拒绝了" + fromQQ + "邀请我加入群" + fromGroup);
-						}
-					});
-                return MSG_IGNORE;
-            }
-			if (ConfigManager.instance.isMaster(fromQQ) || ConfigManager.instance.containsGroup(fromGroup)) {
-				CQ.setGroupAddRequest(responseFlag, REQUEST_GROUP_INVITE, REQUEST_ADOPT, null);
-				sendMessage(0, 2856986197L, "Master" + fromQQ + "邀请我加入群" + fromGroup);			
-				return MSG_IGNORE;
-			}
-            sendMessage(0, 2856986197L, fromQQ + "邀请我加入群" + fromGroup);
-        }
-        /*
+		/*
          * if (fromGroup == 859561731L) { // 台长群 return MSG_IGNORE; }
          *
          * if (subtype == 1) { // 本号为群管理，判断是否为他人申请入群 if (fromQQ == 3035936740L |
@@ -495,8 +371,8 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         return MSG_IGNORE;
     }
 
-    private int sendGroupMessage(long fromGroup, long fromQQ, String msg) {
-        if (sleeping) {
+	public static int sendMessage(long toGroup, long toQQ, String msg) {
+		if (sleeping) {
             return -1;
         }
 		int value=-1;
@@ -507,61 +383,36 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
             if (msg.startsWith("red:")) {
                 msg = msg.substring(4);
 				++RemoteWebSocket.botInfoBean.msgSendPerSec;
-                if (ModuleManager.instance.getGroupModule(MGroupDic.class).onGroupMessage(fromGroup, fromQQ, msg, -1)) {
+                if (ModuleManager.instance.getGroupModule(MGroupDic.class).onGroupMessage(toGroup, toQQ, msg, -1)) {
                     return -1;
                 }
             }
             String[] stri = msg.split(":");
             switch (stri[0]) {
                 case "image":
-					value = CQ.sendGroupMsg(fromGroup, stri[2].replace("--image--", instance.CC.image(new File(appDirectory + stri[1]))));
+					value = CQ.sendGroupMsg(toGroup, stri[2].replace("--image--", instance.CC.image(new File(appDirectory + stri[1]))));
 					break;
 				case "atFromQQ":
-					value = CQ.sendGroupMsg(fromGroup, instance.CC.at(fromQQ) + stri[1]);
+					value = CQ.sendGroupMsg(toGroup, instance.CC.at(toQQ) + stri[1]);
 					break;
 				case "atQQ":
-					value = CQ.sendGroupMsg(fromGroup, instance.CC.at(Long.parseLong(stri[1])) + stri[2]);
+					value = CQ.sendGroupMsg(toGroup, instance.CC.at(Long.parseLong(stri[1])) + stri[2]);
 					break;
 				case "imageFolder":
 					File[] files = (new File(appDirectory + stri[1])).listFiles();
-                    value = CQ.sendGroupMsg(fromGroup, stri[2].replace("--image--", instance.CC.image((File) Tools.ArrayTool.rfa(files))));
+                    value = CQ.sendGroupMsg(toGroup, stri[2].replace("--image--", instance.CC.image((File) Tools.ArrayTool.rfa(files))));
 					break;
 				default:
-					value = CQ.sendGroupMsg(fromGroup, msg);
+					value = CQ.sendGroupMsg(toGroup, msg);
             }
-			instance.remoteWebSocket.sendMsg(1, fromGroup, CQ.getLoginQQ(), msg, value);
+			instance.remoteWebSocket.sendMsg(1, toGroup, CQ.getLoginQQ(), msg, value);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return value;
-    }
+		return value;
+	}
 
-    public static int sendMessage(long fromGroup, long fromQQ, String msg) {
-        return sendMessage(fromGroup, fromQQ, msg, false);
-    }
-
-    public static int sendMessage(long fromGroup, long fromQQ, String msg, boolean isTip) {
-        int value = -1;
-        if (fromGroup == 0 || fromGroup == -1) {
-            value = CQ.sendPrivateMsg(fromQQ, msg);
-        } else {
-            if (isTip) {
-                value = instance.sendGroupMessage(fromGroup, fromQQ, msg);
-            } else {
-                if (msg.equals(lastSend) && lastSend.equals(lastSend2)) {
-                    if (!tipedBreak) {
-                        tipedBreak = true;
-                        value = instance.sendGroupMessage(fromGroup, fromQQ, "打断");
-                    }
-                } else {
-                    tipedBreak = false;
-                    value = instance.sendGroupMessage(fromGroup, fromQQ, msg);
-                }
-                lastSend2 = lastSend;
-                lastSend = msg;
-            }
-        }
-        return value;
-    }
-
+	public static int sendMessage(long toQQ, String msg) {
+		return CQ.sendPrivateMsg(toQQ, msg);
+	}
 }

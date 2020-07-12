@@ -19,7 +19,7 @@ public class MusicManager extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_Music)) {
+		if (!ConfigManager.instance.getGroupConfig(fromGroup).isMusicEnable()) {
 			return false;
 		}
 		judgeAnswer(fromGroup, fromQQ, msg);

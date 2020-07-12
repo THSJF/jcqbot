@@ -17,7 +17,7 @@ public class MPohaitu extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_PoHaiTu)){
+		if(!ConfigManager.instance.getGroupConfig(fromGroup).isPoHaiEnable()){
 			return false;
 		}
 		if (msg.equals("迫害图")) {
@@ -45,9 +45,9 @@ public class MPohaitu extends BaseGroupModule {
 			File[] files = (new File(Autoreply.appDirectory + "pohai/" + msg.replace("迫害图", ""))).listFiles();
 			if (files != null && files.length > 0) {
 				Autoreply.instance.threadPool.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files)))));
-				((MUserCounter)ModuleManager.instance.getGroupModule(MUserCounter.class)).incPohaitu(fromQQ);
-				((MGroupCounter)ModuleManager.instance.getGroupModule(MGroupCounter.class)).incPohaitu(fromGroup);
-				((MUserCounter)ModuleManager.instance.getGroupModule(MUserCounter.class)).incPohaitu(Autoreply.CQ.getLoginQQ());
+				ModuleManager.instance.getGroupModule(MUserCounter.class).incPohaitu(fromQQ);
+				ModuleManager.instance.getGroupModule(MGroupCounter.class).incPohaitu(fromGroup);
+				ModuleManager.instance.getGroupModule(MUserCounter.class).incPohaitu(Autoreply.CQ.getLoginQQ());
 			}
 			return true;
 		}

@@ -29,7 +29,7 @@ public class MGroupDic extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_GroupDic)) {
+		if (!ConfigManager.instance.getGroupConfig(fromGroup).isDictionaryEnable()) {
 			return false;
 		}
 		if (checkPublicDic(fromGroup, fromQQ, msg)) {

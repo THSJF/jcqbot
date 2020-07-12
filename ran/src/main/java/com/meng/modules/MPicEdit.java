@@ -23,7 +23,7 @@ public class MPicEdit extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_PicEdit)){
+		if(!ConfigManager.instance.getGroupConfig(fromGroup).isPicSearchEnable()){
 			return false;
 		}
 		if (msg.startsWith("精神支柱[CQ:at")) {

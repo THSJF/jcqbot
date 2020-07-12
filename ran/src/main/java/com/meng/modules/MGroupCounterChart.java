@@ -50,7 +50,7 @@ public class MGroupCounterChart extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_GroupCountChart)) {
+		if (!ConfigManager.instance.getGroupConfig(fromGroup).isGroupCountChartEnable()) {
 			return false;
 		}
 		GroupSpeak gs=groupsMap.get(fromGroup);

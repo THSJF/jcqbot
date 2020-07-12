@@ -60,7 +60,7 @@ public class MGroupCounter extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_GroupCount)) {
+		if (!ConfigManager.instance.getGroupConfig(fromGroup).isGroupCountEnable()) {
 			return false;
 		}
 		GroupInfo groupInfo = getBean(fromGroup);

@@ -64,7 +64,7 @@ public class MUserCounter extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_UserCount)) {
+		if (!ConfigManager.instance.getGroupConfig(fromGroup).isUserCountEnable()) {
 			return false;
 		}
 		if (msg.contains("艹") || msg.contains("草")) {

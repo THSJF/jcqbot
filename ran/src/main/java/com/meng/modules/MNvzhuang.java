@@ -17,7 +17,7 @@ public class MNvzhuang extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_NvZhuang)) {
+		if (!ConfigManager.instance.getGroupConfig(fromGroup).isNvZhuangEnable()) {
 			return false;
 		}
 		if (msg.equals("随机女装")) {

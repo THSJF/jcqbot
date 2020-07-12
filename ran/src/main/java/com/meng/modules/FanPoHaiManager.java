@@ -88,7 +88,7 @@ public class FanPoHaiManager extends BaseGroupModule {
                 }
                 File file = new File(folder);
                 if (msgId != -1) {
-					if (ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_CheHuiMotu)) {
+					if (ConfigManager.instance.getGroupConfig(fromGroup).isCheHuiMoTuEnable()) {
                         Member me = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, Autoreply.CQ.getLoginQQ());
                         Member ban = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, fromQQ);
                         if (me.getAuthority() - ban.getAuthority() > 0) {

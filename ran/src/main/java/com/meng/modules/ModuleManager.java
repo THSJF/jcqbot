@@ -1,13 +1,18 @@
 package com.meng.modules;
 
 import com.meng.*;
-import com.meng.config.*;
 import com.meng.SJFInterfaces.*;
+import com.meng.config.*;
+import com.meng.remote.*;
 import com.meng.tip.*;
+import com.sobte.cqp.jcq.entity.*;
 import java.util.*;
-import java.io.*;
 
-public class ModuleManager extends BaseModule implements IGroupMessage, IPrivateMessage, IDiscussMessage, IGroupEvent, IFriendEvent {
+import static com.meng.Autoreply.sendMessage;
+import static com.meng.Autoreply.CC;
+import static com.sobte.cqp.jcq.event.JcqApp.CQ;
+
+public class ModuleManager extends BaseModule implements IGroupMessage, IPrivateMessage, IDiscussMessage, IGroupEvent, IFriendEvent, IRequest, IMsg {
 
 	public static ModuleManager instance;
 
@@ -18,34 +23,10 @@ public class ModuleManager extends BaseModule implements IGroupMessage, IPrivate
 	private ArrayList<IGroupEvent> groupEventModules = new ArrayList<>();
 	private ArrayList<IFriendEvent> friendEventModules = new ArrayList<>();
 
-	public static final int ID_MainSwitch=0;
-	public static final int ID_Repeater = 1;
-	public static final int ID_MoShenFuSong=2;
-	public static final int ID_BilibiliNewUpdate=3;
-	public static final int ID_Dice=4;
-	public static final int ID_SpellCollect=5;
-	public static final int ID_OCR=6;
-	public static final int ID_Barcode=7;
-	public static final int ID_Banner=8;
-	public static final int ID_CQCode=9;
-	public static final int ID_Music=10;
-	public static final int ID_PicSearch=11;
-	public static final int ID_BiliLink=12;
-	public static final int ID_Setu=13;
-	public static final int ID_PoHaiTu=14;
-	public static final int ID_NvZhuang=15;
-	public static final int ID_GuanZhuangBingDu=16;
-	public static final int ID_Seq=17;
-	public static final int ID_GroupDic=18;
-	public static final int ID_CheHuiMotu=19;
-	public static final int ID_PicEdit=20;
-	public static final int ID_UserCount=21;
-	public static final int ID_GroupCount=22;
-	public static final int ID_GroupCountChart=23;
-
 	@Override
 	public ModuleManager load() {
 		loadModules(new SenctenceCollecet().load());
+		loadModules(new MessageRefuse().load());
 		loadModules(new MGroupCounterChart().load());
 		loadModules(new MGroupCounter().load());
 		loadModules(new MUserCounter().load());
@@ -76,6 +57,7 @@ public class ModuleManager extends BaseModule implements IGroupMessage, IPrivate
 		loadModules(new VirusManager().load());
 		loadModules(new MSeq().load());
 		//modules.add(new MGroupDic().load());
+		loadModules(new GroupEventListener());
 		Autoreply.instance.threadPool.execute(getGroupModule(MTimeTip.class));
 		instance = this;
 		return this;
@@ -104,11 +86,13 @@ public class ModuleManager extends BaseModule implements IGroupMessage, IPrivate
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_MainSwitch)) {
+		Autoreply.instance.remoteWebSocket.sendMsg(1, fromGroup, fromQQ, msg, msgId);
+		++RemoteWebSocket.botInfoBean.msgPerSec;
+		if (!ConfigManager.instance.getGroupConfig(fromGroup).isMainSwitchEnable()) {
 			return true;
 		}
-		for (int i=0;i < groupModules.size();++i) {
-			if (groupModules.get(i).onGroupMessage(fromGroup, fromQQ, msg, msgId)) {
+		for (IGroupMessage m : groupModules) {
+			if (m.onGroupMessage(fromGroup, fromQQ, msg, msgId)) {
 				return true;
 			}
 		}
@@ -117,8 +101,8 @@ public class ModuleManager extends BaseModule implements IGroupMessage, IPrivate
 
 	@Override
 	public boolean onPrivateMsg(long fromQQ, String msg, int msgId) {
-		for (int i=0;i < privateModules.size();++i) {
-			if (privateModules.get(i).onPrivateMsg(fromQQ, msg, msgId)) {
+		for (IPrivateMessage m : privateModules) {
+			if (m.onPrivateMsg(fromQQ, msg, msgId)) {
 				return true;
 			}
 		}
@@ -127,54 +111,109 @@ public class ModuleManager extends BaseModule implements IGroupMessage, IPrivate
 
 	@Override
 	public boolean onDiscussMessage(long fromDiscuss, long fromQQ, String msg, int msgId) {
-		for (int i=0;i < discussModules.size();++i) {
-			if (discussModules.get(i).onDiscussMessage(fromDiscuss, fromQQ, msg, msgId)) {
+		for (IDiscussMessage m : discussModules) {
+			if (m.onDiscussMessage(fromDiscuss, fromQQ, msg, msgId)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-
 	@Override
 	public boolean onGroupFileUpload(int sendTime, long fromGroup, long fromQQ, String file) {
-		// TODO: Implement this method
+		if (!ConfigManager.instance.getGroupConfig(fromGroup).isMainSwitchEnable()) {
+            return true;
+        }
+		for (IGroupEvent e : groupEventModules) {
+			if (e.onGroupFileUpload(sendTime, fromGroup, fromQQ, file)) {
+				return true;
+			}
+		}
 		return false;
 	}
 
 	@Override
 	public boolean onGroupAdminChange(int subtype, int sendTime, long fromGroup, long beingOperateQQ) {
-		// TODO: Implement this method
+		if (!ConfigManager.instance.getGroupConfig(fromGroup).isMainSwitchEnable()) {
+            return true;
+        }
+		for (IGroupEvent e : groupEventModules) {
+			if (e.onGroupAdminChange(subtype, sendTime, fromGroup, beingOperateQQ)) {
+				return true;
+			}
+		}
 		return false;
 	}
 
 	@Override
 	public boolean onGroupMemberDecrease(int subtype, int sendTime, long fromGroup, long fromQQ, long beingOperateQQ) {
-		// TODO: Implement this method
+		if (!ConfigManager.instance.getGroupConfig(fromGroup).isMainSwitchEnable()) {
+            return true;
+        }
+		for (IGroupEvent e : groupEventModules) {
+			if (e.onGroupMemberDecrease(subtype, sendTime, fromGroup, fromQQ, beingOperateQQ)) {
+				return true;
+			}
+		}
 		return false;
 	}
 
 	@Override
 	public boolean onGroupMemberIncrease(int subtype, int sendTime, long fromGroup, long fromQQ, long beingOperateQQ) {
-		// TODO: Implement this method
+		if (!ConfigManager.instance.getGroupConfig(fromGroup).isMainSwitchEnable()) {
+            return true;
+        }
+		if (beingOperateQQ == CQ.getLoginQQ()) {
+            return true;
+        }
+		for (IGroupEvent e : groupEventModules) {
+			if (e.onGroupMemberIncrease(subtype, sendTime, fromGroup, fromQQ, beingOperateQQ)) {
+				return true;
+			}
+		}
 		return false;
 	}
 
 	@Override
 	public boolean onRequestAddGroup(int subtype, int sendTime, long fromGroup, long fromQQ, String msg, String responseFlag) {
-		// TODO: Implement this method
-		return false;
+		if (ConfigManager.instance.isNotReplyQQ(fromQQ)) {
+			CQ.setFriendAddRequest(responseFlag, Autoreply.REQUEST_REFUSE, "");
+			sendMessage(0, 2856986197L, "拒绝了" + fromQQ + "加为好友");
+            return true;
+        }
+		for (IGroupEvent e : groupEventModules) {
+			if (e.onRequestAddGroup(subtype, sendTime, fromGroup, fromQQ, msg, responseFlag)) {
+				return true;
+			}
+		}
+        /*
+         * REQUEST_ADOPT 通过 REQUEST_REFUSE 拒绝
+         */
+        //    QQInfo qInfo = CQ.getStrangerInfo(fromQQ);
+        //    CQ.setFriendAddRequest(responseFlag, REQUEST_ADOPT, qInfo.getNick()); //
+        // sendMessage(0, fromQQ, "本体2856986197");
+        sendMessage(0, 2856986197L, fromQQ + "把我加为好友");
+        // 同意好友添加请求
+		return true;
 	}
 
 	@Override
 	public boolean onFriendAdd(int sendTime, long fromQQ) {
-		// TODO: Implement this method
+		for (IFriendEvent e : friendEventModules) {
+			if (e.onFriendAdd(sendTime, fromQQ)) {
+				return true;
+			}
+		}
 		return false;
 	}
 
 	@Override
 	public boolean onRequestAddFriend(int sendTime, long fromQQ, String msg, String responseFlag) {
-		// TODO: Implement this method
+		for (IFriendEvent e : friendEventModules) {
+			if (e.onRequestAddFriend(sendTime, fromQQ, msg, responseFlag)) {
+				return true;
+			}
+		}
 		return false;
 	}
 

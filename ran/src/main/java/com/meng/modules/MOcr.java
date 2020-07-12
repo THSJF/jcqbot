@@ -35,7 +35,7 @@ public class MOcr extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_OCR)) {
+		if (!ConfigManager.instance.getGroupConfig(fromGroup).isOCREnable()) {
 			return false;
 		}
 		if (!msg.startsWith("ocr")) {

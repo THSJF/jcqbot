@@ -136,7 +136,7 @@ public class MSpellCollect extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_SpellCollect)) {
+		if (!ConfigManager.instance.getGroupConfig(fromGroup).isSpellCollectEnable()) {
 			return false;
 		}
 		if (msg.startsWith("#幻币转账") && fromQQ == ConfigManager.instance.configJavaBean.ogg) {

@@ -16,7 +16,7 @@ public class MSetu extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_Setu)) {
+		if (!ConfigManager.instance.getGroupConfig(fromGroup).isR15Enable()) {
 			return false;
 		}
 		if (msg.equals("色图")) {

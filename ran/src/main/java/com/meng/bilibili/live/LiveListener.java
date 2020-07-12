@@ -148,7 +148,7 @@ public class LiveListener implements Runnable {
 		SanaeDataPack sdp=SanaeDataPack.encode(SanaeDataPack.opLiveStart);
 		sdp.write(p.name).write(p.bliveRoom);
 		Autoreply.instance.sanaeServer.send(sdp);
-		        Autoreply.sendMessage(Autoreply.mainGroup, 0, p.name + "开始直播" + p.bliveRoom, true);
+		        Autoreply.sendMessage(Autoreply.mainGroup, 0, p.name + "开始直播" + p.bliveRoom);
         	}
 
     private void tipFinish(PersonInfo p) {
@@ -159,7 +159,7 @@ public class LiveListener implements Runnable {
 		SanaeDataPack sdp=SanaeDataPack.encode(SanaeDataPack.opLiveStop);
 		sdp.write(p.name).write(p.bliveRoom);
 		Autoreply.instance.sanaeServer.send(sdp);
-		        Autoreply.sendMessage(Autoreply.mainGroup, 0, p.name + "直播结束" + p.bliveRoom, true);
+		        Autoreply.sendMessage(Autoreply.mainGroup, 0, p.name + "直播结束" + p.bliveRoom);
         	}
 
     public String getLiveTimeCount() {

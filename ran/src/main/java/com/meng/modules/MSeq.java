@@ -37,7 +37,7 @@ public class MSeq extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_Seq)){
+		if(!ConfigManager.instance.getGroupConfig(fromGroup).isSeqEnable()){
 			return false;
 		}
 		for (SeqBean sb:seqs) {

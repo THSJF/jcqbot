@@ -16,7 +16,7 @@ public class MoShenFuSong extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if(!ConfigManager.instance.isFunctionEnable(fromGroup,ModuleManager.ID_MoShenFuSong)){
+		if(!ConfigManager.instance.getGroupConfig(fromGroup).isMoShenFuSongEnable()){
 			return false;
 		}
 		if (msg.contains("大膜法")) { 

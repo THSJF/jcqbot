@@ -93,7 +93,7 @@ public class UpdateListener implements Runnable {
     }
 
     private void tip(String updater, String msg) {
-		Autoreply.sendMessage(Autoreply.mainGroup, 0, msg, true);
+		Autoreply.sendMessage(Autoreply.mainGroup, 0, msg);
     }
 
 	private class UpdatePerson {

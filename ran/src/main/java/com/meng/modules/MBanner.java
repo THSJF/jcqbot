@@ -18,7 +18,7 @@ public class MBanner extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if (!ConfigManager.instance.isFunctionEnable(fromGroup, ModuleManager.ID_Banner)) {
+		if (!ConfigManager.instance.getGroupConfig(fromGroup).isBannerEnable()) {
 			return false;
 		}
 		if (!ConfigManager.instance.isAdmin(fromQQ)) {

@@ -14,7 +14,8 @@ public class ConfigManager {
 	public static ConfigManager instance;
     public RanCfgBean configJavaBean = new RanCfgBean();
     public PortConfig portConfig = new PortConfig();
-
+	private GroupConfig emptyConfig = new GroupConfig();
+	
     public ConfigManager() {
 		instance = this;
         portConfig = Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "grzxEditConfig.json"), PortConfig.class);
@@ -22,9 +23,7 @@ public class ConfigManager {
         if (!jsonBaseConfigFile.exists()) {
             saveConfig();
         }
-        Type type = new TypeToken<RanCfgBean>() {
-        }.getType();
-        configJavaBean = Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "configV3.json"), type);
+        configJavaBean = Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "configV3.json"), RanCfgBean.class);
 		Autoreply.instance.threadPool.execute(new SocketDicManager(this));
     }
 
@@ -35,14 +34,6 @@ public class ConfigManager {
 			}
 		}
 		return false;
-	}
-
-	public boolean isFunctionEnable(long fromGroup, int functionID) {
-		GroupConfig gc=getGroupConfig(fromGroup);
-		if (gc == null) {
-			return false;
-		}
-		return (gc.f1 & (1 << functionID)) != 0;
 	}
 
 	public void setFunctionEnabled(long fromGroup, int functionID, boolean enable) {
@@ -106,7 +97,7 @@ public class ConfigManager {
                 return gc;
             }
         }
-        return null;
+        return emptyConfig;
     }
 
     public boolean isNotReplyQQ(long qq) {
