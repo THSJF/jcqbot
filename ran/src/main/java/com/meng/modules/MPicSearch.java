@@ -24,7 +24,7 @@ public class MPicSearch extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if(!ConfigManager.instance.getGroupConfig(fromGroup).isPicSearchEnable()){
+		if(!ConfigManager.getGroupConfig(fromGroup).isPicSearchEnable()){
 			return false;
 		}
 		if (msg.equalsIgnoreCase("sp.help")) {
@@ -48,9 +48,9 @@ public class MPicSearch extends BaseGroupModule {
 
         if (imageFile != null && (msg.toLowerCase().startsWith("sp"))) {
             try {
-                ModuleManager.instance.getGroupModule(MUserCounter.class).incSearchPicture(fromQQ);
-                ModuleManager.instance.getGroupModule(MGroupCounter.class).incSearchPicture(fromGroup);
-                ModuleManager.instance.getGroupModule(MUserCounter.class).incSearchPicture(Autoreply.CQ.getLoginQQ());
+                ModuleManager.getGroupModule(MUserCounter.class).incSearchPicture(fromQQ);
+                ModuleManager.getGroupModule(MGroupCounter.class).incSearchPicture(fromGroup);
+                ModuleManager.getGroupModule(MUserCounter.class).incSearchPicture(Autoreply.CQ.getLoginQQ());
                 sendMsg(fromGroup, fromQQ, "土豆折寿中……");
                 int needPic = 1;
                 int database = 999;
@@ -71,9 +71,9 @@ public class MPicSearch extends BaseGroupModule {
         } else if (imageFile != null && userNotSendPicture.get(fromQQ) != null) {
             try {
                 sendMsg(fromGroup, fromQQ, "土豆折寿中……");
-                ModuleManager.instance.getGroupModule(MUserCounter.class).incSearchPicture(fromQQ);
-                ModuleManager.instance.getGroupModule(MGroupCounter.class).incSearchPicture(fromGroup);
-                ModuleManager.instance.getGroupModule(MUserCounter.class).incSearchPicture(Autoreply.CQ.getLoginQQ());
+                ModuleManager.getGroupModule(MUserCounter.class).incSearchPicture(fromQQ);
+                ModuleManager.getGroupModule(MGroupCounter.class).incSearchPicture(fromGroup);
+                ModuleManager.getGroupModule(MUserCounter.class).incSearchPicture(Autoreply.CQ.getLoginQQ());
                 int needPic = 1;
                 int database = 999;
                 if (userNotSendPicture.get(fromQQ).startsWith("sp.")) {

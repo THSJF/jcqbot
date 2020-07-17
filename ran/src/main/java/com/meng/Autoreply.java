@@ -71,7 +71,6 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         createdImageFolder = Autoreply.appDirectory + "createdImages/";
         // 返回如：D:\CoolQ\app\com.sobte.cqp.jcq\app\com.example.demo\
         System.out.println("开始加载");
-		ConfigManager.instance = new ConfigManager();
 		ModuleManager.instance = new ModuleManager();
 		ModuleManager.instance.load();
 		cookieManager = new CookieManager();
@@ -144,13 +143,13 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         // if (fromQQ != 2856986197L) {
         // return MSG_IGNORE;
         // }
-        if (ConfigManager.instance.isNotReplyQQ(fromQQ) || ConfigManager.instance.isNotReplyWord(msg)) {
+        if (ConfigManager.isBlockQQ(fromQQ) || ConfigManager.isBlockWord(msg)) {
             return MSG_IGNORE;
         }
         Autoreply.instance.threadPool.execute(new Runnable() {
 				@Override
 				public void run() {
-					if (ConfigManager.instance.isMaster(fromQQ)) {
+					if (ConfigManager.isMaster(fromQQ)) {
 						if (msg.equals("喵")) {
 							sendMessage(0, fromQQ, CC.record("miao.mp3"));
 							return;
@@ -383,7 +382,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
             if (msg.startsWith("red:")) {
                 msg = msg.substring(4);
 				++RemoteWebSocket.botInfoBean.msgSendPerSec;
-                if (ModuleManager.instance.getGroupModule(MGroupDic.class).onGroupMessage(toGroup, toQQ, msg, -1)) {
+                if (ModuleManager.getGroupModule(MGroupDic.class).onGroupMessage(toGroup, toQQ, msg, -1)) {
                     return -1;
                 }
             }

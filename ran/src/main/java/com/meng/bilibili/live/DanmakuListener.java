@@ -87,7 +87,7 @@ public class DanmakuListener extends WebSocketClient {
 				String danmakuText=jaar.get(1).getAsString();
 				String speakerName=jaar2.get(1).getAsString();
 				long speakerUid=jaar2.get(0).getAsLong();
-				PersonInfo speakerPersonInfo=ConfigManager.instance.getPersonInfoFromBid(speakerUid);
+				PersonInfo speakerPersonInfo=ConfigManager.getPersonInfoFromBid(speakerUid);
 				//PersonInfo roomMasterPersonInfo=Autoreply.instence.configManager.getPersonInfoFromLiveId(roomMaster.bliveRoom);
 				String finallySpeakerName=speakerPersonInfo == null ?speakerName: speakerPersonInfo.name;
 				peopleMap.put(speakerUid, System.currentTimeMillis());
@@ -112,7 +112,7 @@ public class DanmakuListener extends WebSocketClient {
 				if (speakerUid == 64483321 && danmakuText.startsWith("ban.")) {
 					String ss[]=danmakuText.split("\\.");
 					String blockid=ss[1];
-					PersonInfo pi=ConfigManager.instance.getPersonInfoFromName(blockid);
+					PersonInfo pi=ConfigManager.getPersonInfoFromName(blockid);
 					if (pi != null) {
 						blockid += pi.bid;
 					}

@@ -16,7 +16,7 @@ public class MoShenFuSong extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if(!ConfigManager.instance.getGroupConfig(fromGroup).isMoShenFuSongEnable()){
+		if(!ConfigManager.getGroupConfig(fromGroup).isMoShenFuSongEnable()){
 			return false;
 		}
 		if (msg.contains("大膜法")) { 
@@ -102,7 +102,7 @@ public class MoShenFuSong extends BaseGroupModule {
 					}
 					break;
 				case 5:
-					if (ConfigManager.instance.isMaster(fromQQ)) {
+					if (ConfigManager.isMaster(fromQQ)) {
 						for (int i = 0; i < 68; ++i) {
 							Autoreply.CQ.sendGroupMsg(fromGroup, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files)));
 						}

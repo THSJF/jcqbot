@@ -27,7 +27,7 @@ public class LiveListener implements Runnable {
 		Autoreply.instance.threadPool.execute(new Runnable() {
 				@Override
 				public void run() {
-					for (PersonInfo cb : ConfigManager.instance.configHolder.personInfo) {
+					for (PersonInfo cb : ConfigManager.getPersonInfo()) {
 						checkPerson(cb);
 					}
 					loadFinish = true;
@@ -53,11 +53,11 @@ public class LiveListener implements Runnable {
                 SpaceToLiveJavaBean sjb = new Gson().fromJson(Tools.BilibiliTool.getLiveRoomInfo(personInfo.bid), SpaceToLiveJavaBean.class);
                 if (sjb.data.roomid == 0) {
                     personInfo.bliveRoom = -1;
-                    ConfigManager.instance.saveConfig();
+                    ConfigManager.saveConfig();
                     return;
 				}
                 personInfo.bliveRoom = sjb.data.roomid;
-                ConfigManager.instance.saveConfig();
+                ConfigManager.saveConfig();
                 System.out.println("检测到用户" + personInfo.name + "(" + personInfo.bid + ")的直播间" + personInfo.bliveRoom);
                 try {
                     Thread.sleep(100);
@@ -76,7 +76,7 @@ public class LiveListener implements Runnable {
                     Thread.sleep(1000);
                     continue;
 				}
-                for (PersonInfo personInfo : ConfigManager.instance.configHolder.personInfo) {
+                for (PersonInfo personInfo : ConfigManager.getPersonInfo()) {
                     if (personInfo.bliveRoom == 0 || personInfo.bliveRoom == -1) {
                         continue;
 					}

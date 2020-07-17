@@ -33,7 +33,7 @@ public class MTimeTip extends BaseGroupModule implements Runnable {
                     Autoreply.instance.threadPool.execute(new Runnable() {
 							@Override
 							public void run() {
-								for (GroupConfig groupConfig : ConfigManager.instance.configHolder.groupConfigs) {
+								for (GroupConfig groupConfig : ConfigManager.getGroupConfigs()) {
 									if (groupConfig.isMainSwitchEnable()) {
 										if (Autoreply.sendMessage(groupConfig.n, 0, "少女休息中...") < 0) {
 											continue;

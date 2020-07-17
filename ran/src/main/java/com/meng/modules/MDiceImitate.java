@@ -201,7 +201,7 @@ public class MDiceImitate extends BaseGroupModule {
                 return true;
             }
         }
-		String pname=ConfigManager.instance.getNickName(fromGroup, fromQQ);
+		String pname=ConfigManager.getNickName(fromGroup, fromQQ);
 		String md5=Tools.Hash.MD5(String.valueOf(fromQQ + System.currentTimeMillis() / (24 * 60 * 60 * 1000)));
 		char c=md5.charAt(0);
 		switch (msg) {

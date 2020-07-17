@@ -37,7 +37,7 @@ public class MSeq extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if(!ConfigManager.instance.getGroupConfig(fromGroup).isSeqEnable()){
+		if(!ConfigManager.getGroupConfig(fromGroup).isSeqEnable()){
 			return false;
 		}
 		for (SeqBean sb:seqs) {
@@ -46,11 +46,11 @@ public class MSeq extends BaseGroupModule {
 			}
 			if (msg.equals(sb.content[sb.pos])) {
 				if (sb.flag == 1) {
-					ModuleManager.instance.getGroupModule(MUserCounter.class).decLife(fromQQ);
-					ModuleManager.instance.getGroupModule(MGroupCounter.class).decLife(fromGroup);
+					ModuleManager.getGroupModule(MUserCounter.class).decLife(fromQQ);
+					ModuleManager.getGroupModule(MGroupCounter.class).decLife(fromGroup);
 				} else if (sb.flag == 2) {
-					ModuleManager.instance.getGroupModule(MUserCounter.class).incMengEr(fromQQ);
-					ModuleManager.instance.getGroupModule(MGroupCounter.class).incMengEr(fromGroup);
+					ModuleManager.getGroupModule(MUserCounter.class).incMengEr(fromQQ);
+					ModuleManager.getGroupModule(MGroupCounter.class).incMengEr(fromGroup);
 				}
 				++sb.pos;			
 				if (sb.pos < sb.content.length) {

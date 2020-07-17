@@ -6,11 +6,11 @@ import java.io.*;
 import java.net.*;
 import java.nio.charset.*;
 
-public class SocketDicManager implements Runnable {
+public class SJFServerSocket implements Runnable {
 
     private ConfigManager configManager;
 
-    public SocketDicManager(ConfigManager configManager) {
+    public SJFServerSocket(ConfigManager configManager) {
         this.configManager = configManager;
     }
 

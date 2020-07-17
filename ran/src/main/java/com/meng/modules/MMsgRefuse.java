@@ -31,9 +31,7 @@ public class MMsgRefuse extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		
-		ConfigManager cm=ConfigManager.instance;
-		if (!cm.isNotReplyQQ(fromQQ) || cm.isNotReplyWord(msg)) {
+		if (ConfigManager.isBlockQQ(fromQQ) || ConfigManager.isBlockWord(msg)) {
             return true;
         }
 		FireWallBean mtmb=msgMap.get(fromQQ);

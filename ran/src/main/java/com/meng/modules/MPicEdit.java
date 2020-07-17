@@ -23,7 +23,7 @@ public class MPicEdit extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if(!ConfigManager.instance.getGroupConfig(fromGroup).isPicSearchEnable()){
+		if(!ConfigManager.getGroupConfig(fromGroup).isPicSearchEnable()){
 			return false;
 		}
 		if (msg.startsWith("精神支柱[CQ:at")) {
@@ -32,7 +32,7 @@ public class MPicEdit extends BaseGroupModule {
 		} else if (msg.startsWith("神触[CQ:at")) {
 			Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.image(shenChuByAt(fromGroup, fromQQ, msg)));
 			return true;
-		} else if (ConfigManager.instance.isMaster(fromQQ)) {
+		} else if (ConfigManager.isMaster(fromQQ)) {
 			if (msg.startsWith("精神支柱[CQ:image")) {
 				Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.image(jingShenZhiZhuByPic(fromGroup, fromQQ, msg)));
                 return true;

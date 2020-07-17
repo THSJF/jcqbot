@@ -16,7 +16,7 @@ public class MSetu extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if (!ConfigManager.instance.getGroupConfig(fromGroup).isR15Enable()) {
+		if (!ConfigManager.getGroupConfig(fromGroup).isR15Enable()) {
 			return false;
 		}
 		if (msg.equals("色图")) {
@@ -40,7 +40,7 @@ public class MSetu extends BaseGroupModule {
 			}
 			return true;
 		}
-		if (!ConfigManager.instance.isAdmin(fromQQ)) {
+		if (!ConfigManager.isAdminPermission(fromQQ)) {
 			return false;
 		}
 		if (msg.contains("色图[CQ:image")) {

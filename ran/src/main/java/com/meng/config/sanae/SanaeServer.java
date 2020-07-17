@@ -40,10 +40,10 @@ public class SanaeServer extends WebSocketServer {
 		SanaeDataPack sdp = SanaeDataPack.encode(rsdp);
 		switch (rsdp.getOpCode()) {
 			case SanaeDataPack.opConfigFile:
-				sdp.write(Autoreply.gson.toJson(ConfigManager.instance.configHolder));
+				sdp.write(Autoreply.gson.toJson(ConfigManager.getConfigHolder()));
 				break;
 			case SanaeDataPack.opGameOverSpell:
-				sdp.write(ModuleManager.instance.getGroupModule(MDiceImitate.class).md5RanStr(rsdp.readLong(), MDiceImitate.spells));
+				sdp.write(ModuleManager.getGroupModule(MDiceImitate.class).md5RanStr(rsdp.readLong(), MDiceImitate.spells));
 				break;
 			case SanaeDataPack.opGameOverPersent:
 				String md5=Tools.Hash.MD5(String.valueOf(rsdp.readLong() + System.currentTimeMillis() / (24 * 60 * 60 * 1000)));
@@ -57,29 +57,29 @@ public class SanaeServer extends WebSocketServer {
 				}
 				break;
 			case SanaeDataPack.opIncSpeak:
-				ModuleManager.instance.getGroupModule(MGroupCounter.class).incSpeak(rsdp.readLong());
-				ModuleManager.instance.getGroupModule(MUserCounter.class).incSpeak(rsdp.readLong());
+				ModuleManager.getGroupModule(MGroupCounter.class).incSpeak(rsdp.readLong());
+				ModuleManager.getGroupModule(MUserCounter.class).incSpeak(rsdp.readLong());
 				break;
 			case SanaeDataPack.opIncRepeat:
-				ModuleManager.instance.getGroupModule(MGroupCounter.class).incFudu(rsdp.readLong());
-				ModuleManager.instance.getGroupModule(MUserCounter.class).incFudu(rsdp.readLong());
+				ModuleManager.getGroupModule(MGroupCounter.class).incFudu(rsdp.readLong());
+				ModuleManager.getGroupModule(MUserCounter.class).incFudu(rsdp.readLong());
 				break;
 			case SanaeDataPack.opIncRepeatStart:
-				ModuleManager.instance.getGroupModule(MUserCounter.class).incFudujiguanjia(rsdp.readLong());
+				ModuleManager.getGroupModule(MUserCounter.class).incFudujiguanjia(rsdp.readLong());
 				break;
 			case SanaeDataPack.opIncRepeatBreak:
-				ModuleManager.instance.getGroupModule(MGroupCounter.class).incRepeatBreaker(rsdp.readLong());
-				ModuleManager.instance.getGroupModule(MUserCounter.class).incRepeatBreaker(rsdp.readLong());
+				ModuleManager.getGroupModule(MGroupCounter.class).incRepeatBreaker(rsdp.readLong());
+				ModuleManager.getGroupModule(MUserCounter.class).incRepeatBreaker(rsdp.readLong());
 				break;
 			case SanaeDataPack.opSetNick:
-				ConfigManager.instance.setNickName(rsdp.readLong(), rsdp.readString());
+				ConfigManager.setNickName(rsdp.readLong(), rsdp.readString());
 				break;
 			case SanaeDataPack.opSeqContent:
 				File jsonFile = new File(Autoreply.appDirectory + "seq.json");
 				sdp.write(Tools.FileTool.readString(jsonFile));
 				break;
 			case SanaeDataPack.opAddBlack:
-				ConfigManager.instance.addBlack(rsdp.readLong(), rsdp.readLong());
+				ConfigManager.addBlack(rsdp.readLong(), rsdp.readLong());
 				Autoreply.sendMessage(Autoreply.mainGroup, 0, "添加成功");
 				break;
 		}

@@ -148,7 +148,7 @@ public class RitsukageDataPack {
 		write(Tools.BitConverter.getBytes(headLength));
 		write(Tools.BitConverter.getBytes((short)1));
 		write(Tools.BitConverter.getBytes(timeStamp));
-		write(Tools.BitConverter.getBytes(ConfigManager.instance.configHolder.ogg));
+		write(Tools.BitConverter.getBytes(ConfigManager.getOgg()));
 		write(Tools.BitConverter.getBytes(opCode));
 	}   
 

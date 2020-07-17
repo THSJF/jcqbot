@@ -35,14 +35,14 @@ public class GroupEventListener implements IGroupEvent ,IRequest {
 	@Override
 	public boolean onGroupMemberDecrease(int subtype, int sendTime, long fromGroup, long fromQQ, long beingOperateQQ) {
 		if (subtype == 1) {
-			if (!ConfigManager.instance.getGroupConfig(fromGroup).isMainSwitchEnable()) {
+			if (!ConfigManager.getGroupConfig(fromGroup).isMainSwitchEnable()) {
                 return true;
             }
 			QQInfo qInfo = Autoreply.CQ.getStrangerInfo(beingOperateQQ);
-            sendMessage(fromGroup, 0, ConfigManager.instance.getNickName(beingOperateQQ)  + "(" + qInfo.getQqId() + ")" + "跑莉");
+            sendMessage(fromGroup, 0, ConfigManager.getNickName(beingOperateQQ)  + "(" + qInfo.getQqId() + ")" + "跑莉");
         } else if (subtype == 2) {
             if (beingOperateQQ == 2856986197L) {
-				ConfigManager.instance.addBlack(fromGroup, fromQQ);
+				ConfigManager.addBlack(fromGroup, fromQQ);
 				Autoreply.CQ.setGroupLeave(fromGroup, false);
                 return true;
             }
@@ -51,31 +51,31 @@ public class GroupEventListener implements IGroupEvent ,IRequest {
                 return true;
             }
             if (beingOperateQQ == Autoreply.CQ.getLoginQQ()) {
-                ConfigManager.instance.addBlack(fromGroup, fromQQ);
+                ConfigManager.addBlack(fromGroup, fromQQ);
                 return true;
             }
 			QQInfo qInfo = Autoreply.CQ.getStrangerInfo(beingOperateQQ);
             QQInfo qInfo2 = Autoreply.CQ.getStrangerInfo(fromQQ);
-            sendMessage(fromGroup, 0, ConfigManager.instance.getNickName(beingOperateQQ) + "(" + qInfo.getQqId() + ")" + "被" + ConfigManager.instance.getNickName(fromQQ) + "(" + qInfo2.getQqId() + ")" + "玩完扔莉");
+            sendMessage(fromGroup, 0, ConfigManager.getNickName(beingOperateQQ) + "(" + qInfo.getQqId() + ")" + "被" + ConfigManager.getNickName(fromQQ) + "(" + qInfo2.getQqId() + ")" + "玩完扔莉");
         }
 		return false;
 	}
 
 	@Override
 	public boolean onGroupMemberIncrease(int subtype, int sendTime, long fromGroup, long fromQQ, long beingOperateQQ) {
-		if (ConfigManager.instance.isBlackQQ(beingOperateQQ)) {
+		if (ConfigManager.isBlackQQ(beingOperateQQ)) {
             Tools.CQ.ban(fromGroup, fromQQ, 300);
         }
-        PersonInfo personInfo = ConfigManager.instance.getPersonInfoFromQQ(beingOperateQQ);
+        PersonInfo personInfo = ConfigManager.getPersonInfoFromQQ(beingOperateQQ);
         if (personInfo != null && personInfo.name.equals("熊哥")) {
             sendMessage(959615179L, 0, Autoreply.instance.CC.at(-1) + "熊加入了群" + fromGroup);
             return true;
         }
-        if (!ConfigManager.instance.getGroupConfig(fromGroup).isMainSwitchEnable()) {
+        if (!ConfigManager.getGroupConfig(fromGroup).isMainSwitchEnable()) {
             return true;
         }
         if (personInfo != null) {
-            sendMessage(fromGroup, 0, "欢迎" + ConfigManager.instance.getNickName(beingOperateQQ));
+            sendMessage(fromGroup, 0, "欢迎" + ConfigManager.getNickName(beingOperateQQ));
         } else {
             sendMessage(fromGroup, 0, "欢迎新大佬");
         }
@@ -86,13 +86,13 @@ public class GroupEventListener implements IGroupEvent ,IRequest {
 	public boolean onRequestAddGroup(int subtype, int sendTime, long fromGroup, long fromQQ, String msg, String responseFlag) {
 		System.out.println("groupAdd");
         if (subtype == 1) {
-            if (ConfigManager.instance.isBlackQQ(fromQQ)) {
+            if (ConfigManager.isBlackQQ(fromQQ)) {
                 CQ.setGroupAddRequest(responseFlag, REQUEST_GROUP_ADD, REQUEST_ADOPT, null);
                 Tools.CQ.ban(fromGroup, fromQQ, 2592000);
                 sendMessage(fromGroup, fromQQ, "不要问为什么你会进黑名单，你干了什么自己知道");
                 return true;
             }
-            PersonInfo personInfo = ConfigManager.instance.getPersonInfoFromQQ(fromQQ);
+            PersonInfo personInfo = ConfigManager.getPersonInfoFromQQ(fromQQ);
             if (personInfo != null) {
                 CQ.setGroupAddRequest(responseFlag, REQUEST_GROUP_ADD, REQUEST_ADOPT, null);
                 //        sendMessage(fromGroup, 0, "欢迎" + personInfo.name);
@@ -100,12 +100,12 @@ public class GroupEventListener implements IGroupEvent ,IRequest {
                 sendMessage(fromGroup, 0, "有人申请加群，绿帽赶紧瞅瞅");
             }
         } else if (subtype == 2) {
-            if (ConfigManager.instance.isBlackQQ(fromQQ) || ConfigManager.instance.isBlackGroup(fromGroup)) {
+            if (ConfigManager.isBlackQQ(fromQQ) || ConfigManager.isBlackGroup(fromGroup)) {
 				CQ.setGroupAddRequest(responseFlag, REQUEST_GROUP_ADD, REQUEST_REFUSE, "");
 				sendMessage(0, 2856986197L, "拒绝了" + fromQQ + "邀请我加入群" + fromGroup);
                 return true;
             }
-			if (ConfigManager.instance.isMaster(fromQQ) || ConfigManager.instance.containsGroup(fromGroup)) {
+			if (ConfigManager.isMaster(fromQQ) || ConfigManager.getGroupConfig(fromGroup).n != 0) {
 				CQ.setGroupAddRequest(responseFlag, REQUEST_GROUP_INVITE, REQUEST_ADOPT, null);
 				sendMessage(0, 2856986197L, "Master" + fromQQ + "邀请我加入群" + fromGroup);			
 				return true;

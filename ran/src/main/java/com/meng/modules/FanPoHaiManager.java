@@ -82,13 +82,13 @@ public class FanPoHaiManager extends BaseGroupModule {
             }
             if (bpohai) {
                 String folder = "";
-                PersonInfo personInfo = ConfigManager.instance.getPersonInfoFromQQ(fromQQ);
+                PersonInfo personInfo = ConfigManager.getPersonInfoFromQQ(fromQQ);
                 if (personInfo != null) {
                     folder = Autoreply.appDirectory + "pohai/" + personInfo.name + "/";
                 }
                 File file = new File(folder);
                 if (msgId != -1) {
-					if (ConfigManager.instance.getGroupConfig(fromGroup).isCheHuiMoTuEnable()) {
+					if (ConfigManager.getGroupConfig(fromGroup).isCheHuiMoTuEnable()) {
                         Member me = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, Autoreply.CQ.getLoginQQ());
                         Member ban = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, fromQQ);
                         if (me.getAuthority() - ban.getAuthority() > 0) {
@@ -113,8 +113,8 @@ public class FanPoHaiManager extends BaseGroupModule {
                     File[] files = file.listFiles();
                     if (files != null) {
                         Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files)));
-                        ModuleManager.instance.getGroupModule(MUserCounter.class).incPohaitu(Autoreply.CQ.getLoginQQ());
-                        ModuleManager.instance.getGroupModule(MGroupCounter.class).incPohaitu(fromGroup);
+                        ModuleManager.getGroupModule(MUserCounter.class).incPohaitu(Autoreply.CQ.getLoginQQ());
+                        ModuleManager.getGroupModule(MGroupCounter.class).incPohaitu(fromGroup);
                     }
                     return true;
                 }

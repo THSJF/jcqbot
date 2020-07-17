@@ -7,6 +7,7 @@ import java.util.*;
 public class SanaeDataPack {
 
 	public ArrayList<Byte> data=new ArrayList<>();
+	//private ByteArrayOutputStream bos = new ByteArrayOutputStream();
 	public byte[] dataArray;
 	public static final short headLength=28;
 	public int dataPointer=0;

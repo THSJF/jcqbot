@@ -1,6 +1,6 @@
 package com.meng.SJFInterfaces;
 
-public interface INeedPersistent {
+public interface IPersistentData {
 	public String getPersistentName();
 	public Class<?> getDataClass();
 	public Object getDataBean();

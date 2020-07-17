@@ -17,7 +17,7 @@ public class MNvzhuang extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if (!ConfigManager.instance.getGroupConfig(fromGroup).isNvZhuangEnable()) {
+		if (!ConfigManager.getGroupConfig(fromGroup).isNvZhuangEnable()) {
 			return false;
 		}
 		if (msg.equals("随机女装")) {
@@ -33,7 +33,7 @@ public class MNvzhuang extends BaseGroupModule {
 			}
 			return true;
 		}
-		if (!ConfigManager.instance.isAdmin(fromQQ)) {
+		if (!ConfigManager.isAdminPermission(fromQQ)) {
 			return false;
 		}
 		if (msg.contains("女装[CQ:image")) {

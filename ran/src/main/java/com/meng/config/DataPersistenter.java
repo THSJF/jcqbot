@@ -12,7 +12,7 @@ public class DataPersistenter {
 		
 	}
 
-	public static boolean save(INeedPersistent pb) {
+	public static boolean save(IPersistentData pb) {
 		try {
             File file = new File(Autoreply.appDirectory + pb.getPersistentName());
             FileOutputStream fos = new FileOutputStream(file);
@@ -27,7 +27,7 @@ public class DataPersistenter {
         }
 	}
 
-	public static boolean read(INeedPersistent pb) {    
+	public static boolean read(IPersistentData pb) {    
         try {
 			pb.setDataBean(Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + pb.getPersistentName()), pb.getDataClass()));
 			return true;

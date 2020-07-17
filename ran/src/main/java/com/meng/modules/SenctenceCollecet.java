@@ -27,7 +27,7 @@ public class SenctenceCollecet extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if (msg.startsWith("c.add.") && ConfigManager.instance.isMaster(fromQQ)) {
+		if (msg.startsWith("c.add.") && ConfigManager.isMaster(fromQQ)) {
 			senb.ketWord.add(msg.substring(6));
 			save();
 			Autoreply.sendMessage(fromGroup, 0, "添加" + msg + "成功");

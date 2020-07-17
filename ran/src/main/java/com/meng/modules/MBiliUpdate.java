@@ -86,7 +86,7 @@ public class MBiliUpdate extends BaseGroupModule {
     }
 
     private boolean isUpper(String msg) {
-        for (PersonInfo cb : ConfigManager.instance.configHolder.personInfo) {
+        for (PersonInfo cb : ConfigManager.getPersonInfo()) {
             if (msg.equals(cb.name) && cb.bid != 0) {
                 return true;
             }
@@ -95,7 +95,7 @@ public class MBiliUpdate extends BaseGroupModule {
     }
 
     private int getUpId(String msg) {
-        for (PersonInfo cb : ConfigManager.instance.configHolder.personInfo) {
+        for (PersonInfo cb : ConfigManager.getPersonInfo()) {
             if (cb.bid == 0) {
                 continue;
             }
@@ -107,7 +107,7 @@ public class MBiliUpdate extends BaseGroupModule {
     }
 
     private long getUpQQ(String msg) {
-        for (PersonInfo cb : ConfigManager.instance.configHolder.personInfo) {
+        for (PersonInfo cb : ConfigManager.getPersonInfo()) {
             if (msg.equals(cb.name)) {
                 return cb.qq;
             }

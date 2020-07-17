@@ -24,7 +24,7 @@ public class MRepeater extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if (!ConfigManager.instance.getGroupConfig(fromGroup).isRepeaterEnable()) {
+		if (!ConfigManager.getGroupConfig(fromGroup).isRepeaterEnable()) {
 			return false;
 		}
 		Repeater rp=repeaters.get(fromGroup);

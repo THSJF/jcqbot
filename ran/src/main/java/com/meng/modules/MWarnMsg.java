@@ -98,7 +98,7 @@ public class MWarnMsg extends BaseGroupModule {
                 sendMessage(fromGroup, fromQQ, "你的行为被判定为危险行为,请联系管理员解除夏眠");
             }
         } catch (Exception e) {
-			ConfigManager.instance .configHolder.blackListQQ.add(fromQQ);
+			ConfigManager.addBlackQQ(fromQQ);
             Tools.CQ.ban(fromGroup, fromQQ, 2592000);
             sendMessage(fromGroup, fromQQ, "你的行为被判定为危险行为");
         }

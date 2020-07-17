@@ -36,23 +36,23 @@ public class MessageRefuse extends BaseGroupModule{
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		       if (ConfigManager.instance.isBlackQQ(fromQQ)) {
+		       if (ConfigManager.isBlackQQ(fromQQ)) {
             System.out.println("black:" + fromQQ);
             if (Tools.CQ.ban(fromGroup, fromQQ, 300)) {
                 sendMessage(fromGroup, fromQQ, "嘘 别说话");
             }
         }
-        if (ConfigManager.instance.isNotReplyQQ(fromQQ)) {
+        if (ConfigManager.isBlockQQ(fromQQ)) {
             return true;
         }
-        if (ConfigManager.instance.isNotReplyWord(msg)) {
+        if (ConfigManager.isBlockWord(msg)) {
             return true;
         }
 		if (fromQQ == 2856986197L || fromQQ == 2565128043L) {
 			++RemoteWebSocket.botInfoBean.msgCmdPerSec;
 			if (msg.contains("setConnect")) {
 				try {
-					ConfigManager.instance.setOgg(CC.getAt(msg));
+					ConfigManager.setOgg(CC.getAt(msg));
 					sendMessage(fromGroup, 0, "设置连接" + CC.getAt(msg));
 				} catch (Exception e) {
 					e.printStackTrace();

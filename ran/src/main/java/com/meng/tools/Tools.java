@@ -242,7 +242,7 @@ public class Tools {
 			return false;
 		}
 		public static boolean ban(long fromGroup, long banQQ, int time) {
-			if (banQQ == 2558395159L || ConfigManager.instance.isAdmin(banQQ)) {
+			if (banQQ == 2558395159L || ConfigManager.isAdminPermission(banQQ)) {
 				return false;
 			}
 			Member me = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, Autoreply.CQ.getLoginQQ());
@@ -251,7 +251,7 @@ public class Tools {
 				Autoreply.CQ.setGroupBan(fromGroup, banQQ, time);
 				return true;
 			} else {
-				Member ogg = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, ConfigManager.instance.configHolder.ogg);
+				Member ogg = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, ConfigManager.getOgg());
 				if (ogg != null && ogg.getAuthority() - ban.getAuthority() > 0) {
 					Autoreply.sendMessage(Autoreply.mainGroup, 0, "~mutegroupuser " + fromGroup + " " + (time / 60) + " " + banQQ);
 					return true;
@@ -269,7 +269,7 @@ public class Tools {
 		}
 		public static void ban(long fromGroup, long[] banQQs, float time) {
 			Member me = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, Autoreply.CQ.getLoginQQ());
-			Member ogg = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, ConfigManager.instance.configHolder.ogg);
+			Member ogg = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, ConfigManager.getOgg());
 			StringBuilder banqqs = new StringBuilder("");
 			for (long banQQ : banQQs) {
 				if (banQQ == 2558395159L) {

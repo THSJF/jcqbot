@@ -27,25 +27,25 @@ public class MDiceCmd extends BaseGroupModule {
 				switch (next()) {
 					case ".r":
 						String rs = next();
-						Autoreply.sendMessage(fromGroup, 0, String.format("%s投掷%s:D100 = %d", ConfigManager.instance.getNickName(fromQQ), rs == null ?"": rs, Autoreply.instance.random.nextInt(101)));
+						Autoreply.sendMessage(fromGroup, 0, String.format("%s投掷%s:D100 = %d", ConfigManager.getNickName(fromQQ), rs == null ?"": rs, Autoreply.instance.random.nextInt(101)));
 						return true;
 					case ".ra":
 						String ras = next();
-						Autoreply.sendMessage(fromGroup, 0, String.format("%s进行检定:D100 = %d/%s", ConfigManager.instance.getNickName(fromQQ), Autoreply.instance.random.nextInt(Integer.parseInt(ras)), ras));
+						Autoreply.sendMessage(fromGroup, 0, String.format("%s进行检定:D100 = %d/%s", ConfigManager.getNickName(fromQQ), Autoreply.instance.random.nextInt(Integer.parseInt(ras)), ras));
 						return true;
 					case ".li":
-						Autoreply.sendMessage(fromGroup, 0, String.format("%s的疯狂发作-总结症状:\n1D10=%d\n症状: 狂躁：调查员患上一个新的狂躁症，在1D10=%d小时后恢复理智。在这次疯狂发作中，调查员将完全沉浸于其新的狂躁症状。这是否会被其他人理解（apparent to other people）则取决于守秘人和此调查员。\n1D100=%d\n具体狂躁症: 臆想症（Nosomania）：妄想自己正在被某种臆想出的疾病折磨。(KP也可以自行从狂躁症状表中选择其他症状)", ConfigManager.instance.getNickName(fromQQ), Autoreply.instance.random.nextInt(11), Autoreply.instance.random.nextInt(11), Autoreply.instance.random.nextInt(101)));
+						Autoreply.sendMessage(fromGroup, 0, String.format("%s的疯狂发作-总结症状:\n1D10=%d\n症状: 狂躁：调查员患上一个新的狂躁症，在1D10=%d小时后恢复理智。在这次疯狂发作中，调查员将完全沉浸于其新的狂躁症状。这是否会被其他人理解（apparent to other people）则取决于守秘人和此调查员。\n1D100=%d\n具体狂躁症: 臆想症（Nosomania）：妄想自己正在被某种臆想出的疾病折磨。(KP也可以自行从狂躁症状表中选择其他症状)", ConfigManager.getNickName(fromQQ), Autoreply.instance.random.nextInt(11), Autoreply.instance.random.nextInt(11), Autoreply.instance.random.nextInt(101)));
 						return true;
 					case ".ti":
-						Autoreply.sendMessage(fromGroup, 0, String.format("%s的疯狂发作-临时症状:\n1D10=%d\n症状: 逃避行为：调查员会用任何的手段试图逃离现在所处的位置，状态持续1D10=%d轮。", ConfigManager.instance.getNickName(fromQQ), Autoreply.instance.random.nextInt(11), Autoreply.instance.random.nextInt(11)));
+						Autoreply.sendMessage(fromGroup, 0, String.format("%s的疯狂发作-临时症状:\n1D10=%d\n症状: 逃避行为：调查员会用任何的手段试图逃离现在所处的位置，状态持续1D10=%d轮。", ConfigManager.getNickName(fromQQ), Autoreply.instance.random.nextInt(11), Autoreply.instance.random.nextInt(11)));
 						return true;
 					case ".rd":
-						Autoreply.sendMessage(fromGroup, 0, String.format("由于%s %s骰出了: D100=%d", next(), ConfigManager.instance.getNickName(fromGroup, fromQQ), Autoreply.instance.random.nextInt(101)));
+						Autoreply.sendMessage(fromGroup, 0, String.format("由于%s %s骰出了: D100=%d", next(), ConfigManager.getNickName(fromGroup, fromQQ), Autoreply.instance.random.nextInt(101)));
 						return true;
 					case ".nn":
 						String name = next();
 						if (name == null) {
-							ConfigManager.instance.setNickName(fromQQ, null);
+							ConfigManager.setNickName(fromQQ, null);
 							Autoreply.sendMessage(fromGroup, 0, "我以后会用你的QQ昵称称呼你");
 							return true;
 						}
@@ -53,7 +53,7 @@ public class MDiceCmd extends BaseGroupModule {
 							Autoreply.sendMessage(fromGroup, 0, "太长了,记不住");
 							return true;
 						}
-						ConfigManager.instance.setNickName(fromQQ, name);
+						ConfigManager.setNickName(fromQQ, name);
 						Autoreply.sendMessage(fromGroup, 0, "我以后会称呼你为" + name);
 						return true;
 				}

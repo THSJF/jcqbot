@@ -88,7 +88,7 @@ public class ModuleManager extends BaseModule implements IGroupMessage, IPrivate
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		Autoreply.instance.remoteWebSocket.sendMsg(1, fromGroup, fromQQ, msg, msgId);
 		++RemoteWebSocket.botInfoBean.msgPerSec;
-		if (!ConfigManager.instance.getGroupConfig(fromGroup).isMainSwitchEnable()) {
+		if (!ConfigManager.getGroupConfig(fromGroup).isMainSwitchEnable()) {
 			return true;
 		}
 		for (IGroupMessage m : groupModules) {
@@ -121,7 +121,7 @@ public class ModuleManager extends BaseModule implements IGroupMessage, IPrivate
 
 	@Override
 	public boolean onGroupFileUpload(int sendTime, long fromGroup, long fromQQ, String file) {
-		if (!ConfigManager.instance.getGroupConfig(fromGroup).isMainSwitchEnable()) {
+		if (!ConfigManager.getGroupConfig(fromGroup).isMainSwitchEnable()) {
             return true;
         }
 		for (IGroupEvent e : groupEventModules) {
@@ -134,7 +134,7 @@ public class ModuleManager extends BaseModule implements IGroupMessage, IPrivate
 
 	@Override
 	public boolean onGroupAdminChange(int subtype, int sendTime, long fromGroup, long beingOperateQQ) {
-		if (!ConfigManager.instance.getGroupConfig(fromGroup).isMainSwitchEnable()) {
+		if (!ConfigManager.getGroupConfig(fromGroup).isMainSwitchEnable()) {
             return true;
         }
 		for (IGroupEvent e : groupEventModules) {
@@ -147,7 +147,7 @@ public class ModuleManager extends BaseModule implements IGroupMessage, IPrivate
 
 	@Override
 	public boolean onGroupMemberDecrease(int subtype, int sendTime, long fromGroup, long fromQQ, long beingOperateQQ) {
-		if (!ConfigManager.instance.getGroupConfig(fromGroup).isMainSwitchEnable()) {
+		if (!ConfigManager.getGroupConfig(fromGroup).isMainSwitchEnable()) {
             return true;
         }
 		for (IGroupEvent e : groupEventModules) {
@@ -160,7 +160,7 @@ public class ModuleManager extends BaseModule implements IGroupMessage, IPrivate
 
 	@Override
 	public boolean onGroupMemberIncrease(int subtype, int sendTime, long fromGroup, long fromQQ, long beingOperateQQ) {
-		if (!ConfigManager.instance.getGroupConfig(fromGroup).isMainSwitchEnable()) {
+		if (!ConfigManager.getGroupConfig(fromGroup).isMainSwitchEnable()) {
             return true;
         }
 		if (beingOperateQQ == CQ.getLoginQQ()) {
@@ -176,7 +176,7 @@ public class ModuleManager extends BaseModule implements IGroupMessage, IPrivate
 
 	@Override
 	public boolean onRequestAddGroup(int subtype, int sendTime, long fromGroup, long fromQQ, String msg, String responseFlag) {
-		if (ConfigManager.instance.isNotReplyQQ(fromQQ)) {
+		if (ConfigManager.isBlockQQ(fromQQ)) {
 			CQ.setFriendAddRequest(responseFlag, Autoreply.REQUEST_REFUSE, "");
 			sendMessage(0, 2856986197L, "拒绝了" + fromQQ + "加为好友");
             return true;
@@ -217,8 +217,8 @@ public class ModuleManager extends BaseModule implements IGroupMessage, IPrivate
 		return false;
 	}
 
-	public <T extends IGroupMessage> T getGroupModule(Class<T> t) {
-		for (IGroupMessage m : groupModules) {
+	public static <T extends IGroupMessage> T getGroupModule(Class<T> t) {
+		for (IGroupMessage m :instance.groupModules) {
 			if (m.getClass() == t) {
 				return (T)m;
 			}
@@ -226,8 +226,8 @@ public class ModuleManager extends BaseModule implements IGroupMessage, IPrivate
 		return null;
 	}
 
-	public <T extends IPrivateMessage> T getPrivateModule(Class<T> t) {
-		for (IPrivateMessage m : privateModules) {
+	public static <T extends IPrivateMessage> T getPrivateModule(Class<T> t) {
+		for (IPrivateMessage m : instance.privateModules) {
 			if (m.getClass() == t) {
 				return (T)m;
 			}
@@ -235,8 +235,8 @@ public class ModuleManager extends BaseModule implements IGroupMessage, IPrivate
 		return null;
 	}
 
-	public <T extends IDiscussMessage> T getDiscussModule(Class<T> t) {
-		for (IDiscussMessage m : discussModules) {
+	public static <T extends IDiscussMessage> T getDiscussModule(Class<T> t) {
+		for (IDiscussMessage m : instance.discussModules) {
 			if (m.getClass() == t) {
 				return (T)m;
 			}
@@ -244,8 +244,8 @@ public class ModuleManager extends BaseModule implements IGroupMessage, IPrivate
 		return null;
 	}
 
-	public <T extends IHelpMessage> T getHelpModule(Class<T> t) {
-		for (IHelpMessage m : helpModules) {
+	public static <T extends IHelpMessage> T getHelpModule(Class<T> t) {
+		for (IHelpMessage m : instance.helpModules) {
 			if (m.getClass() == t) {
 				return (T)m;
 			}
@@ -253,8 +253,8 @@ public class ModuleManager extends BaseModule implements IGroupMessage, IPrivate
 		return null;
 	}
 
-	public <T extends IGroupEvent> T getGroupEventModule(Class<T> t) {
-		for (IGroupEvent m : groupEventModules) {
+	public static <T extends IGroupEvent> T getGroupEventModule(Class<T> t) {
+		for (IGroupEvent m : instance.groupEventModules) {
 			if (m.getClass() == t) {
 				return (T)m;
 			}
@@ -262,8 +262,8 @@ public class ModuleManager extends BaseModule implements IGroupMessage, IPrivate
 		return null;
 	}
 
-	public <T extends IFriendEvent> T getFriendEventModule(Class<T> t) {
-		for (IFriendEvent m : friendEventModules) {
+	public static <T extends IFriendEvent> T getFriendEventModule(Class<T> t) {
+		for (IFriendEvent m : instance.friendEventModules) {
 			if (m.getClass() == t) {
 				return (T)m;
 			}

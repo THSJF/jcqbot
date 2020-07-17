@@ -21,10 +21,10 @@ public class ZanManager {
     }
 
     public void sendZan() {
-        for (long l : ConfigManager.instance.configHolder.masterList) {
+        for (long l : ConfigManager.getMasters()) {
             zanCore(l);
         }
-        for (long l : ConfigManager.instance.configHolder.adminList) {
+        for (long l : ConfigManager.getAdmins()) {
             zanCore(l);
         }
         for (long l : hashSet) {

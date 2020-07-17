@@ -86,7 +86,7 @@ public class MAdminMsg extends BaseGroupModule {
 		if (fromQQ == 2856986197L || fromQQ == 2528419891L) {
 			if (msg.startsWith("bchat.")) {
 				String[] strs=msg.split("\\.", 3);
-				PersonInfo pi=ConfigManager.instance.getPersonInfoFromName(strs[1]);
+				PersonInfo pi=ConfigManager.getPersonInfoFromName(strs[1]);
 				String resu;
 				if (pi == null) {
 					resu = Autoreply.instance.naiManager.sendChat(strs[1], strs[2]);
@@ -100,7 +100,7 @@ public class MAdminMsg extends BaseGroupModule {
 			}
 			if (msg.startsWith("blink.")) {
 				String[] strs=msg.split("\\.", 2);
-				PersonInfo pi=ConfigManager.instance.getPersonInfoFromName(strs[1]);
+				PersonInfo pi=ConfigManager.getPersonInfoFromName(strs[1]);
 				if (pi == null) {	  
 					JsonParser parser = new JsonParser();
 					JsonObject obj = parser.parse(Tools.Network.getSourceCode("https://api.live.bilibili.com/room/v1/Room/playUrl?cid=" + strs[1] + "&quality=4&platform=web")).getAsJsonObject();
@@ -115,23 +115,23 @@ public class MAdminMsg extends BaseGroupModule {
 				return true;
 			}
 		}
-		if (!ConfigManager.instance.isAdmin(fromQQ) && Autoreply.CQ.getGroupMemberInfo(fromGroup, fromQQ).getAuthority() < 2) {
+		if (!ConfigManager.isAdminPermission(fromQQ) && Autoreply.CQ.getGroupMemberInfo(fromGroup, fromQQ).getAuthority() < 2) {
 			return false;
 		}
 		if (msg.equals(".on")) {
-            GroupConfig groupConfig =ConfigManager.instance.getGroupConfig(fromGroup);
+            GroupConfig groupConfig =ConfigManager.getGroupConfig(fromGroup);
             if (groupConfig == null) {
                 Autoreply.sendMessage(fromGroup, fromQQ, "本群没有默认配置");
                 return true;
             }
-            ConfigManager.instance.getGroupConfig(fromGroup).setMainSwitchEnable(true);
+            ConfigManager.getGroupConfig(fromGroup).setMainSwitchEnable(true);
             Autoreply.sendMessage(fromGroup, fromQQ, "已启用");
-            ConfigManager.instance.saveConfig();
+            ConfigManager.saveConfig();
 			return true;
 		}
 
         if (msg.equals(".off")) {
-			ConfigManager.instance.getGroupConfig(fromGroup).setMainSwitchEnable(false);
+			ConfigManager.getGroupConfig(fromGroup).setMainSwitchEnable(false);
 			Autoreply.sendMessage(fromGroup, 0, "已停用");
             return true;
         }
@@ -140,7 +140,7 @@ public class MAdminMsg extends BaseGroupModule {
 			StringBuilder stringBuilder = new StringBuilder();
 			for (Map.Entry<Integer,LivePerson> entry:Autoreply.instance.liveListener.livePersonMap.entrySet()) {	
 				if (entry.getValue().lastStatus) {
-					stringBuilder.append(ConfigManager.instance.getPersonInfoFromBid(entry.getKey()).name).append("正在直播").append(entry.getValue().liveUrl).append("\n");
+					stringBuilder.append(ConfigManager.getPersonInfoFromBid(entry.getKey()).name).append("正在直播").append(entry.getValue().liveUrl).append("\n");
 				}
 			}
 			msgSend = stringBuilder.toString();
@@ -151,7 +151,7 @@ public class MAdminMsg extends BaseGroupModule {
 			Tools.CQ.findQQInAllGroup(fromGroup, fromQQ, msg);
 			return true;
 		}
-        if (!ConfigManager.instance.isMaster(fromQQ) && Autoreply.CQ.getGroupMemberInfo(fromGroup, fromQQ).getAuthority() < 3) {
+        if (!ConfigManager.isMaster(fromQQ) && Autoreply.CQ.getGroupMemberInfo(fromGroup, fromQQ).getAuthority() < 3) {
 			return false;
 		}
 
@@ -164,8 +164,8 @@ public class MAdminMsg extends BaseGroupModule {
 			HashSet<Group> hs=new HashSet<>();
 			List<Group> glist=Autoreply.CQ.getGroupList();
 			for (Group g:glist) {
-				GroupConfig gc=ConfigManager.instance.getGroupConfig(g.getId());
-				if (!ConfigManager.instance.getGroupConfig(fromGroup).isMainSwitchEnable()) {
+				GroupConfig gc=ConfigManager.getGroupConfig(g.getId());
+				if (!ConfigManager.getGroupConfig(fromGroup).isMainSwitchEnable()) {
 					continue;
 				}
 				Autoreply.sendMessage(gc.n, 0, broadcast);
@@ -196,7 +196,7 @@ public class MAdminMsg extends BaseGroupModule {
 		}
 		if (msg.startsWith("-live")) {
 			String[] str=msg.split("\\.");
-			PersonInfo pi=ConfigManager.instance.getPersonInfoFromQQ(fromQQ);
+			PersonInfo pi=ConfigManager.getPersonInfoFromQQ(fromQQ);
 			String name;
 			if (pi == null) {
 				name = "" + fromQQ;
@@ -228,11 +228,11 @@ public class MAdminMsg extends BaseGroupModule {
 			String[] ss=msg.split("\\.");
 			String rid=ss[1];
 			String uid=ss[2];
-			PersonInfo mas=ConfigManager.instance.getPersonInfoFromName(ss[1]);
+			PersonInfo mas=ConfigManager.getPersonInfoFromName(ss[1]);
 			if (mas != null) {
 				rid += mas.bliveRoom;
 			}
-			PersonInfo ban=ConfigManager.instance.getPersonInfoFromName(ss[2]);
+			PersonInfo ban=ConfigManager.getPersonInfoFromName(ss[2]);
 			if (ban != null) {
 				uid += ban.bid;
 			}
@@ -259,10 +259,10 @@ public class MAdminMsg extends BaseGroupModule {
 			sb.append("屏蔽列表添加:");
 			for (int i = 0, qqsSize = qqs.size(); i < qqsSize; i++) {
 				long qq = qqs.get(i);
+				ConfigManager.addBlockQQ(qq);
 				sb.append(qq).append(" ");
 			}
-			ConfigManager.instance.configHolder.QQNotReply.addAll(qqs);
-			ConfigManager.instance.saveConfig();
+			ConfigManager.saveConfig();
 			Autoreply.sendMessage(fromGroup, fromQQ, sb.toString());
 			return true;
 		}
@@ -272,17 +272,17 @@ public class MAdminMsg extends BaseGroupModule {
 			sb.append("黑名单添加:");
 			for (int i = 0, qqsSize = qqs.size(); i < qqsSize; i++) {
 				long qq = qqs.get(i);
+				ConfigManager.addBlackQQ(qq);
 				sb.append(qq).append(" ");
 			}
-			ConfigManager.instance.configHolder.blackListQQ.addAll(qqs);
-			ConfigManager.instance.saveConfig();
+			ConfigManager.saveConfig();
 			Autoreply.sendMessage(fromGroup, fromQQ, sb.toString());
 			return true;
 		}
 		if (msg.startsWith("find:")) {
 			String name = msg.substring(5);
 			HashSet<PersonInfo> hashSet = new HashSet<>();
-			for (PersonInfo personInfo : ConfigManager.instance.configHolder.personInfo) {
+			for (PersonInfo personInfo : ConfigManager.getPersonInfo()) {
 				if (personInfo.name.contains(name)) {
 					hashSet.add(personInfo);
 				}
@@ -329,7 +329,7 @@ public class MAdminMsg extends BaseGroupModule {
 		}
 		if (msg.startsWith("nai.")) {
 			String[] sarr = msg.split("\\.", 3);
-			PersonInfo pInfo = ConfigManager.instance.getPersonInfoFromName(sarr[1]);
+			PersonInfo pInfo = ConfigManager.getPersonInfoFromName(sarr[1]);
 			if (pInfo != null) {
 				Autoreply.instance.naiManager.check(fromGroup, pInfo.bliveRoom + "", fromQQ, sarr[2]);
 			} else {
@@ -383,11 +383,11 @@ public class MAdminMsg extends BaseGroupModule {
 			return true;
 		}
 		if (msg.startsWith("精神支柱[CQ:image")) {
-			ModuleManager.instance.getGroupModule(MPicEdit.class).jingShenZhiZhuByPic(fromGroup, fromQQ, msg);
+			ModuleManager.getGroupModule(MPicEdit.class).jingShenZhiZhuByPic(fromGroup, fromQQ, msg);
 			return true;
 		}
 		if (msg.startsWith("神触[CQ:image")) {
-			ModuleManager.instance.getGroupModule(MPicEdit.class).shenChuByAt(fromGroup, fromQQ, msg);
+			ModuleManager.getGroupModule(MPicEdit.class).shenChuByAt(fromGroup, fromQQ, msg);
 			return true;
 		}
 		if (msg.startsWith("设置群头衔[CQ:at")) {

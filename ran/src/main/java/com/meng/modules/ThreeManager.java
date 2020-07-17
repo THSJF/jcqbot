@@ -17,9 +17,9 @@ public class ThreeManager extends BaseGroupModule {
     public ThreeManager load() {
 		checkSet.add(2487765013L);
 		checkSet.add(1033317031L);
-		checkSet.addAll(ConfigManager.instance.configHolder.adminList);
-		checkSet.addAll(ConfigManager.instance.configHolder.masterList);
-		for (PersonInfo pi:ConfigManager.instance.configHolder.personInfo) {
+		checkSet.addAll(ConfigManager.getMasters());
+		checkSet.addAll(ConfigManager.getAdmins());
+		for (PersonInfo pi:ConfigManager.getPersonInfo()) {
 			if (pi.qq != 0) {
 				checkSet.add(pi.qq);
 			}
@@ -66,7 +66,7 @@ public class ThreeManager extends BaseGroupModule {
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (changeMap.get(fromQQ) != null && changeMap.get(fromQQ)) {
-			Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image(ModuleManager.instance.getGroupModule(MPicEdit.class).jingShenZhiZhuByAt(fromGroup, 0, Autoreply.instance.CC.at(fromQQ))));
+			Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image(ModuleManager.getGroupModule(MPicEdit.class).jingShenZhiZhuByAt(fromGroup, 0, Autoreply.instance.CC.at(fromQQ))));
 			changeMap.put(fromQQ, false);
 			return true;
 		}

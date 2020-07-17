@@ -64,7 +64,7 @@ public class MUserCounter extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if (!ConfigManager.instance.getGroupConfig(fromGroup).isUserCountEnable()) {
+		if (!ConfigManager.getGroupConfig(fromGroup).isUserCountEnable()) {
 			return false;
 		}
 		if (msg.contains("艹") || msg.contains("草")) {
@@ -78,7 +78,7 @@ public class MUserCounter extends BaseGroupModule {
 			Autoreply.sendMessage(fromGroup, fromQQ, getTheFirst());
             return true;
 		}
-		if (!ConfigManager.instance.isAdmin(fromQQ)) {
+		if (!ConfigManager.isAdminPermission(fromQQ)) {
 			return false;
 		}
 		if (msg.equals("蓝统计")) {

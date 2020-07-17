@@ -18,10 +18,10 @@ public class MBanner extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if (!ConfigManager.instance.getGroupConfig(fromGroup).isBannerEnable()) {
+		if (!ConfigManager.getGroupConfig(fromGroup).isBannerEnable()) {
 			return false;
 		}
-		if (!ConfigManager.instance.isAdmin(fromQQ)) {
+		if (!ConfigManager.isAdminPermission(fromQQ)) {
 			return false;
 		}
 		String[] strs = msg.split("\\.");
@@ -149,7 +149,7 @@ public class MBanner extends BaseGroupModule {
 
     private boolean checkSleep(long fromGroup, long fromQQ, String[] str) {
         if (str.length == 3 && str[0].equals("sleep")) {
-            if (ConfigManager.instance.isAdmin(fromQQ)) {
+            if (ConfigManager.isAdminPermission(fromQQ)) {
                 return true;
             }
             int time;
@@ -205,7 +205,7 @@ public class MBanner extends BaseGroupModule {
 
     private boolean checkBan(long targetGroup, long targetQQ, long fromQQ, int time) {
         try {
-            if (ConfigManager.instance.isAdmin(fromQQ)) {
+            if (ConfigManager.isAdminPermission(fromQQ)) {
                 if (time > 2592000) {
                     time = 2592000;
                 }
@@ -221,8 +221,8 @@ public class MBanner extends BaseGroupModule {
             time = 2592000;
             targetQQ = fromQQ;
         }
-        if (ConfigManager.instance.isMaster(targetQQ)) {
-            if (!ConfigManager.instance.isMaster(fromQQ)) {
+        if (ConfigManager.isMaster(targetQQ)) {
+            if (!ConfigManager.isMaster(fromQQ)) {
                 Tools.CQ.ban(targetGroup, fromQQ, time);
                 return true;
             }
@@ -234,14 +234,14 @@ public class MBanner extends BaseGroupModule {
     }
 
     private BanType getType(long fromGroup, long fromQQ) {
-        if (ConfigManager.instance.isMaster(fromQQ)) {
+        if (ConfigManager.isMaster(fromQQ)) {
             return BanType.ByMaster;
         }
         Member member = Autoreply.CQ.getGroupMemberInfoV2(fromGroup, fromQQ);
         if (member.getAuthority() == 3) {
             return BanType.ByGroupMaster;
         }
-        if (ConfigManager.instance.isAdmin(fromQQ)) {
+        if (ConfigManager.isAdminPermission(fromQQ)) {
             return BanType.ByAdmin;
         }
         if (member.getAuthority() == 2) {
