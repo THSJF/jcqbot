@@ -38,15 +38,6 @@ public class ConfigManager implements IPersistentData {
 			getGroupConfig(fromGroup).f1 &= ~(1 << functionID);
 		}
 		saveConfig();
-		
-		try {
-			Method m = instance.getClass()
-			 .getMethod("setYYSLj", boolean.class);
-			m.invoke(instance,true);
-		} catch (Exception e) {
-			
-		}
-
 	}
 
 	public static void addGroupConfig(GroupConfig gc) {
@@ -75,11 +66,11 @@ public class ConfigManager implements IPersistentData {
 	}
 
     public static GroupConfig getGroupConfig(long fromGroup) {
-        for (GroupConfig gc : instance.configHolder.groupConfigs) {
-            if (fromGroup == gc.n) {
-                return gc;
-            }
-        }
+//        for (GroupConfig gc : instance.configHolder.groupConfigs) {
+//            if (fromGroup == gc.n) {
+//                return gc;
+//            }
+//        }
         return emptyConfig;
     }
 

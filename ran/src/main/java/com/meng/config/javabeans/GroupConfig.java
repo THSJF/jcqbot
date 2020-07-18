@@ -3,8 +3,8 @@ package com.meng.config.javabeans;
 import java.util.*;
 
 public class GroupConfig extends Object {
-    public long n=0;
-	public int f1=0;
+    public long n=617745343L;
+	public int f1=-1;
 
 	public boolean isMainSwitchEnable() {
 		return (f1 & (1 << 0)) != 0;

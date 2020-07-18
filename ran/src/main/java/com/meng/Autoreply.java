@@ -99,6 +99,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 		danmakuListenerManager = new DanmakuListenerManager();
         threadPool.execute(new CleanRunnable());
 		threadPool.execute(new BirthdayTip());
+		ConfigManager.init();
 		System.out.println("加载完成,用时" + (System.currentTimeMillis() - startTime));
         return 0;
     }
@@ -201,8 +202,8 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         // return MSG_IGNORE;
 		//if (fromGroup != 1023432971L)
 		//return MSG_IGNORE;
-        // if (fromGroup != 617745343L)
-        // return MSG_IGNORE;
+         if (fromGroup != 617745343L)
+         return MSG_IGNORE;
         // 如果消息来自匿名者
 		if (fromQQ == 80000000L && !fromAnonymous.equals("")) {
             // 将匿名用户信息放到 anonymous 变量中

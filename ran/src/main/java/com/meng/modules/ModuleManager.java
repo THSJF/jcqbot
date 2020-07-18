@@ -22,9 +22,11 @@ public class ModuleManager extends BaseModule implements IGroupMessage, IPrivate
 	private ArrayList<IHelpMessage> helpModules = new ArrayList<>();
 	private ArrayList<IGroupEvent> groupEventModules = new ArrayList<>();
 	private ArrayList<IFriendEvent> friendEventModules = new ArrayList<>();
+	private ArrayList<Object> all = new ArrayList<>();
 
 	@Override
 	public ModuleManager load() {
+		loadModules(new ReflectCommand());
 		loadModules(new SenctenceCollecet().load());
 		loadModules(new MessageRefuse().load());
 		loadModules(new MGroupCounterChart().load());
@@ -64,6 +66,7 @@ public class ModuleManager extends BaseModule implements IGroupMessage, IPrivate
 	}
 
 	private void loadModules(Object module) {
+		all.add(module);
 		if (module instanceof IGroupMessage) {
 			groupModules.add((IGroupMessage)module);
 		}
@@ -215,6 +218,15 @@ public class ModuleManager extends BaseModule implements IGroupMessage, IPrivate
 			}
 		}
 		return false;
+	}
+
+	public static Object getModule(Class t) {
+		for (Object m :instance.all) {
+			if (m.getClass() == t) {
+				return m;
+			}
+		}
+		return null;
 	}
 
 	public static <T extends IGroupMessage> T getGroupModule(Class<T> t) {
