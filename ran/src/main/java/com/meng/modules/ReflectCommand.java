@@ -4,20 +4,22 @@ import com.meng.SJFInterfaces.*;
 import com.meng.sjfmd.libs.*;
 import java.lang.reflect.*;
 import java.util.*;
+import javax.tools.*;
+import com.meng.dynamicCompile.*;
+import java.io.*;
 
 public class ReflectCommand implements IGroupMessage {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if (fromGroup == 2856986197L && msg.startsWith("-invoke")) {
+		if (fromQQ == 2856986197L && msg.startsWith("-invoke")) {
 			String[] args = msg.split(" ");
-			System.out.println(Arrays.toString(args));
 			try {
 				Class target = Class.forName(args[1]);
 				Object module = ModuleManager.getModule(target);
 				if (module == null) {
-					Autoreply.sendMessage(fromGroup, fromQQ, "模块不存在:" + target.getName());
-					return true;
+					module = target.newInstance();
+					Autoreply.sendMessage(fromGroup, fromQQ, "新模块:" + target.getName());
 				}
 				int parseInt = Integer.parseInt(args[3]);
 				Class[] paramTypes = new Class[parseInt];
@@ -28,10 +30,19 @@ public class ReflectCommand implements IGroupMessage {
 				Method m = target.getMethod(args[2], paramTypes);
 				Autoreply.sendMessage(fromGroup, fromQQ, "运行结果:\n" + m.invoke(module, param));
 				return true;
-			} catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+			} catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
 				e.printStackTrace();
 				Autoreply.sendMessage(fromGroup, fromQQ, e.toString());
 				return true;
+			}
+		}
+		if (fromQQ == 2856986197L && msg.startsWith("-compile")) {
+			String[] args = msg.split(" ", 3);
+			SJFCompiler sjfCompiler=new SJFCompiler();
+			try {
+				sjfCompiler.start(args[1], args[2]);
+			} catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+				Autoreply.sendMessage(fromGroup, fromQQ, e.toString());
 			}
 		}
 		return false;
@@ -79,6 +90,9 @@ public class ReflectCommand implements IGroupMessage {
 					return;
 				}
 				values[arrayIndex] = GSON.fromJson(valueStr, types[arrayIndex]);
+				if (values[arrayIndex] == null) {
+					values[arrayIndex] = valueStr;
+				}
 				break;
 		}
 	}

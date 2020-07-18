@@ -65,7 +65,7 @@ public class ModuleManager extends BaseModule implements IGroupMessage, IPrivate
 		return this;
 	}
 
-	private void loadModules(Object module) {
+	public void loadModules(Object module) {
 		all.add(module);
 		if (module instanceof IGroupMessage) {
 			groupModules.add((IGroupMessage)module);
