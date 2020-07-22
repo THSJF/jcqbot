@@ -1,6 +1,7 @@
 package com.meng.config;
 
 import com.meng.*;
+import com.meng.sjfmd.libs.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.net.*;
@@ -27,7 +28,7 @@ public class SJFServerSocket implements Runnable {
         try {
             ServerSocket serverSocket = new ServerSocket(9911);
             while (true) {
-                Autoreply.instance.threadPool.execute(new SocketDicRunnable(configManager, serverSocket));
+                SJFExecutors.execute(new SocketDicRunnable(configManager, serverSocket));
                 Thread.sleep(10);
             }
         } catch (Exception e) {
@@ -65,7 +66,7 @@ public class SJFServerSocket implements Runnable {
                     + string.substring(0, string.indexOf(".")).replace("get", "").replace("write", "") + ".json";
 				System.out.println(fileName);
 				if (string.startsWith("get")) {
-					dataOutputStream.writeUTF(Tools.FileTool.readString(fileName));
+					dataOutputStream.writeUTF(FileTool.readString(fileName));
 				} else if (string.startsWith("write")) {
 					File file = new File(fileName);
 					FileOutputStream fileOutputStream = new FileOutputStream(file);

@@ -3,7 +3,9 @@ package com.meng.tools;
 import com.google.gson.*;
 import com.meng.*;
 import com.meng.config.*;
-import com.meng.modules.*;
+import com.meng.sjfmd.libs.*;
+import com.meng.sjfmd.result.*;
+import com.meng.tools.*;
 import com.sobte.cqp.jcq.entity.*;
 import java.io.*;
 import java.net.*;
@@ -12,6 +14,8 @@ import java.security.*;
 import java.text.*;
 import java.util.*;
 import org.jsoup.*;
+
+import com.meng.sjfmd.result.CvInfo;
 
 public class Tools {
 
@@ -45,91 +49,6 @@ public class Tools {
 				build.append(line);
 			}
 			return build.toString();
-		}
-	}
-	public static class FileTool {
-		public static String readString(String fileName) {
-			return readString(new File(fileName));
-		}
-		public static String readString(File f) {
-			String s = "{}";
-			try {      
-				if (!f.exists()) {
-					f.createNewFile();
-				}
-				long filelength = f.length();
-				byte[] filecontent = new byte[(int) filelength];
-				FileInputStream in = new FileInputStream(f);
-				in.read(filecontent);
-				in.close();
-				s = new String(filecontent, StandardCharsets.UTF_8);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return s;
-		}
-	}
-
-	public static class Hash {
-		public static String MD5(String str) {
-			try {
-				return MD5(str.getBytes());
-			} catch (Exception e) {
-				return null;
-			}
-		}
-
-		public static String MD5(byte[] bs) {
-			try {
-				MessageDigest mdTemp = MessageDigest.getInstance("MD5");
-				mdTemp.update(bs);
-				return toHexString(mdTemp.digest());
-			} catch (Exception e) {
-				return null;
-			}
-		}
-
-		public static String MD5(File file) {
-			InputStream inputStream = null;
-			try {
-				inputStream = new FileInputStream(file);
-				return MD5(inputStream);
-			} catch (Exception e) {
-				return null;
-			} finally {
-				if (inputStream != null) {
-					try {
-						inputStream.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-		public static String MD5(InputStream inputStream) {
-			try {
-				MessageDigest mdTemp = MessageDigest.getInstance("MD5");
-				byte[] buffer = new byte[1024];
-				int numRead = 0;
-				while ((numRead = inputStream.read(buffer)) > 0) {
-					mdTemp.update(buffer, 0, numRead);
-				}
-				return toHexString(mdTemp.digest());
-			} catch (Exception e) {
-				return null;
-			}
-		}
-		private static String toHexString(byte[] md) {
-			char hexDigits[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'a', 'b', 'c', 'd', 'e', 'f' };
-			int j = md.length;
-			char str[] = new char[j * 2];
-			for (int i = 0; i < j; i++) {
-				byte byte0 = md[i];
-				str[2 * i] = hexDigits[byte0 >>> 4 & 0xf];
-				str[i * 2 + 1] = hexDigits[byte0 & 0xf];
-			}
-			return new String(str);
 		}
 	}
 
@@ -332,125 +251,6 @@ public class Tools {
 		}
 		public static Object rfa(Object[] array) {
 			return array[Autoreply.instance.random.nextInt(array.length)];
-		}
-	}
-
-	public static class BitConverter {
-		public static byte[] getBytes(short s) {
-			byte[] bs=new byte[2];
-			bs[0] = (byte) ((s >> 0) & 0xff);
-			bs[1] = (byte) ((s >> 8) & 0xff) ;
-			return bs;	
-		}
-
-		public static byte[] getBytes(int i) {
-			byte[] bs=new byte[4];
-			bs[0] = (byte) ((i >> 0) & 0xff);
-			bs[1] = (byte) ((i >> 8) & 0xff);
-			bs[2] = (byte) ((i >> 16) & 0xff);
-			bs[3] = (byte) ((i >> 24) & 0xff);
-			return bs;	
-		}
-
-		public static byte[] getBytes(long l) {
-			byte[] bs=new byte[8];
-			bs[0] = (byte) ((l >> 0) & 0xff);
-			bs[1] = (byte) ((l >> 8) & 0xff);
-			bs[2] = (byte) ((l >> 16) & 0xff);
-			bs[3] = (byte) ((l >> 24) & 0xff);
-			bs[4] = (byte) ((l >> 32) & 0xff);
-			bs[5] = (byte) ((l >> 40) & 0xff);
-			bs[6] = (byte) ((l >> 48) & 0xff);
-			bs[7] = (byte) ((l >> 56) & 0xff);
-			return bs;
-		}
-
-		public static byte[] getBytes(float f) {
-			int i = Float.floatToIntBits(f);
-			byte[] bs=new byte[4];
-			bs[0] = (byte) ((i >> 24) & 0xff);
-			bs[1] = (byte) ((i >> 16) & 0xff);
-			bs[2] = (byte) ((i >> 8) & 0xff);
-			bs[3] = (byte) ((i >> 0) & 0xff);
-			return bs;	
-		}
-
-		public static byte[] getBytes(double d) {
-			long l = Double.doubleToLongBits(d);
-			byte[] bs = new byte[8];
-			bs[0] = (byte) ((l >> 56) & 0xff);
-			bs[1] = (byte) ((l >> 48) & 0xff);
-			bs[2] = (byte) ((l >> 40) & 0xff);
-			bs[3] = (byte) ((l >> 32) & 0xff);
-			bs[4] = (byte) ((l >> 24) & 0xff);
-			bs[5] = (byte) ((l >> 16) & 0xff);
-			bs[6] = (byte) ((l >> 8) & 0xff);
-			bs[7] = (byte) ((l >> 0) & 0xff);
-			return bs;
-		}
-
-		public static byte[] getBytes(String s) {
-			try {
-				return s.getBytes(DEFAULT_ENCODING);
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-				return null;
-			}
-		}
-
-		public static short toShort(byte[] data, int pos) {
-			return (short) ((data[pos] & 0xff) << 0 | (data[pos + 1] & 0xff) << 8);
-		}
-
-		public static short toShort(byte[] data) {
-			return toShort(data , 0);
-		}
-
-		public static int toInt(byte[] data, int pos) {
-			return (data[pos] & 0xff) << 0 | (data[pos + 1] & 0xff) << 8 | (data[pos + 2] & 0xff) << 16 | (data[pos + 3] & 0xff) << 24;
-		}
-
-		public static int toInt(byte[] data) {
-			return toInt(data, 0);
-		}
-
-		public static long toLong(byte[] data, int pos) {
-			return ((data[pos] & 0xffL) << 0) | (data[pos + 1] & 0xffL) << 8 | (data[pos + 2] & 0xffL) << 16 | (data[pos + 3] & 0xffL) << 24 | (data[pos + 4] & 0xffL) << 32 | (data[pos + 5] & 0xffL) << 40 | (data[pos + 6] & 0xffL) << 48 | (data[pos + 7] & 0xffL) << 56;
-		}
-
-		public static long toLong(byte[] data) {
-			return toLong(data , 0);
-		}
-
-		public static float toFloat(byte[] data, int pos) {
-			int i= (data[pos] & 0xff) << 24 | (data[pos + 1] & 0xff) << 16 | (data[pos + 2] & 0xff) << 8 | (data[pos + 3] & 0xff) << 0;
-			return Float.intBitsToFloat(i);
-		}
-
-		public static float toFloat(byte[] data) {
-			return toFloat(data , 0);
-		}
-
-		public static double toDouble(byte[] data, int pos) {
-			long l = ((data[pos] & 0xffL) << 56) | (data[pos + 1] & 0xffL) << 48 | (data[pos + 2] & 0xffL) << 40 | (data[pos + 3] & 0xffL) << 32 | (data[pos + 4] & 0xffL) << 24 | (data[pos + 5] & 0xffL) << 16 | (data[pos + 6] & 0xffL) << 8 | (data[pos + 7] & 0xffL) << 0;
-			return Double.longBitsToDouble(l);
-		}
-
-		public static double toDouble(byte[] data) {
-			return toDouble(data, 0);
-		}
-
-		public static String toString(byte[] data, int pos, int byteCount) {
-			try {
-				return new String(data, pos, byteCount, DEFAULT_ENCODING);
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-				return null;
-			}
-		}
-
-		public static String toString(byte[] data) {
-			return toString(data, 0, data.length);
 		}
 	}
 
@@ -880,7 +680,7 @@ public class Tools {
                 .method(Connection.Method.POST)
                 .data("aid", String.valueOf(CvId))
                 .data("multiply", String.valueOf(count))
-			    .data("upid", String.valueOf(Autoreply.instance.gson.fromJson(Tools.BilibiliTool.getCvInfo(CvId), CvInfo.class).data.mid))
+			    .data("upid", String.valueOf(GSON.fromJson(Tools.BilibiliTool.getCvInfo(CvId), CvInfo.class).data.mid))
                 .data("avtype", "2")
                 .data("csrf", Tools.Network.cookieToMap(cookie).get("bili_jct"));
 			Connection.Response response=null;

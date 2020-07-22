@@ -11,18 +11,18 @@ import static com.meng.Autoreply.sendMessage;
 import static com.meng.Autoreply.CC;
 import static com.sobte.cqp.jcq.event.JcqApp.CQ;
 
-public class MessageRefuse extends BaseGroupModule{
+public class MessageRefuse extends BaseGroupModule {
 
 	public ConcurrentHashMap<Long,FireWallBean> msgMap=new ConcurrentHashMap<>();
 
 	@Override
 	public MessageRefuse load() {
-		Autoreply.instance.threadPool.execute(new Runnable(){
+		SJFExecutors.execute(new Runnable(){
 
 				@Override
 				public void run() {
 					while (true) {
-						for (FireWallBean mb:msgMap.values()) {
+						for (FireWallBean mb : msgMap.values()) {
 							mb.lastSeconedMsgs = 0;
 						}
 						try {
@@ -36,16 +36,12 @@ public class MessageRefuse extends BaseGroupModule{
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		       if (ConfigManager.isBlackQQ(fromQQ)) {
-            System.out.println("black:" + fromQQ);
-            if (Tools.CQ.ban(fromGroup, fromQQ, 300)) {
+		if (ConfigManager.isBlackQQ(fromQQ)) {
+			if (Tools.CQ.ban(fromGroup, fromQQ, 300)) {
                 sendMessage(fromGroup, fromQQ, "嘘 别说话");
             }
         }
-        if (ConfigManager.isBlockQQ(fromQQ)) {
-            return true;
-        }
-        if (ConfigManager.isBlockWord(msg)) {
+        if (ConfigManager.isBlockQQ(fromQQ) || ConfigManager.isBlockWord(msg)) {
             return true;
         }
 		if (fromQQ == 2856986197L || fromQQ == 2565128043L) {
@@ -60,7 +56,7 @@ public class MessageRefuse extends BaseGroupModule{
 				return true;
 			}
 		}
-		
+
 		FireWallBean mtmb=msgMap.get(fromQQ);
 		if (mtmb == null) {
 			mtmb = new FireWallBean();

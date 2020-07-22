@@ -1,27 +1,21 @@
 package com.meng.modules;
 
-import com.google.gson.reflect.*;
 import com.meng.*;
-import com.meng.config.*;
 import com.meng.SJFInterfaces.*;
-import com.meng.tools.*;
-import java.io.*;
-import java.lang.reflect.*;
-import java.nio.charset.*;
+import com.meng.config.*;
 import java.util.*;
 
-public class SenctenceCollecet extends BaseGroupModule {
+/**
+ * @author 司徒灵羽
+ */
 
-	private SenBean senb=new SenBean();
-	private File sbFile;
+public class SenctenceCollecet extends BaseGroupModule implements IPersistentData {
+
+	private SenBean senb = new SenBean();
 
 	@Override
 	public SenctenceCollecet load() {
-		sbFile = new File(Autoreply.appDirectory + "sb.json");
-        if (!sbFile.exists()) {
-            save();
-        }
-        senb = Autoreply.gson.fromJson(Tools.FileTool.readString(sbFile), new TypeToken<SenBean>() {}.getType());
+		DataPersistenter.read(this);
 		return this;
 	}
 
@@ -43,20 +37,35 @@ public class SenctenceCollecet extends BaseGroupModule {
 		return false;
 	}
 
-	private class SenBean {
+	private static class SenBean {
 		private HashSet<String> ketWord=new HashSet<>();
 		private HashSet<String> colleted=new HashSet<>();
 	}
 
 	private void save() {
-		try {
-			FileOutputStream fos = new FileOutputStream(sbFile);
-            OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-            writer.write(Autoreply.gson.toJson(senb));
-            writer.flush();
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+		DataPersistenter.save(this);
     }
+
+	@Override
+	public String getPersistentName() {
+		return "sb.json";
+	}
+
+	@Override
+	public Class<?> getDataClass() {
+		return SenBean.class;
+	}
+
+	@Override
+	public Object getDataBean() {
+		return senb;
+	}
+
+	@Override
+	public void setDataBean(Object o) {
+		if (o.getClass() != getDataClass()) {
+			throw new RuntimeException("bean类型错误");
+		}
+		senb = (SenctenceCollecet.SenBean) o;
+	}
 }

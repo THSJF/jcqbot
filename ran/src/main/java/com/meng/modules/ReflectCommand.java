@@ -8,6 +8,10 @@ import javax.tools.*;
 import com.meng.dynamicCompile.*;
 import java.io.*;
 
+/**
+ * @author 司徒灵羽
+ */
+
 public class ReflectCommand implements IGroupMessage {
 
 	@Override
@@ -30,7 +34,7 @@ public class ReflectCommand implements IGroupMessage {
 				Method m = target.getMethod(args[2], paramTypes);
 				Autoreply.sendMessage(fromGroup, fromQQ, "运行结果:\n" + m.invoke(module, param));
 				return true;
-			} catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				Autoreply.sendMessage(fromGroup, fromQQ, e.toString());
 				return true;
@@ -41,7 +45,7 @@ public class ReflectCommand implements IGroupMessage {
 			SJFCompiler sjfCompiler=new SJFCompiler();
 			try {
 				sjfCompiler.start(args[1], args[2]);
-			} catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+			} catch (Exception e) {
 				Autoreply.sendMessage(fromGroup, fromQQ, e.toString());
 			}
 		}

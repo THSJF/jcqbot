@@ -1,16 +1,22 @@
 package com.meng.modules;
 
 import com.meng.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.config.*;
 import com.meng.gameData.TouHou.zun.*;
-import com.meng.SJFInterfaces.*;
 import com.meng.tools.*;
 import java.io.*;
+import java.nio.charset.*;
 import java.util.*;
 
+/**
+ * @author 司徒灵羽
+ */
+
 public class MusicManager extends BaseGroupModule {
-	public static String musicFolder="C://thbgm/";
-	private HashMap<Long,QA> resultMap=new HashMap<>();
+	
+	public static String musicFolder = "C://thbgm/";
+	private HashMap<Long,QA> resultMap = new HashMap<>();
 
 	@Override
 	public MusicManager load() {
@@ -29,29 +35,21 @@ public class MusicManager extends BaseGroupModule {
 			return true;
 		}
 		if (msg.startsWith("原曲认知 ")) {
-			switch (msg) {
-				case "原曲认知 E":
+			switch (msg.toLowerCase()) {
 				case "原曲认知 e":
 				case "原曲认知 easy":
-				case "原曲认知 Easy":
 					Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.record(createMusicCut(new Random().nextInt(16), 10, fromGroup, fromQQ).getName()));	
 					break;
-				case "原曲认知 N":
 				case "原曲认知 n":
 				case "原曲认知 normal":
-				case "原曲认知 Normal":
 					Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.record(createMusicCut(new Random().nextInt(16), 6, fromGroup, fromQQ).getName()));
 					break;
-				case "原曲认知 H":
 				case "原曲认知 h":
 				case "原曲认知 hard":
-				case "原曲认知 Hard":
 					Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.record(createMusicCut(new Random().nextInt(16), 3, fromGroup, fromQQ).getName()));
 					break;
-				case "原曲认知 L":
 				case "原曲认知 l":
 				case "原曲认知 lunatic":
-				case "原曲认知 Lunatic":
 					Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.record(createMusicCut(new Random().nextInt(16), 1, fromGroup, fromQQ).getName()));
 					break;		
 			}
@@ -60,31 +58,31 @@ public class MusicManager extends BaseGroupModule {
 	}
 
 	private File createMusicCut(int musicNum, int needSeconeds, long fromGroup,  long fromQQ) {
-		File[] games=new File(musicFolder).listFiles();
-		int game=new Random().nextInt(games.length);
+		File[] games = new File(musicFolder).listFiles();
+		int game = new Random().nextInt(games.length);
 		File fmtFile = new File(musicFolder + games[game].getName() + "/thbgm.fmt");
-		File resultFile=null;
+		File resultFile = null;
 		THfmt thfmt = new THfmt(fmtFile);
         thfmt.load();
-		MusicInfo muiscInfo=thfmt.musicInfos[musicNum];
-		byte[] music=new byte[needSeconeds * muiscInfo.bitsPerSample * muiscInfo.channels * muiscInfo.rate / 8];
+		MusicInfo muiscInfo = thfmt.musicInfos[musicNum];
+		byte[] music = new byte[needSeconeds * muiscInfo.bitsPerSample * muiscInfo.channels * muiscInfo.rate / 8];
 		readFile(music, getStartBytes(musicNum, thfmt, needSeconeds), games[game].getName());
-		WavHeader wavHeader=new WavHeader();
-		byte[] finalFile=Tools.ArrayTool.mergeArray(wavHeader.getWavHeader(musicNum, thfmt, needSeconeds), music);
-		final String newFileName="C://Users/Administrator/Desktop/酷Q Pro/data/record/" + System.currentTimeMillis() + ".wav";
+		WavHeader wavHeader = new WavHeader();
+		byte[] finalFile = Tools.ArrayTool.mergeArray(wavHeader.getWavHeader(musicNum, thfmt, needSeconeds), music);
+		final String newFileName = "C://Users/Administrator/Desktop/酷Q Pro/data/record/" + System.currentTimeMillis() + ".wav";
 		try {
 			resultFile = new File(newFileName);
 			if (resultFile.exists()) {
 				resultFile.delete();
 			}
-			FileOutputStream fom=new FileOutputStream(resultFile);
+			FileOutputStream fom = new FileOutputStream(resultFile);
 			fom.write(finalFile, 0, finalFile.length);
 			fom.flush();
 			fom.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		Autoreply.instance.threadPool.execute(new Runnable(){
+		SJFExecutors.execute(new Runnable(){
 
 				@Override
 				public void run() {
@@ -149,7 +147,7 @@ public class MusicManager extends BaseGroupModule {
 			return ;
 		}
 		if (qar != null) {
-			int userAnser=-1;
+			int userAnser = -1;
 			try {
 				userAnser = Integer.parseInt(msg);
 			} catch (NumberFormatException e) {}
@@ -163,11 +161,11 @@ public class MusicManager extends BaseGroupModule {
 	}
 
 	private int getStartBytes(int musicNum, THfmt thfmt, int needSeconeds) {
-		MusicInfo muiscInfo=thfmt.musicInfos[musicNum];
-		int oneFrameBytes=muiscInfo.bitsPerSample / 8 * muiscInfo.channels;	
-		int startFtame=new Random().nextInt(muiscInfo.length / oneFrameBytes);
-		int SecNeedBytes=needSeconeds * muiscInfo.bitsPerSample * muiscInfo.channels * muiscInfo.rate / 8;
-		int questionStartBytes=muiscInfo.start + startFtame * oneFrameBytes;
+		MusicInfo muiscInfo = thfmt.musicInfos[musicNum];
+		int oneFrameBytes = muiscInfo.bitsPerSample / 8 * muiscInfo.channels;	
+		int startFtame = new Random().nextInt(muiscInfo.length / oneFrameBytes);
+		int SecNeedBytes = needSeconeds * muiscInfo.bitsPerSample * muiscInfo.channels * muiscInfo.rate / 8;
+		int questionStartBytes = muiscInfo.start + startFtame * oneFrameBytes;
 		if (muiscInfo.length - startFtame * oneFrameBytes < SecNeedBytes) {
 			questionStartBytes = startFtame * oneFrameBytes - SecNeedBytes;
 		}
@@ -245,10 +243,10 @@ public class MusicManager extends BaseGroupModule {
 
 	private class WavHeader {
 		private byte[] header;
-		private int writePointer=0;
+		private int writePointer = 0;
 		public byte[] getWavHeader(int num, THfmt fmt, int second) {
-			MusicInfo mi=fmt.musicInfos[num];
-			int oneSecBytes=mi.bitsPerSample * mi.channels * mi.rate / 8;
+			MusicInfo mi = fmt.musicInfos[num];
+			int oneSecBytes = mi.bitsPerSample * mi.channels * mi.rate / 8;
 			header = new byte[44];
 			write("RIFF");	//ckid：4字节 RIFF 标志，大写
 			write(second * oneSecBytes + 44 - 8);//cksize：4字节文件长度，这个长度不包括"RIFF"标志(4字节)和文件长度本身所占字节(4字节),即该长度等于整个文件长度 - 8  
@@ -311,8 +309,8 @@ public class MusicManager extends BaseGroupModule {
 
 		@Override
 		public String toString() {
-			StringBuilder sb=new StringBuilder();
-			sb.append(new String(name)).append(" ");
+			StringBuilder sb = new StringBuilder();
+			sb.append(new String(name, StandardCharsets.UTF_8)).append(" ");
 			sb.append(start).append(" ");
 			sb.append(unknown1).append(" ");
 			sb.append(repeatStart).append(" ");

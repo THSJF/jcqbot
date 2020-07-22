@@ -59,7 +59,7 @@ public class MPicSearch extends BaseGroupModule {
                     needPic = Integer.parseInt(ss[1]);
                     database = ss.length >= 3 ? Integer.parseInt(ss[2]) : 999;
                 }
-                Autoreply.instance.threadPool.execute(new SearchThread(fromGroup, fromQQ, imageFile, needPic, database));
+                SJFExecutors.execute(new SearchThread(fromGroup, fromQQ, imageFile, needPic, database));
             } catch (Exception e) {
                 sendMsg(fromGroup, fromQQ, e.toString());
             }
@@ -81,7 +81,7 @@ public class MPicSearch extends BaseGroupModule {
                     needPic = Integer.parseInt(ss[1]);
                     database = ss.length >= 3 ? Integer.parseInt(ss[2]) : 999;
                 }
-                Autoreply.instance.threadPool.execute(new SearchThread(fromGroup, fromQQ, imageFile, needPic, database));
+                SJFExecutors.execute(new SearchThread(fromGroup, fromQQ, imageFile, needPic, database));
             } catch (Exception e) {
                 sendMsg(fromGroup, fromQQ, e.toString());
             }
@@ -132,7 +132,7 @@ public class MPicSearch extends BaseGroupModule {
 				fInputStream = new FileInputStream(picF);
 				Connection.Response response = Jsoup.connect("https://saucenao.com/search.php?db=" + database).timeout(60000).data("file", "image.jpg", fInputStream).method(Connection.Method.POST).execute();
 				if (response.statusCode() != 200) {
-					Autoreply.instance.threadPool.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, "statusCode" + response.statusCode())));
+					SJFExecutors.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, "statusCode" + response.statusCode())));
 				}
 				mResults = new PicResults(Jsoup.parse(response.body()));
 			} catch (Exception e) {

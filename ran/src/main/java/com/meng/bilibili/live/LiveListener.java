@@ -7,15 +7,14 @@ import com.meng.bilibili.main.*;
 import com.meng.config.*;
 import com.meng.config.javabeans.*;
 import com.meng.config.sanae.*;
+import com.meng.sjfmd.libs.*;
 import com.meng.tools.*;
 import java.io.*;
-import java.lang.reflect.*;
 import java.net.*;
 import java.nio.charset.*;
 import java.util.*;
 import java.util.Map.*;
 import java.util.concurrent.*;
-import org.jsoup.*;
 
 public class LiveListener implements Runnable {
 
@@ -24,7 +23,7 @@ public class LiveListener implements Runnable {
     private ConcurrentHashMap<String, Long> liveTimeMap = new ConcurrentHashMap<>();
 
     public LiveListener() {
-		Autoreply.instance.threadPool.execute(new Runnable() {
+		SJFExecutors.execute(new Runnable() {
 				@Override
 				public void run() {
 					for (PersonInfo cb : ConfigManager.getPersonInfo()) {
@@ -38,7 +37,7 @@ public class LiveListener implements Runnable {
             saveLiveTime();
 		}
         try {
-            liveTimeMap = new Gson().fromJson(Tools.FileTool.readString(liveTimeFile), new TypeToken<ConcurrentHashMap<String, Long>>() {}.getType());
+            liveTimeMap = new Gson().fromJson(FileTool.readString(liveTimeFile), new TypeToken<ConcurrentHashMap<String, Long>>() {}.getType());
 		} catch (Exception e) {
             e.printStackTrace();
 		}
@@ -53,11 +52,11 @@ public class LiveListener implements Runnable {
                 SpaceToLiveJavaBean sjb = new Gson().fromJson(Tools.BilibiliTool.getLiveRoomInfo(personInfo.bid), SpaceToLiveJavaBean.class);
                 if (sjb.data.roomid == 0) {
                     personInfo.bliveRoom = -1;
-                    ConfigManager.saveConfig();
+                    ConfigManager.save();
                     return;
 				}
                 personInfo.bliveRoom = sjb.data.roomid;
-                ConfigManager.saveConfig();
+                ConfigManager.save();
                 System.out.println("检测到用户" + personInfo.name + "(" + personInfo.bid + ")的直播间" + personInfo.bliveRoom);
                 try {
                     Thread.sleep(100);

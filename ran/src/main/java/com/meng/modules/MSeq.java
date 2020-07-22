@@ -3,9 +3,9 @@ package com.meng.modules;
 import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
-import com.meng.config.*;
 import com.meng.SJFInterfaces.*;
-import com.meng.tools.*;
+import com.meng.config.*;
+import com.meng.sjfmd.libs.*;
 import java.io.*;
 import java.nio.charset.*;
 import java.util.*;
@@ -20,7 +20,7 @@ public class MSeq extends BaseGroupModule {
         if (!jsonFile.exists()) {
             saveData();
 		}
-        jsonData = new Gson().fromJson(Tools.FileTool.readString(jsonFile), new TypeToken<HashMap<String, ArrayList<String>>>() {}.getType());
+        jsonData = new Gson().fromJson(FileTool.readString(jsonFile), new TypeToken<HashMap<String, ArrayList<String>>>() {}.getType());
    		for (String key : jsonData.keySet()) {
 			ArrayList<String> al=jsonData.get(key);
 			String[] content=al.toArray(new String[al.size()]);

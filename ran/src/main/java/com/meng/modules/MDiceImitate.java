@@ -7,6 +7,7 @@ import com.meng.SJFInterfaces.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.util.*;
+import com.meng.sjfmd.libs.*;
 
 public class MDiceImitate extends BaseGroupModule {
 	public static String[] spells;
@@ -202,7 +203,7 @@ public class MDiceImitate extends BaseGroupModule {
             }
         }
 		String pname=ConfigManager.getNickName(fromGroup, fromQQ);
-		String md5=Tools.Hash.MD5(String.valueOf(fromQQ + System.currentTimeMillis() / (24 * 60 * 60 * 1000)));
+		String md5=Hash.getMd5Instance().calculate(String.valueOf(fromQQ + System.currentTimeMillis() / (24 * 60 * 60 * 1000)));
 		char c=md5.charAt(0);
 		switch (msg) {
 			case ".jrrp":
@@ -237,7 +238,7 @@ public class MDiceImitate extends BaseGroupModule {
 					Autoreply.sendMessage(fromGroup, 0, String.format("%s今天宜听%s", pname, md5RanStr(fromQQ, music)));
 					return true;
 				case "grandma":
-					if (Tools.Hash.MD5(String.valueOf(fromQQ + System.currentTimeMillis() / (24 * 60 * 60 * 1000))).charAt(0) == '0') {
+					if (Hash.getMd5Instance().calculate(String.valueOf(fromQQ + System.currentTimeMillis() / (24 * 60 * 60 * 1000))).charAt(0) == '0') {
 						Autoreply.sendMessage(fromGroup, 0, String.format("%s今天宜认八云紫当奶奶", pname));
 						return true;
 					}
@@ -257,7 +258,7 @@ public class MDiceImitate extends BaseGroupModule {
 					sss += "\n";
 					sss += String.format("%s今天宜听%s", pname, md5RanStr(fromQQ, music));
 					sss += "\n";
-					if (Tools.Hash.MD5(String.valueOf(fromQQ + System.currentTimeMillis() / (24 * 60 * 60 * 1000))).charAt(0) == '0') {
+					if (Hash.getMd5Instance().calculate(String.valueOf(fromQQ + System.currentTimeMillis() / (24 * 60 * 60 * 1000))).charAt(0) == '0') {
 						sss += String.format("%s今天宜认八云紫当奶奶", pname);
 					} else {
 						sss += String.format("%s今天宜认%s当奶奶", pname, md5RanStr(fromQQ, name));
@@ -506,7 +507,7 @@ public class MDiceImitate extends BaseGroupModule {
     }
 
 	private int md5Random(long fromQQ) {
-		String md5=Tools.Hash.MD5(String.valueOf(fromQQ + System.currentTimeMillis() / (24 * 60 * 60 * 1000)));
+		String md5=Hash.getMd5Instance().calculate(String.valueOf(fromQQ + System.currentTimeMillis() / (24 * 60 * 60 * 1000)));
 		return Integer.parseInt(md5.substring(26), 16);
 	}
 

@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
 import com.meng.config.*;
+import com.meng.sjfmd.libs.*;
 import java.io.*;
 import java.nio.charset.*;
 import java.util.*;
@@ -17,7 +18,7 @@ public class ZanManager {
         if (!jsonBaseConfigFile.exists()) {
             saveConfig();
         }
-        hashSet = new Gson().fromJson(Tools.FileTool.readString(configPath), new TypeToken<HashSet<Long>>() {}.getType());
+        hashSet = new Gson().fromJson(FileTool.readString(configPath), new TypeToken<HashSet<Long>>() {}.getType());
     }
 
     public void sendZan() {

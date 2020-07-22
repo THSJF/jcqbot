@@ -24,12 +24,12 @@ public class MNvzhuang extends BaseGroupModule {
 			File[] files = (new File(Autoreply.appDirectory + "nvzhuang/")).listFiles();
 			File folder = (File) Tools.ArrayTool.rfa(files);
 			File[] pics = folder.listFiles();
-			Autoreply.instance.threadPool.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(pics)))));
+			SJFExecutors.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(pics)))));
 			return true;
 		} else if (msg.endsWith("女装")) {
 			File[] files = (new File(Autoreply.appDirectory + "nvzhuang/" + msg.replace("女装", ""))).listFiles();
 			if (files != null && files.length > 0) {
-				Autoreply.instance.threadPool.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files)))));
+				SJFExecutors.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files)))));
 			}
 			return true;
 		}

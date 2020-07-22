@@ -12,6 +12,7 @@ import java.nio.*;
 import org.java_websocket.*;
 import org.java_websocket.handshake.*;
 import org.java_websocket.server.*;
+import com.meng.sjfmd.libs.*;
 
 public class SanaeServer extends WebSocketServer {
 
@@ -40,13 +41,13 @@ public class SanaeServer extends WebSocketServer {
 		SanaeDataPack sdp = SanaeDataPack.encode(rsdp);
 		switch (rsdp.getOpCode()) {
 			case SanaeDataPack.opConfigFile:
-				sdp.write(Autoreply.gson.toJson(ConfigManager.getConfigHolder()));
+				sdp.write(GSON.toJson(ConfigManager.getConfigHolder()));
 				break;
 			case SanaeDataPack.opGameOverSpell:
 				sdp.write(ModuleManager.getGroupModule(MDiceImitate.class).md5RanStr(rsdp.readLong(), MDiceImitate.spells));
 				break;
 			case SanaeDataPack.opGameOverPersent:
-				String md5=Tools.Hash.MD5(String.valueOf(rsdp.readLong() + System.currentTimeMillis() / (24 * 60 * 60 * 1000)));
+				String md5=Hash.getMd5Instance().calculate(String.valueOf(rsdp.readLong() + System.currentTimeMillis() / (24 * 60 * 60 * 1000)));
 				char c=md5.charAt(0);
 				if (c == '0') {
 					sdp.write(9961);
@@ -75,8 +76,7 @@ public class SanaeServer extends WebSocketServer {
 				ConfigManager.setNickName(rsdp.readLong(), rsdp.readString());
 				break;
 			case SanaeDataPack.opSeqContent:
-				File jsonFile = new File(Autoreply.appDirectory + "seq.json");
-				sdp.write(Tools.FileTool.readString(jsonFile));
+				sdp.write(FileTool.readString(new File(Autoreply.appDirectory + "seq.json")));
 				break;
 			case SanaeDataPack.opAddBlack:
 				ConfigManager.addBlack(rsdp.readLong(), rsdp.readLong());
@@ -104,7 +104,7 @@ public class SanaeServer extends WebSocketServer {
 	}
 
 	public void send(final SanaeDataPack sdp) {
-		Autoreply.instance.threadPool.execute(new Runnable(){
+		SJFExecutors.execute(new Runnable(){
 
 				@Override
 				public void run() {

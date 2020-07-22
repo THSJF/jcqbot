@@ -2,8 +2,9 @@ package com.meng.modules;
 
 import com.google.gson.reflect.*;
 import com.meng.*;
-import com.meng.config.javabeans.*;
 import com.meng.SJFInterfaces.*;
+import com.meng.config.javabeans.*;
+import com.meng.sjfmd.libs.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.nio.charset.*;
@@ -19,8 +20,8 @@ public class MCoinManager extends BaseGroupModule {
 		if (!file.exists()) {
 			saveData();
 		}
-		countMap = Autoreply.gson.fromJson(Tools.FileTool.readString(file), new TypeToken<HashMap<Long, Integer>>() {}.getType());
-		Autoreply.instance.threadPool.execute(new Runnable() {
+		countMap = GSON.fromJson(FileTool.readString(file), new TypeToken<HashMap<Long, Integer>>() {}.getType());
+		SJFExecutors.execute(new Runnable() {
 				@Override
 				public void run() {
 					backupData();
@@ -92,7 +93,7 @@ public class MCoinManager extends BaseGroupModule {
 		try {
 			FileOutputStream fos = new FileOutputStream(file);
 			OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-			writer.write(Autoreply.gson.toJson(countMap));
+			writer.write(GSON.toJson(countMap));
 			writer.flush();
 			fos.close();
 		} catch (Exception e) {
@@ -107,7 +108,7 @@ public class MCoinManager extends BaseGroupModule {
 				File backup = new File(file.getAbsolutePath() + ".bak" + System.currentTimeMillis());
 				FileOutputStream fos = new FileOutputStream(backup);
 				OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-				writer.write(Autoreply.gson.toJson(countMap));
+				writer.write(GSON.toJson(countMap));
 				writer.flush();
 				fos.close();
 			} catch (Exception e) {

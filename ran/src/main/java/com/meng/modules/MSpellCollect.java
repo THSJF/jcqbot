@@ -11,6 +11,7 @@ import java.io.*;
 import java.nio.charset.*;
 import java.util.*;
 import java.util.concurrent.*;
+import com.meng.sjfmd.libs.*;
 
 public class MSpellCollect extends BaseGroupModule {
 	public ConcurrentHashMap<Long,HashSet<String>> userSpellsMap=new ConcurrentHashMap<>();
@@ -27,12 +28,12 @@ public class MSpellCollect extends BaseGroupModule {
         if (!spellFile.exists()) {
             saveConfig();
         }
-        userSpellsMap = Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "/properties/spells.json"), new TypeToken<ConcurrentHashMap<Long,HashSet<String>>>() {}.getType());
+        userSpellsMap = GSON.fromJson(FileTool.readString(Autoreply.appDirectory + "/properties/spells.json"), new TypeToken<ConcurrentHashMap<Long,HashSet<String>>>() {}.getType());
 		archiFile = new File(Autoreply.appDirectory + "/properties/archievement.json");
         if (!archiFile.exists()) {
             saveArchiConfig();
         }
-        archiMap = Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "/properties/archievement.json"), new TypeToken<ConcurrentHashMap<Long,ArchievementBean>>() {}.getType());
+        archiMap = GSON.fromJson(FileTool.readString(Autoreply.appDirectory + "/properties/archievement.json"), new TypeToken<ConcurrentHashMap<Long,ArchievementBean>>() {}.getType());
 		archList.add(new Archievement("恶魔领地", "收集东方红魔乡全部符卡", ArchievementBean.th6All, TH06GameData.spells.length, TH06GameData.spells));
 		archList.add(new Archievement("完美樱花", "收集东方妖妖梦全部符卡",  ArchievementBean.th7All, TH07GameData.spells.length, TH07GameData.spells));
 		archList.add(new Archievement("永恒之夜", "收集东方永夜抄lastspell和lastword外全部符卡",  ArchievementBean.th8All, TH08GameData.spells.length, TH08GameData.spells));
@@ -107,13 +108,13 @@ public class MSpellCollect extends BaseGroupModule {
 		//郭敬明 七个一寸法师
 		// 轻工业( 
 
-		Autoreply.instance.threadPool.execute(new Runnable() {
+		SJFExecutors.execute(new Runnable() {
 				@Override
 				public void run() {
 					backupData();
 				}
 			});
-		Autoreply.instance.threadPool.execute(new Runnable(){
+		SJFExecutors.execute(new Runnable(){
 
 				@Override
 				public void run() {
@@ -473,13 +474,13 @@ public class MSpellCollect extends BaseGroupModule {
                 File backup1= new File(spellFile.getAbsolutePath() + ".bak" + System.currentTimeMillis());
                 FileOutputStream fos1 = new FileOutputStream(backup1);
                 OutputStreamWriter writer1 = new OutputStreamWriter(fos1, StandardCharsets.UTF_8);
-                writer1.write(Autoreply.gson.toJson(userSpellsMap));
+                writer1.write(GSON.toJson(userSpellsMap));
                 writer1.flush();
                 fos1.close();			
 				File ar=new File(archiFile.getAbsolutePath() + ".bak" + System.currentTimeMillis());
 				FileOutputStream fos = new FileOutputStream(ar);
                 OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-                writer.write(Autoreply.gson.toJson(archiMap));
+                writer.write(GSON.toJson(archiMap));
                 writer.flush();
                 fos.close();			
             } catch (Exception e) {
@@ -492,7 +493,7 @@ public class MSpellCollect extends BaseGroupModule {
         try {
             FileOutputStream fos = new FileOutputStream(spellFile);
             OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-            writer.write(Autoreply.gson.toJson(userSpellsMap));
+            writer.write(GSON.toJson(userSpellsMap));
             writer.flush();
             fos.close();
         } catch (IOException e) {
@@ -504,7 +505,7 @@ public class MSpellCollect extends BaseGroupModule {
         try {
             FileOutputStream fos = new FileOutputStream(archiFile);
             OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-            writer.write(Autoreply.gson.toJson(archiMap));
+            writer.write(GSON.toJson(archiMap));
             writer.flush();
             fos.close();
         } catch (IOException e) {

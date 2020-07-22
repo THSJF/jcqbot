@@ -3,8 +3,9 @@ package com.meng.modules;
 import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
-import com.meng.config.*;
 import com.meng.SJFInterfaces.*;
+import com.meng.config.*;
+import com.meng.sjfmd.libs.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.nio.charset.*;
@@ -42,14 +43,14 @@ public class MGroupCounter extends BaseGroupModule {
                 e.printStackTrace();
             }
         }
-        countMap = new Gson().fromJson(Tools.FileTool.readString(file), new TypeToken<HashMap<String, GroupInfo>>() { }.getType());
-        Autoreply.instance.threadPool.execute(new Runnable() {
+        countMap = new Gson().fromJson(FileTool.readString(file), new TypeToken<HashMap<String, GroupInfo>>() { }.getType());
+        SJFExecutors.execute(new Runnable() {
 				@Override
 				public void run() {
 					saveData();
 				}
 			});
-        Autoreply.instance.threadPool.execute(new Runnable() {
+        SJFExecutors.execute(new Runnable() {
 				@Override
 				public void run() {
 					backupData();

@@ -22,25 +22,25 @@ public class MoShenFuSong extends BaseGroupModule {
 		if (msg.contains("大膜法")) { 
             switch (msg) {
                 case "大膜法 膜神复诵":
-					Autoreply.instance.threadPool.execute(new MoRunnable(fromGroup, fromQQ, new Random().nextInt(4)));
+					SJFExecutors.execute(new MoRunnable(fromGroup, fromQQ, new Random().nextInt(4)));
 					break;
                 case "大膜法 膜神复诵 Easy":
-					Autoreply.instance.threadPool.execute(new MoRunnable(fromGroup, fromQQ, 0));
+					SJFExecutors.execute(new MoRunnable(fromGroup, fromQQ, 0));
 					break;
                 case "大膜法 膜神复诵 Normal":
-					Autoreply.instance.threadPool.execute(new MoRunnable(fromGroup, fromQQ, 1));
+					SJFExecutors.execute(new MoRunnable(fromGroup, fromQQ, 1));
 					break;
                 case "大膜法 膜神复诵 Hard":
-					Autoreply.instance.threadPool.execute(new MoRunnable(fromGroup, fromQQ, 2));
+					SJFExecutors.execute(new MoRunnable(fromGroup, fromQQ, 2));
 					break;
                 case "大膜法 膜神复诵 Lunatic":
-					Autoreply.instance.threadPool.execute(new MoRunnable(fromGroup, fromQQ, 3));
+					SJFExecutors.execute(new MoRunnable(fromGroup, fromQQ, 3));
 					break;
                 case "大膜法 膜神复诵 Overdrive":
-					Autoreply.instance.threadPool.execute(new MoRunnable(fromGroup, fromQQ, 4));
+					SJFExecutors.execute(new MoRunnable(fromGroup, fromQQ, 4));
 					break;
                 case "大膜法 c568连":
-					Autoreply.instance.threadPool.execute(new MoRunnable(fromGroup, fromQQ, 5));
+					SJFExecutors.execute(new MoRunnable(fromGroup, fromQQ, 5));
 					break;
                 default:
 					break;
@@ -48,7 +48,7 @@ public class MoShenFuSong extends BaseGroupModule {
             return true;
 		}
 		if (msg.equals("大芳法 芳神复诵")) {
-			Autoreply.instance.threadPool.execute(new MoRunnable(fromGroup, fromQQ, 6));
+			SJFExecutors.execute(new MoRunnable(fromGroup, fromQQ, 6));
 			return true;
 		}
 		return false;

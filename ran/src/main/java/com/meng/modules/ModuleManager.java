@@ -5,12 +5,18 @@ import com.meng.SJFInterfaces.*;
 import com.meng.config.*;
 import com.meng.remote.*;
 import com.meng.tip.*;
+import com.meng.tools.*;
 import com.sobte.cqp.jcq.entity.*;
+import java.lang.reflect.*;
 import java.util.*;
 
 import static com.meng.Autoreply.sendMessage;
 import static com.meng.Autoreply.CC;
 import static com.sobte.cqp.jcq.event.JcqApp.CQ;
+
+/**
+ * @author 司徒灵羽
+ */
 
 public class ModuleManager extends BaseModule implements IGroupMessage, IPrivateMessage, IDiscussMessage, IGroupEvent, IFriendEvent, IRequest, IMsg {
 
@@ -26,43 +32,73 @@ public class ModuleManager extends BaseModule implements IGroupMessage, IPrivate
 
 	@Override
 	public ModuleManager load() {
-		loadModules(new ReflectCommand());
-		loadModules(new SenctenceCollecet().load());
-		loadModules(new MessageRefuse().load());
-		loadModules(new MGroupCounterChart().load());
-		loadModules(new MGroupCounter().load());
-		loadModules(new MUserCounter().load());
-		loadModules(new MTimeTip().load());
-		loadModules(new MAdminMsg().load());
-		loadModules(new MWarnMsg().load());
-		loadModules(new MRepeater().load());
-		loadModules(new MoShenFuSong().load());
-		loadModules(new MCoinManager().load());
-		loadModules(new MMsgAt().load());
-		loadModules(new MBiliUpdate().load());
-		loadModules(new MDiceImitate().load());
-		loadModules(new MDiceCmd().load());
-		loadModules(new MSpellCollect().load());
-		loadModules(new MOcr().load());
-		loadModules(new MBarcode().load());
-		loadModules(new FanPoHaiManager().load());
-		loadModules(new ThreeManager().load());
-		loadModules(new MBanner().load());
-		loadModules(new MusicManager().load());
-		loadModules(new MPicSearch().load());
-		loadModules(new MPicEdit().load());
-		loadModules(new MBiliLinkInfo().load());
-		loadModules(new MNumberProcess().load());
-		loadModules(new MSetu().load());
-		loadModules(new MPohaitu().load());
-		loadModules(new MNvzhuang().load());
-		loadModules(new VirusManager().load());
-		loadModules(new MSeq().load());
-		//modules.add(new MGroupDic().load());
-		loadModules(new GroupEventListener());
-		Autoreply.instance.threadPool.execute(getGroupModule(MTimeTip.class));
+		load(ReflectCommand.class, false);
+		load(SenctenceCollecet.class);
+		load(MessageRefuse.class);
+		load(MGroupCounterChart.class);
+		load(MGroupCounterChart.class);
+		load(MGroupCounter.class);
+		load(MUserCounter.class);
+		load(MTimeTip.class);
+		load(MAdminMsg.class);
+		load(MWarnMsg.class);
+		load(MRepeater.class);
+		//load(MoShenFuSong.class);
+		load(MCoinManager.class);
+		load(MMsgAt.class);
+		//load(MBiliUpdate.class);
+		load(MDiceImitate.class);
+		load(MDiceCmd.class);
+		load(MSpellCollect.class);
+		load(MOcr.class);
+		load(MBarcode.class);
+		//load(FanPoHaiManager.class);
+		load(ThreeManager.class);
+		load(MBanner.class);
+		//load(MusicManager.class);
+		load(MPicSearch.class);
+		load(MPicEdit.class);
+		load(MBiliLinkInfo.class);
+		load(MNumberProcess.class);
+		//load(MSetu.class);
+		//load(MPohaitu.class);
+		//load(MNvzhuang.class);
+		//load(VirusManager.class);
+		load(MSeq.class);
+		//modules.add(new MGroupDic.class);
+		load(GroupEventListener.class, false);
+		SJFExecutors.execute(getGroupModule(MTimeTip.class));
 		instance = this;
 		return this;
+	}
+
+	public void load(Class<?> cls) {
+		load(cls, true);
+	}
+
+	public void load(Class<?> cls, boolean needLoad) {
+		Object o = null;
+		try {
+			o = cls.newInstance();
+			if (needLoad) {
+				Method m = o.getClass().getMethod("load");
+				m.invoke(o);
+			}
+		} catch (Exception e) {
+
+		}
+		if (o == null) {
+			Autoreply.sendMessage(Autoreply.yysGroup, 0, "加载失败:" + cls.getName());
+		}
+		loadModules(o);
+	}
+
+	public void load(String className, boolean needLoad) {
+		try {
+			load(Class.forName(className), needLoad);
+		} catch (ClassNotFoundException e) {
+			Autoreply.sendMessage(Autoreply.yysGroup, 0, "加载失败:" + className);
+		}
 	}
 
 	public void loadModules(Object module) {

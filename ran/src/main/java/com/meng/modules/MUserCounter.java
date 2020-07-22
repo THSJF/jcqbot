@@ -11,9 +11,15 @@ import java.lang.reflect.*;
 import java.nio.charset.*;
 import java.util.*;
 import java.util.Map.*;
+import com.meng.sjfmd.libs.*;
 
-public class MUserCounter extends BaseGroupModule {
-    private HashMap<Long, UserInfo> countMap = new HashMap<>();
+/**
+ * @author 司徒灵羽
+ */
+
+public class MUserCounter extends BaseGroupModule implements IPersistentData {
+
+	private HashMap<Long, UserInfo> countMap = new HashMap<>();
     private File file;
 
     public class UserInfo {
@@ -32,6 +38,7 @@ public class MUserCounter extends BaseGroupModule {
 
 	@Override
 	public MUserCounter load() {
+		
 		file = new File(Autoreply.appDirectory + "properties\\UserCount.json");
         if (!file.exists()) {
             try {
@@ -44,16 +51,14 @@ public class MUserCounter extends BaseGroupModule {
                 e.printStackTrace();
             }
         }
-        Type type = new TypeToken<HashMap<Long, UserInfo>>() {
-        }.getType();
-        countMap = Autoreply.gson.fromJson(Tools.FileTool.readString(file), type);
-        Autoreply.instance.threadPool.execute(new Runnable() {
+        countMap = GSON.fromJson(FileTool.readString(file), new TypeToken<HashMap<Long, UserInfo>>() {}.getType());
+        SJFExecutors.execute(new Runnable() {
 				@Override
 				public void run() {
 					saveData();
 				}
 			});
-        Autoreply.instance.threadPool.execute(new Runnable() {
+        SJFExecutors.execute(new Runnable() {
 				@Override
 				public void run() {
 					backupData();
@@ -387,4 +392,27 @@ public class MUserCounter extends BaseGroupModule {
             }
         }
     }
+	
+	@Override
+	public String getPersistentName() {
+		return "properties\\UserCount.json";
+	}
+
+	@Override
+	public Type getDataType() {
+		return new TypeToken<HashMap<Long, UserInfo>>() {}.getType();
+	}
+
+	@Override
+	public Object getDataBean() {
+		return countMap;
+	}
+
+	@Override
+	public void setDataBean(Object o) {
+		if(o.getClass()!=HashMap.class){
+			throw new RuntimeException("bean类型错误");
+		}
+		countMap = (HashMap<Long, MUserCounter.UserInfo>) o;
+	}
 }

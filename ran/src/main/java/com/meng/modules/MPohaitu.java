@@ -44,7 +44,7 @@ public class MPohaitu extends BaseGroupModule {
 			}
 			File[] files = (new File(Autoreply.appDirectory + "pohai/" + msg.replace("迫害图", ""))).listFiles();
 			if (files != null && files.length > 0) {
-				Autoreply.instance.threadPool.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files)))));
+				SJFExecutors.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files)))));
 				ModuleManager.getGroupModule(MUserCounter.class).incPohaitu(fromQQ);
 				ModuleManager.getGroupModule(MGroupCounter.class).incPohaitu(fromGroup);
 				ModuleManager.getGroupModule(MUserCounter.class).incPohaitu(Autoreply.CQ.getLoginQQ());

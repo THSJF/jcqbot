@@ -1,12 +1,9 @@
 package com.meng;
 
-import com.google.gson.*;
 import com.meng.bilibili.live.*;
 import com.meng.bilibili.main.*;
 import com.meng.config.*;
-import com.meng.config.javabeans.*;
 import com.meng.config.sanae.*;
-import com.meng.SJFInterfaces.*;
 import com.meng.modules.*;
 import com.meng.remote.*;
 import com.meng.tip.*;
@@ -19,8 +16,9 @@ import java.util.*;
 import java.util.concurrent.*;
 
 /**
- * @author Administrator
+ * @author 司徒灵羽
  */
+
 public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest {
 
     public static Autoreply instance;
@@ -37,13 +35,14 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 	public DanmakuListenerManager danmakuListenerManager;
 	public RitsukageServer connectServer;
 	public SanaeServer sanaeServer;
-    public ExecutorService threadPool = Executors.newCachedThreadPool();
 
 	public RemoteWebSocket remoteWebSocket;
 	public String userAgent="Mozilla/5.0 (Windows NT 6.1; WOW64; rv:28.0) Gecko/20100101 Firefox/28.0";
 	public static long mainGroup=1023432971l;
-	public static Gson gson;
+	public static long yysGroup = 617745343L;
 	public static boolean sleeping=true;
+
+	private MessageSender sender;
 
     public static void main(String[] args) {
         CQ = new CoolQ(1000);
@@ -65,14 +64,13 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         // 获取应用数据目录(无需储存数据时，请将此行注释)
         instance = this;
         appDirectory = CQ.getAppDirectory();
-		GsonBuilder gb = new GsonBuilder();
-		gb.setLongSerializationPolicy(LongSerializationPolicy.STRING);
-		gson = gb.create();
-        createdImageFolder = Autoreply.appDirectory + "createdImages/";
+		createdImageFolder = Autoreply.appDirectory + "createdImages/";
         // 返回如：D:\CoolQ\app\com.sobte.cqp.jcq\app\com.example.demo\
         System.out.println("开始加载");
 		ModuleManager.instance = new ModuleManager();
 		ModuleManager.instance.load();
+		sender = (MessageSender) ModuleManager.getModule(MessageSender.class);
+		sender.setCQ(CQ);
 		cookieManager = new CookieManager();
         long startTime = System.currentTimeMillis();
 
@@ -93,12 +91,12 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         FileTipManager fileTipManager = new FileTipManager();
         fileTipManager.addTip(807242547L, 1592608126L);
         //new TimeTipManager().start();
-        threadPool.execute(liveListener);
-        threadPool.execute(updateListener);
+        SJFExecutors.execute(liveListener);
+        SJFExecutors.execute(updateListener);
 		//   threadPool.execute(fileTipManager);
 		danmakuListenerManager = new DanmakuListenerManager();
-        threadPool.execute(new CleanRunnable());
-		threadPool.execute(new BirthdayTip());
+        SJFExecutors.execute(new CleanRunnable());
+		SJFExecutors.execute(new BirthdayTip());
 		ConfigManager.init();
 		System.out.println("加载完成,用时" + (System.currentTimeMillis() - startTime));
         return 0;
@@ -106,7 +104,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 
     @Override
     public int exit() {
-		threadPool.shutdownNow();
+		SJFExecutors.shutdownNow();
 		System.exit(0);
         return 0;
     }
@@ -147,7 +145,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         if (ConfigManager.isBlockQQ(fromQQ) || ConfigManager.isBlockWord(msg)) {
             return MSG_IGNORE;
         }
-        Autoreply.instance.threadPool.execute(new Runnable() {
+        SJFExecutors.execute(new Runnable() {
 				@Override
 				public void run() {
 					if (ConfigManager.isMaster(fromQQ)) {
@@ -202,8 +200,8 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         // return MSG_IGNORE;
 		//if (fromGroup != 1023432971L)
 		//return MSG_IGNORE;
-         if (fromGroup != 617745343L)
-         return MSG_IGNORE;
+		if (fromGroup != 617745343L)
+			return MSG_IGNORE;
         // 如果消息来自匿名者
 		if (fromQQ == 80000000L && !fromAnonymous.equals("")) {
             // 将匿名用户信息放到 anonymous 变量中
@@ -348,9 +346,9 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
      * @return 关于返回值说明, 见 {@link #privateMsg 私聊消息} 的方法
      */
     @Override
-    public int requestAddGroup(int subtype, int sendTime, final long fromGroup, final long fromQQ, String msg, final String responseFlag) {
+    public int requestAddGroup(int subtype, int sendTime, long fromGroup, long fromQQ, String msg, String responseFlag) {
         // 这里处理消息
-
+		ModuleManager.instance.onRequestAddGroup(subtype, sendTime, fromGroup, fromQQ, msg, responseFlag);
         /*
          * REQUEST_ADOPT 通过 REQUEST_REFUSE 拒绝 REQUEST_GROUP_ADD 群添加
          * REQUEST_GROUP_INVITE 群邀请
@@ -378,7 +376,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 		int value=-1;
         // 处理词库中为特殊消息做的标记
 		++RemoteWebSocket.botInfoBean.msgSendPerSec;
-        Tools.CQ.setRandomPop();
+		// Tools.CQ.setRandomPop();
 		try {
             if (msg.startsWith("red:")) {
                 msg = msg.substring(4);
@@ -390,20 +388,20 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
             String[] stri = msg.split(":");
             switch (stri[0]) {
                 case "image":
-					value = CQ.sendGroupMsg(toGroup, stri[2].replace("--image--", instance.CC.image(new File(appDirectory + stri[1]))));
+					value = instance.sender.sendGroup(toGroup, stri[2].replace("--image--", instance.CC.image(new File(appDirectory + stri[1]))));
 					break;
 				case "atFromQQ":
-					value = CQ.sendGroupMsg(toGroup, instance.CC.at(toQQ) + stri[1]);
+					value = instance.sender.sendGroup(toGroup, instance.CC.at(toQQ) + stri[1]);
 					break;
 				case "atQQ":
-					value = CQ.sendGroupMsg(toGroup, instance.CC.at(Long.parseLong(stri[1])) + stri[2]);
+					value = instance.sender.sendGroup(toGroup, instance.CC.at(Long.parseLong(stri[1])) + stri[2]);
 					break;
 				case "imageFolder":
 					File[] files = (new File(appDirectory + stri[1])).listFiles();
-                    value = CQ.sendGroupMsg(toGroup, stri[2].replace("--image--", instance.CC.image((File) Tools.ArrayTool.rfa(files))));
+                    value = instance.sender.sendGroup(toGroup, stri[2].replace("--image--", instance.CC.image((File) Tools.ArrayTool.rfa(files))));
 					break;
 				default:
-					value = CQ.sendGroupMsg(toGroup, msg);
+					value = instance.sender.sendGroup(toGroup, msg);
             }
 			instance.remoteWebSocket.sendMsg(1, toGroup, CQ.getLoginQQ(), msg, value);
         } catch (Exception e) {
@@ -413,6 +411,6 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 	}
 
 	public static int sendMessage(long toQQ, String msg) {
-		return CQ.sendPrivateMsg(toQQ, msg);
+		return instance.sender.sendPrivate(toQQ, msg);
 	}
 }

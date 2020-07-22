@@ -3,8 +3,9 @@ package com.meng.modules;
 import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
-import com.meng.config.*;
 import com.meng.SJFInterfaces.*;
+import com.meng.config.*;
+import com.meng.sjfmd.libs.*;
 import com.meng.tools.*;
 import java.awt.*;
 import java.io.*;
@@ -34,8 +35,8 @@ public class MGroupCounterChart extends BaseGroupModule {
                 e.printStackTrace();
             }
         }
-        groupsMap = Autoreply.gson.fromJson(Tools.FileTool.readString(historyFile), new TypeToken<HashMap<Long, GroupSpeak>>() {}.getType());
-		Autoreply.instance.threadPool.execute(new Runnable() {
+        groupsMap = GSON.fromJson(FileTool.readString(historyFile), new TypeToken<HashMap<Long, GroupSpeak>>() {}.getType());
+		SJFExecutors.execute(new Runnable() {
 				@Override
 				public void run() {
 					saveData();

@@ -15,8 +15,8 @@ public class Main {
 			String s=readString(f);
 			/*
 			 getFragment(PersonInfoFragment.class)
-			*/
-			s = s.replace("ConfigManager.instance", "ConfigManager");
+			 */
+			s = s.replace("Autoreply.instance.threadPool.execute", "SJFExecutors.execute");
 			//System.out.println(s);
 			saveString(f, s);
 		}

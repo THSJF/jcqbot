@@ -1,8 +1,10 @@
 package com.meng.remote;
 
+import com.meng.sjfmd.libs.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.util.*;
+import com.meng.sjfmd.libs.BitConverter.*;
 
 public class BotDataPack {
 
@@ -10,6 +12,7 @@ public class BotDataPack {
 	public byte[] dataArray;
 	public static final short headLength=10;
 	public int dataPointer=0;
+	private BitConverter cvt;
 
 	public static final byte typeByte=0;
 	public static final byte typeShort=1;
@@ -95,9 +98,10 @@ public class BotDataPack {
 
 	private BotDataPack(int opCode) {
 		//length(4) version(2) opCode(4)
-		writeByteDataIntoArray(Tools.BitConverter.getBytes(0));
-		writeByteDataIntoArray(Tools.BitConverter.getBytes((short)1));
-		writeByteDataIntoArray(Tools.BitConverter.getBytes(opCode));
+		cvt = BitConverter.getInstanceLittleEndian();
+		writeByteDataIntoArray(cvt.getBytes(0));
+		writeByteDataIntoArray(cvt.getBytes((short)1));
+		writeByteDataIntoArray(cvt.getBytes(opCode));
 	}   
 
 	private BotDataPack(byte[] pack) {
@@ -110,7 +114,7 @@ public class BotDataPack {
 		for (int i=0;i < data.size();++i) {
 			retData[i] = data.get(i);
 		}
-		byte[] len=Tools.BitConverter.getBytes(retData.length);
+		byte[] len=cvt.getBytes(retData.length);
 		retData[0] = len[0];
 		retData[1] = len[1];
 		retData[2] = len[2];
@@ -120,15 +124,15 @@ public class BotDataPack {
 	}
 
 	public int getLength() {
-		return Tools.BitConverter.toInt(dataArray, 0);
+		return cvt.toInt(dataArray, 0);
 	}  
 
 	public short getVersion() {
-		return Tools.BitConverter.toShort(dataArray, 4);
+		return cvt.toShort(dataArray, 4);
 	}
 
 	public int getOpCode() {
-		return Tools.BitConverter.toShort(dataArray, 6);
+		return cvt.toShort(dataArray, 6);
 	}
 
 	private BotDataPack writeByteDataIntoArray(byte... bs) {
@@ -147,37 +151,37 @@ public class BotDataPack {
 
 	public BotDataPack write(short s) {
 		writeByteDataIntoArray(typeShort);
-		writeByteDataIntoArray(Tools.BitConverter.getBytes(s));
+		writeByteDataIntoArray(cvt.getBytes(s));
 		return this;
 	}
 
 	public BotDataPack write(int i) {
 		writeByteDataIntoArray(typeInt);
-		writeByteDataIntoArray(Tools.BitConverter.getBytes(i));
+		writeByteDataIntoArray(cvt.getBytes(i));
 		return this;
 	}
 
 	public BotDataPack write(long l) {
 		writeByteDataIntoArray(typeLong);
-		writeByteDataIntoArray(Tools.BitConverter.getBytes(l));
+		writeByteDataIntoArray(cvt.getBytes(l));
 		return this;
 	}
 
 	public BotDataPack write(float f) {
 		writeByteDataIntoArray(typeFloat);
-		writeByteDataIntoArray(Tools.BitConverter.getBytes(f));
+		writeByteDataIntoArray(cvt.getBytes(f));
 		return this;
 	}
 
 	public BotDataPack write(double d) {
 		writeByteDataIntoArray(typeDouble);
-		writeByteDataIntoArray(Tools.BitConverter.getBytes(d));
+		writeByteDataIntoArray(cvt.getBytes(d));
 		return this;
 	}
 
 	public BotDataPack write(String s) {
 		writeByteDataIntoArray(typeString);
-		byte[] stringBytes = Tools.BitConverter.getBytes(s);
+		byte[] stringBytes = cvt.getBytes(s);
 		write(stringBytes.length);
 		writeByteDataIntoArray(stringBytes);
 		return this;
@@ -230,7 +234,7 @@ public class BotDataPack {
 
 	public short readShort() {
 		if (dataArray[dataPointer++] == typeShort) {
-			short s = Tools.BitConverter.toShort(dataArray, dataPointer);
+			short s = cvt.toShort(dataArray, dataPointer);
 			dataPointer += 2;
 			return s;
 		}
@@ -239,7 +243,7 @@ public class BotDataPack {
 
 	public int readInt() {
 		if (dataArray[dataPointer++] == typeInt) {
-			int i= Tools.BitConverter.toInt(dataArray, dataPointer);
+			int i= cvt.toInt(dataArray, dataPointer);
 			dataPointer += 4;
 			return i;
 		}
@@ -248,7 +252,7 @@ public class BotDataPack {
 
 	public long readLong() {
 		if (dataArray[dataPointer++] == typeLong) {
-			long l= Tools.BitConverter.toLong(dataArray, dataPointer);
+			long l= cvt.toLong(dataArray, dataPointer);
 			dataPointer += 8;
 			return l;
 		}
@@ -257,7 +261,7 @@ public class BotDataPack {
 
 	public float readFloat() {
 		if (dataArray[dataPointer++] == typeFloat) {
-			float f = Tools.BitConverter.toFloat(dataArray, dataPointer);
+			float f = cvt.toFloat(dataArray, dataPointer);
 			dataPointer += 4;
 			return f;
 		}
@@ -266,7 +270,7 @@ public class BotDataPack {
 
 	public double readDouble() {
 		if (dataArray[dataPointer++] == typeDouble) {
-			double d = Tools.BitConverter.toDouble(dataArray, dataPointer);
+			double d = cvt.toDouble(dataArray, dataPointer);
 			dataPointer += 8;
 			return d;
 		}
@@ -277,7 +281,7 @@ public class BotDataPack {
 		try {
 			if (dataArray[dataPointer++] == typeString) {
 				int len = readInt();
-				String s = Tools.BitConverter.toString(dataArray, dataPointer, len);
+				String s = cvt.toString(dataArray, dataPointer, len);
 				dataPointer += len;
 				return s;
 			}

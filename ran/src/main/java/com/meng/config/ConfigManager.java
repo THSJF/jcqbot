@@ -1,19 +1,19 @@
 package com.meng.config;
 
-import com.google.gson.*;
-import com.google.gson.reflect.*;
 import com.meng.*;
-import com.meng.config.javabeans.*;
-import com.meng.config.sanae.*;
-import com.meng.tools.*;
-import java.io.*;
-import java.lang.reflect.*;
-import java.nio.charset.*;
 import com.meng.SJFInterfaces.*;
+import com.meng.config.*;
+import com.meng.config.javabeans.*;
+import com.meng.tools.*;
 import java.util.*;
+import java.lang.reflect.*;
 
 public class ConfigManager implements IPersistentData {
 
+	/**
+	 * @author 司徒灵羽
+	 */
+	
 	private static ConfigManager instance = new ConfigManager();
     private ConfigHolder configHolder = new ConfigHolder();
 	private static final GroupConfig emptyConfig = new GroupConfig();
@@ -28,7 +28,7 @@ public class ConfigManager implements IPersistentData {
 
     public static void init() {
 		DataPersistenter.read(instance);
-		Autoreply.instance.threadPool.execute(new SJFServerSocket(instance));
+		SJFExecutors.execute(new SJFServerSocket(instance));
     }
 
 	public static void setFunctionEnabled(long fromGroup, int functionID, boolean enable) {
@@ -37,14 +37,14 @@ public class ConfigManager implements IPersistentData {
 		} else {
 			getGroupConfig(fromGroup).f1 &= ~(1 << functionID);
 		}
-		saveConfig();
+		save();
 	}
 
 	public static void addGroupConfig(GroupConfig gc) {
 		instance.configHolder.groupConfigs.add(gc);
-		saveConfig();
+		save();
 	}
-	
+
 	public static void removeGroupConfig(long gcn) {
 		for (GroupConfig gc : instance.configHolder.groupConfigs) {
 			if (gc.n == gcn) {
@@ -52,25 +52,25 @@ public class ConfigManager implements IPersistentData {
 				break;
 			}
 		}
-		saveConfig();
+		save();
 	}
 
 	public static void removeGroupConfig(GroupConfig gc) {
 		instance.configHolder.groupConfigs.remove(gc);
-		saveConfig();
+		save();
 	}
 
 	public static void removeGroupConfig(Collection<GroupConfig> gc) {
 		instance.configHolder.groupConfigs.removeAll(gc);
-		saveConfig();
+		save();
 	}
 
     public static GroupConfig getGroupConfig(long fromGroup) {
-//        for (GroupConfig gc : instance.configHolder.groupConfigs) {
-//            if (fromGroup == gc.n) {
-//                return gc;
-//            }
-//        }
+        for (GroupConfig gc : instance.configHolder.groupConfigs) {
+            if (fromGroup == gc.n) {
+                return gc;
+            }
+        }
         return emptyConfig;
     }
 
@@ -80,12 +80,12 @@ public class ConfigManager implements IPersistentData {
 
 	public static void addBlockQQ(long qq) {
         instance.configHolder.blockOnlyQQ.add(qq);
-		saveConfig();
+		save();
     }
 
 	public static void removeBlockQQ(long qq) {
         instance.configHolder.blockOnlyQQ.remove(qq);
-		saveConfig();
+		save();
     }
 
 	public static boolean isBlockQQ(long qq) {
@@ -95,15 +95,15 @@ public class ConfigManager implements IPersistentData {
 	public static boolean isBlockOnlyQQ(long qq) {
         return instance.configHolder.blockOnlyQQ.contains(qq);
     }
-	
+
 	public static void addBlackQQ(long qq) {
         instance.configHolder.blackQQ.add(qq);
-		saveConfig();
+		save();
     }
 
 	public static void removeBlackQQ(long q) {
 		instance.configHolder.blackQQ.remove(q);
-		saveConfig();
+		save();
 	}
 
     public static boolean isBlackQQ(long qq) {
@@ -112,12 +112,12 @@ public class ConfigManager implements IPersistentData {
 
 	public static void addBlackGroup(long group) {
 		instance.configHolder.blackGroup.add(group);
-		saveConfig();
+		save();
 	}
 
 	public static void removeBlackGroup(long g) {
 		instance.configHolder.blackGroup.remove(g);
-		saveConfig();
+		save();
 	}
 
     public static boolean isBlackGroup(long qq) {
@@ -126,14 +126,14 @@ public class ConfigManager implements IPersistentData {
 
 	public static void addBlockWord(String str) {
 		instance.configHolder.blockWord.add(str);
-		saveConfig();
+		save();
 	}
 
 	public static void removeBlockWord(String str) {
 		instance.configHolder.blockWord.remove(str);
-		saveConfig();
+		save();
 	}
-	
+
     public static boolean isBlockWord(String word) {
         for (String nrw : instance.configHolder.blockWord) {
             if (word.contains(nrw)) {
@@ -145,7 +145,7 @@ public class ConfigManager implements IPersistentData {
 
 	public static void addPersonInfo(PersonInfo pi) {
 		instance.configHolder.personInfos.add(pi);
-		saveConfig();
+		save();
 	}
 
 	public static Set<PersonInfo> getPersonInfo() {
@@ -154,7 +154,7 @@ public class ConfigManager implements IPersistentData {
 
 	public static void removePersonInfo(PersonInfo pi) {
 		instance.configHolder.personInfos.remove(pi);
-		saveConfig();
+		save();
 	}
 
 	public static PersonInfo getPersonInfoFromQQ(long qq) {
@@ -193,18 +193,36 @@ public class ConfigManager implements IPersistentData {
         return null;
 	}
 
+	public static boolean isOwner(long fromQQ) {
+        return instance.configHolder.owner.contains(fromQQ);
+    }
+
+	public static void addOwner(long qq) {
+		instance.configHolder.owner.add(qq);
+		save();
+	}
+
+	public static void removeOwner(long m) {
+		instance.configHolder.owner.remove(m);
+		save();
+	}
+
+	public static Set<Long> getOwners() {
+		return Collections.unmodifiableSet(instance.configHolder.owner);
+	}
+
 	public static boolean isMaster(long fromQQ) {
         return instance.configHolder.masters.contains(fromQQ);
     }
 
 	public static void addMaster(long qq) {
 		instance.configHolder.masters.add(qq);
-		saveConfig();
+		save();
 	}
 
 	public static void removeMaster(long m) {
 		instance.configHolder.masters.remove(m);
-		saveConfig();
+		save();
 	}
 
 	public static Set<Long> getMasters() {
@@ -217,12 +235,12 @@ public class ConfigManager implements IPersistentData {
 
 	public static void addAdmin(long qq) {
 		instance.configHolder.admins.add(qq);
-		saveConfig();
+		save();
 	}
 
 	public static void removeAdmin(long a) {
 		instance.configHolder.admins.remove(a);
-		saveConfig();
+		save();
 	}
 
 	public static Set<Long> getAdmins() {
@@ -235,7 +253,7 @@ public class ConfigManager implements IPersistentData {
 		} else {
 			instance.configHolder.nicknameMap.remove(qq);
 		}
-		saveConfig();
+		save();
 	}
 
 	public static String getNickName(long qq) {
@@ -275,8 +293,8 @@ public class ConfigManager implements IPersistentData {
                 break;
             }
         }
-        saveConfig();
-        Autoreply.instance.threadPool.execute(new Runnable() {
+        save();
+        SJFExecutors.execute(new Runnable() {
 				@Override
 				public void run() {
 					//    HashSet<Group> groups = Tools.CQ.findQQInAllGroup(qq);
@@ -293,7 +311,7 @@ public class ConfigManager implements IPersistentData {
 
 	public static void setOgg(long qqNum) {
 		instance.configHolder.ogg = qqNum;
-		saveConfig();
+		save();
 	}
 
 	public static long getOgg() {
@@ -306,7 +324,7 @@ public class ConfigManager implements IPersistentData {
 	}
 
 	@Override
-	public Class<?> getDataClass() {
+	public Type getDataType() {
 		return ConfigHolder.class;
 	}
 
@@ -317,16 +335,13 @@ public class ConfigManager implements IPersistentData {
 
 	@Override
 	public void setDataBean(Object o) {
-		if (o.getClass() != getDataClass()) {
+		if (o.getClass() != getDataType()) {
 			throw new RuntimeException("bean类型错误");
 		}
 		instance.configHolder = (ConfigHolder) o;
 	}
 
-    public static void saveConfig() {
-		SanaeDataPack sdp = SanaeDataPack.encode(SanaeDataPack.opConfigFile);
-		sdp.write(Autoreply.gson.toJson(ConfigManager.instance.configHolder));
-		Autoreply.instance.sanaeServer.send(sdp);
-        DataPersistenter.save(instance);
+    public static void save() {
+		DataPersistenter.save(instance);
     }
 }

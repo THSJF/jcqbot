@@ -1,9 +1,9 @@
 package com.meng.modules;
 
 import com.meng.*;
-import com.meng.config.*;
 import com.meng.SJFInterfaces.*;
-import java.io.*;
+import com.meng.config.*;
+import com.meng.tools.*;
 import java.util.concurrent.*;
 
 public class MMsgRefuse extends BaseGroupModule {
@@ -12,7 +12,7 @@ public class MMsgRefuse extends BaseGroupModule {
 
 	@Override
 	public MMsgRefuse load() {
-		Autoreply.instance.threadPool.execute(new Runnable(){
+		SJFExecutors.execute(new Runnable(){
 
 				@Override
 				public void run() {

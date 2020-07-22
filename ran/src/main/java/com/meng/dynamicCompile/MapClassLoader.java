@@ -6,6 +6,7 @@ public class MapClassLoader extends ClassLoader {
 	private Map<String,byte[]> classes;
 
 	public MapClassLoader(Map<String,byte[]> classes) {
+		super(getSystemClassLoader());
 		this.classes = classes;
 	}
 

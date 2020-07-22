@@ -3,7 +3,7 @@ package com.meng.bilibili.live;
 import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
-import com.meng.tools.*;
+import com.meng.sjfmd.libs.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.nio.charset.*;
@@ -22,7 +22,7 @@ public class DanmakuListenerManager {
         try {
             Type token = new TypeToken<HashSet<String>>() {
 			  }.getType();
-            motherSet = new Gson().fromJson(Tools.FileTool.readString(notherMapFile), token);
+            motherSet = new Gson().fromJson(FileTool.readString(notherMapFile), token);
 		  } catch (Exception e) {
             e.printStackTrace();
 		  }

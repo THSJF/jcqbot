@@ -3,28 +3,28 @@ package com.meng.modules;
 import com.google.gson.reflect.*;
 import com.meng.*;
 import com.meng.SJFInterfaces.*;
+import com.meng.sjfmd.libs.*;
 import com.meng.tools.*;
-import java.io.*;
 import java.util.*;
+import java.util.concurrent.*;
+
+/**
+ * @author 司徒灵羽
+ */
 
 public class VirusManager extends BaseGroupModule {
-	private ArrayList<VirusBean> vb=new ArrayList<>();
+	private ArrayList<VirusBean> vb = new ArrayList<>();
 
 	@Override
 	public VirusManager load() {
-		Autoreply.instance.threadPool.execute(new Runnable(){
+		SJFExecutors.executeAtFixedRate(new Runnable(){
 
 				@Override
 				public void run() {
-					while (true) {
-						try {
-							String s=Tools.Network.getSourceCode("https://3g.dxy.cn/newh5/view/pneumonia");
-							vb = Autoreply.gson.fromJson(s.substring(s.indexOf("window.getAreaStat = ") + "window.getAreaStat = ".length(), s.indexOf("}catch(e)")), new TypeToken<ArrayList<VirusBean>>(){}.getType());
-							Thread.sleep(600000);
-						} catch (Exception e) {}
-					}
+					String s = Tools.Network.getSourceCode("https://3g.dxy.cn/newh5/view/pneumonia");
+					vb = GSON.fromJson(s.substring(s.indexOf("window.getAreaStat = ") + "window.getAreaStat = ".length(), s.indexOf("}catch(e)")), new TypeToken<ArrayList<VirusBean>>(){}.getType());
 				}
-			});
+			} , 0, 10, TimeUnit.MINUTES);
 		return this;
 	}
 
@@ -38,8 +38,7 @@ public class VirusManager extends BaseGroupModule {
 	}
 
 	public String getV(String placeName) {
-		for (int i=0;i < vb.size();++i) {
-			VirusBean v=vb.get(i);
+		for (VirusBean v : vb) {
 			if (v.provinceName.equals(placeName)) {
 				return v.toString();
 			}

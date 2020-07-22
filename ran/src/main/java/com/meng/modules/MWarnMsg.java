@@ -10,6 +10,10 @@ import java.util.*;
 
 import static com.meng.Autoreply.sendMessage;
 
+/**
+ * @author 司徒灵羽
+ */
+
 public class MWarnMsg extends BaseGroupModule {
     private String lastMsg = "  ";
     private long lastSender = 2;

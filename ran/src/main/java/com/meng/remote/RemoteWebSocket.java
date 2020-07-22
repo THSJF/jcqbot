@@ -3,6 +3,9 @@ package com.meng.remote;
 import com.meng.*;
 import com.meng.config.*;
 import com.meng.config.javabeans.*;
+import com.meng.remote.*;
+import com.meng.sjfmd.libs.*;
+import com.meng.tools.*;
 import com.sobte.cqp.jcq.entity.*;
 import java.net.*;
 import java.nio.*;
@@ -16,7 +19,7 @@ public class RemoteWebSocket extends WebSocketServer {
 	public static BotMsgInfo botInfoBean=new BotMsgInfo();
 	public RemoteWebSocket() {
 		super(new InetSocketAddress(8888));
-		Autoreply.instance.threadPool.execute(new Runnable(){
+		SJFExecutors.execute(new Runnable(){
 
 				@Override
 				public void run() {
@@ -175,7 +178,7 @@ public class RemoteWebSocket extends WebSocketServer {
 				break;
 			case BotDataPack.getConfig:
 				toSend = BotDataPack.encode(rec.getOpCode());
-				toSend.write(Autoreply.gson.toJson(ConfigManager.getConfigHolder()));
+				toSend.write(GSON.toJson(ConfigManager.getConfigHolder()));
 				break;
 			case BotDataPack.opEnableFunction:
 				ConfigManager.setFunctionEnabled(rec.readLong(), rec.readInt(), rec.readInt() == 1);
@@ -193,7 +196,7 @@ public class RemoteWebSocket extends WebSocketServer {
 				ConfigManager.addBlockWord(rec.readString());
 				break;
 			case BotDataPack.addPersonInfo:
-				ConfigManager.addPersonInfo(Autoreply.gson.fromJson(rec.readString(), PersonInfo.class));
+				ConfigManager.addPersonInfo(GSON.fromJson(rec.readString(), PersonInfo.class));
 				break;
 			case BotDataPack.addMaster:
 				long master=rec.readLong();
@@ -233,7 +236,7 @@ public class RemoteWebSocket extends WebSocketServer {
 				ConfigManager.removeBlockWord(rec.readString());
 				break;
 			case BotDataPack.removePersonInfo:
-				ConfigManager.removePersonInfo(Autoreply.gson.fromJson(rec.readString(), PersonInfo.class));
+				ConfigManager.removePersonInfo(GSON.fromJson(rec.readString(), PersonInfo.class));
 				break;
 			case BotDataPack.removeMaster:
 				long rm=rec.readLong();
@@ -255,8 +258,8 @@ public class RemoteWebSocket extends WebSocketServer {
 				ConfigManager.removeBlackGroup(rec.readLong());
 				break;
 			case BotDataPack.setPersonInfo:
-				PersonInfo oldPersonInfo = Autoreply.gson.fromJson(rec.readString(), PersonInfo.class);
-				PersonInfo newPersonInfo = Autoreply.gson.fromJson(rec.readString(), PersonInfo.class);
+				PersonInfo oldPersonInfo = GSON.fromJson(rec.readString(), PersonInfo.class);
+				PersonInfo newPersonInfo = GSON.fromJson(rec.readString(), PersonInfo.class);
 				for (PersonInfo pi : ConfigManager.getPersonInfo()) {
 					if (pi.name.equals(oldPersonInfo.name) && pi.qq == oldPersonInfo.qq && pi.bid == oldPersonInfo.bid && pi.bliveRoom == oldPersonInfo.bliveRoom) {
 						ConfigManager.removePersonInfo(oldPersonInfo);
@@ -285,7 +288,7 @@ public class RemoteWebSocket extends WebSocketServer {
 		}
 		if (rec.getOpCode() >= BotDataPack.opEnableFunction && rec.getOpCode() <= BotDataPack.setPersonInfo) {
 			conn.send(message.array());
-			ConfigManager.saveConfig();
+			ConfigManager.save();
 		}
 		if (toSend != null) {
 			conn.send(toSend.getData());

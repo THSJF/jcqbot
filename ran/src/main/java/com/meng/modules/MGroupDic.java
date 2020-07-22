@@ -11,6 +11,7 @@ import java.lang.reflect.*;
 import java.nio.charset.*;
 import java.util.*;
 import java.util.regex.*;
+import com.meng.sjfmd.libs.*;
 
 public class MGroupDic extends BaseGroupModule {
 
@@ -23,7 +24,7 @@ public class MGroupDic extends BaseGroupModule {
         if (!dicFile.exists()) {
             saveDic(dicFile, dic);
         }
-        dic = new Gson().fromJson(Tools.FileTool.readString(dicFile), new TypeToken<HashMap<String, ArrayList<String>>>() {}.getType());
+        dic = new Gson().fromJson(FileTool.readString(dicFile), new TypeToken<HashMap<String, ArrayList<String>>>() {}.getType());
 		return this;
 	}
 
@@ -61,9 +62,7 @@ public class MGroupDic extends BaseGroupModule {
 			if (!dicFile.exists()) {
 				saveDic(dicFile, dic);
 			}
-			Type type = new TypeToken<HashMap<String, ArrayList<String>>>() {
-			}.getType();
-			dic = Autoreply.gson.fromJson(Tools.FileTool.readString(dicFile), type);
+			dic = GSON.fromJson(FileTool.readString(dicFile), new TypeToken<HashMap<String, ArrayList<String>>>() {}.getType());
 		}
 		public boolean checkMsg(long group, long qq, String msg) {
 			for (String key : dic.keySet()) {

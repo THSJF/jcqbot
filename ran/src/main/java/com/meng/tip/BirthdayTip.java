@@ -2,14 +2,12 @@ package com.meng.tip;
 
 import com.google.gson.reflect.*;
 import com.meng.*;
+import com.meng.sjfmd.libs.*;
 import com.meng.tools.*;
 import com.sobte.cqp.jcq.entity.*;
 import java.io.*;
-import java.lang.reflect.*;
 import java.nio.charset.*;
 import java.util.*;
-
-import com.sobte.cqp.jcq.entity.Member;
 
 public class BirthdayTip implements Runnable {
 	private HashSet<Long> tiped=new HashSet<Long>();
@@ -26,7 +24,7 @@ public class BirthdayTip implements Runnable {
 		if (!ageFile.exists()) {
             save();
         }
-        memberMap = Autoreply.gson.fromJson(Tools.FileTool.readString(ageFile), new TypeToken<HashMap<Long,Integer>>() {}.getType());
+        memberMap = GSON.fromJson(FileTool.readString(ageFile), new TypeToken<HashMap<Long,Integer>>() {}.getType());
 	}
 
 	@Override
@@ -64,7 +62,7 @@ public class BirthdayTip implements Runnable {
         try {
             FileOutputStream fos = new FileOutputStream(ageFile);
             OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-            writer.write(Autoreply.gson.toJson(memberMap));
+            writer.write(GSON.toJson(memberMap));
             writer.flush();
             fos.close();
         } catch (IOException e) {

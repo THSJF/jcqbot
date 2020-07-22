@@ -10,6 +10,10 @@ import java.io.*;
 import java.util.*;
 import javax.imageio.*;
 
+/**
+ * @author 司徒灵羽
+ */
+
 public class FanPoHaiManager extends BaseGroupModule {
     private HashSet<FingerPrint> fingerPrints = new HashSet<>(64);
     private int pohaicishu = 0;
@@ -17,7 +21,7 @@ public class FanPoHaiManager extends BaseGroupModule {
 
 	@Override
     public FanPoHaiManager load() {
-		Autoreply.instance.threadPool.execute(new Runnable() {
+		SJFExecutors.execute(new Runnable() {
 				@Override
 				public void run() {
 					File[] pohaitu = new File(Autoreply.appDirectory + "fan\\").listFiles();

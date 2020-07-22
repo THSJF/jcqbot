@@ -1,17 +1,23 @@
 package com.meng.modules;
 
 import com.meng.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.config.*;
 import com.meng.config.javabeans.*;
-import com.meng.SJFInterfaces.*;
+import com.meng.tools.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.*;
+
+/**
+ * @author 司徒灵羽
+ */
 
 public class ThreeManager extends BaseGroupModule {
 
-	private HashMap<Long,Boolean> changeMap=new HashMap<>();
-	private HashSet<Long> checkSet=new HashSet<>();
+	private HashMap<Long,Boolean> changeMap = new HashMap<>();
+	private HashSet<Long> checkSet = new HashSet<>();
 
 	@Override
     public ThreeManager load() {
@@ -24,42 +30,35 @@ public class ThreeManager extends BaseGroupModule {
 				checkSet.add(pi.qq);
 			}
 		}
-        Autoreply.instance.threadPool.execute(new Runnable(){
+		File folder = new File(Autoreply.appDirectory + "user\\");
+		if (!folder.exists()) {
+			folder.mkdirs();
+		}
+        SJFExecutors.executeAtFixedRate(new Runnable(){
 
 				@Override
 				public void run() {
-					while (true) {
-						for (long fromQQ:checkSet) {
-							if (changeMap.get(fromQQ) != null && changeMap.get(fromQQ)) {
-								return;
-							}
-							File folder = new File(Autoreply.appDirectory + "user\\");
-							if (!folder.exists()) {
-								folder.mkdirs();
-							}
-							File headImageFile = new File(Autoreply.appDirectory + "user\\" + fromQQ + ".jpg");
-							if (!headImageFile.exists()) {
-								downloadHead(fromQQ, "");
-								changeMap.put(fromQQ, false);
-								return;
-							}
-							if (downloadHead(fromQQ, "a").length() == headImageFile.length()) {
-								changeMap.put(fromQQ, false);
-								return;
-							}
-							changeMap.put(fromQQ, true);
-							try {
-								Thread.sleep(2000);
-							} catch (InterruptedException e) {}
+					for (long fromQQ:checkSet) {
+						if (changeMap.get(fromQQ) != null && changeMap.get(fromQQ)) {
+							return;
 						}
+						File headImageFile = new File(Autoreply.appDirectory + "user\\" + fromQQ + ".jpg");
+						if (!headImageFile.exists()) {
+							downloadHead(fromQQ, "");
+							changeMap.put(fromQQ, false);
+							return;
+						}
+						if (downloadHead(fromQQ, "a").length() == headImageFile.length()) {
+							changeMap.put(fromQQ, false);
+							return;
+						}
+						changeMap.put(fromQQ, true);
 						try {
-							Thread.sleep(60000);
-						} catch (InterruptedException e) {
-
-						}
+							Thread.sleep(2000);
+						} catch (InterruptedException e) {}
 					}
 				}
-			});
+			}, 0, 10, TimeUnit.MINUTES);
 		return this;
     }
 

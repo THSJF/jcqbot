@@ -1,9 +1,9 @@
 package com.meng.config.javabeans;
 
-import com.google.gson.*;
 import com.google.gson.reflect.*;
-import com.meng.*;
 import com.meng.config.*;
+import com.meng.config.javabeans.*;
+import com.meng.sjfmd.libs.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.lang.reflect.*;
@@ -19,7 +19,6 @@ public class RitsukageDataPack {
 	private HashSet<Long> ritsukageLongSet=null;
 	private HashSet<String> ritsukageStringSet=null;
 	private PersonInfo ritsukagePersonInfo=null;
-	private Gson gson;
 	private int writePointer=0;
 
 	/*
@@ -141,19 +140,18 @@ public class RitsukageDataPack {
 	}
 
 	private RitsukageDataPack(short opCode, long timeStamp) {
-		gson = Autoreply.gson;
 		data = new byte[headLength];
 		ritsukageBean = new RitsukageBean();
-		write(Tools.BitConverter.getBytes(data.length));
-		write(Tools.BitConverter.getBytes(headLength));
-		write(Tools.BitConverter.getBytes((short)1));
-		write(Tools.BitConverter.getBytes(timeStamp));
-		write(Tools.BitConverter.getBytes(ConfigManager.getOgg()));
-		write(Tools.BitConverter.getBytes(opCode));
+		BitConverter cvt = BitConverter.getInstanceLittleEndian();
+		write(cvt.getBytes(data.length));
+		write(cvt.getBytes(headLength));
+		write(cvt.getBytes((short)1));
+		write(cvt.getBytes(timeStamp));
+		write(cvt.getBytes(ConfigManager.getOgg()));
+		write(cvt.getBytes(opCode));
 	}   
 
 	private RitsukageDataPack(byte[] pack) {
-		gson = Autoreply.gson;
 		data = pack;
 		String s="";
 		try {
@@ -184,21 +182,21 @@ public class RitsukageDataPack {
 			case RitsukageDataPack._3returnLiveList:
 				Type ritsucageSetType = new TypeToken<HashSet<PersonInfo>>() {
 				}.getType();
-				ritsukageSet = gson.fromJson(s, ritsucageSetType);
+				ritsukageSet = GSON.fromJson(s, ritsucageSetType);
 				break;
 			case RitsukageDataPack._13returnPersonInfo:
-				ritsukagePersonInfo = gson.fromJson(s, PersonInfo.class);
+				ritsukagePersonInfo = GSON.fromJson(s, PersonInfo.class);
 				break;
 			case RitsukageDataPack._19returnFind:
 				Type ritsucageLongSetType = new TypeToken<HashSet<Long>>() {
 				}.getType();
-				ritsukageLongSet = gson.fromJson(s, ritsucageLongSetType);
+				ritsukageLongSet = GSON.fromJson(s, ritsucageLongSetType);
 				break;
 			case RitsukageDataPack._21returnPic:
 				//saveFile(System.currentTimeMillis() + "", data);
 				break;
 			default:
-				ritsukageBean = gson.fromJson(s, RitsukageBean.class);
+				ritsukageBean = GSON.fromJson(s, RitsukageBean.class);
 				break;
 		}
 	} 
@@ -211,35 +209,35 @@ public class RitsukageDataPack {
 			retData = new byte[headLength + byteArray.length];	
 		} else if (ritsukageSet != null) {
 			try {
-				byteArray = gson.toJson(ritsukageSet).getBytes("utf-8");
+				byteArray = GSON.toJson(ritsukageSet).getBytes("utf-8");
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 				return null;
 			}
 		} else if (ritsukagePersonInfo != null) {	
 			try {
-				byteArray = gson.toJson(ritsukagePersonInfo).getBytes("utf-8");
+				byteArray = GSON.toJson(ritsukagePersonInfo).getBytes("utf-8");
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 				return null;
 			}
 		} else if (ritsukageLongSet != null) {
 			try {
-				byteArray = gson.toJson(ritsukageLongSet).getBytes("utf-8");
+				byteArray = GSON.toJson(ritsukageLongSet).getBytes("utf-8");
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 				return null;
 			}
 		} else if (ritsukageStringSet != null) {
 			try {
-				byteArray = gson.toJson(ritsukageStringSet).getBytes("utf-8");
+				byteArray = GSON.toJson(ritsukageStringSet).getBytes("utf-8");
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 				return null;
 			}
 		} else if (ritsukageBean != null) {
 			try {
-				byteArray = gson.toJson(ritsukageBean).replaceAll(",\"s[1-9]\":\"\"", "").replaceAll(",\"n[1-9]\":\"0\"", "").getBytes("utf-8");
+				byteArray = GSON.toJson(ritsukageBean).replaceAll(",\"s[1-9]\":\"\"", "").replaceAll(",\"n[1-9]\":\"0\"", "").getBytes("utf-8");
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 				return null;
@@ -253,7 +251,7 @@ public class RitsukageDataPack {
 			}
 		}
 		retData = Tools.ArrayTool.mergeArray(data, byteArray);
-		byte[] len=Tools.BitConverter.getBytes(retData.length);
+		byte[] len=BitConverter.getInstanceLittleEndian().getBytes(retData.length);
 		retData[0] = len[0];
 		retData[1] = len[1];
 		retData[2] = len[2];
@@ -262,27 +260,27 @@ public class RitsukageDataPack {
 	}
 
 	public int getLength() {
-		return Tools.BitConverter.toInt(data, 0);
+		return BitConverter.getInstanceLittleEndian().toInt(data, 0);
 	}  
 
 	public short getHeadLength() {
-		return Tools.BitConverter.toShort(data, 4);
+		return BitConverter.getInstanceLittleEndian().toShort(data, 4);
 	}
 
 	public short getVersion() {
-		return Tools.BitConverter.toShort(data, 6);
+		return BitConverter.getInstanceLittleEndian().toShort(data, 6);
 	}
 
 	public long getTimeStamp() {
-		return Tools.BitConverter.toLong(data, 8);
+		return BitConverter.getInstanceLittleEndian().toLong(data, 8);
 	}
 
 	public long getTarget() {
-		return Tools.BitConverter.toLong(data, 16);
+		return BitConverter.getInstanceLittleEndian().toLong(data, 16);
 	}
 
 	public short getOpCode() {
-		return Tools.BitConverter.toShort(data, 24);
+		return BitConverter.getInstanceLittleEndian().toShort(data, 24);
 	}
 
 	public void write(PersonInfo pi) {

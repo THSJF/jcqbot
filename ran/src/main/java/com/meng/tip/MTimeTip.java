@@ -30,7 +30,7 @@ public class MTimeTip extends BaseGroupModule implements Runnable {
             if (c.get(Calendar.MINUTE) == 0) {
                 tipedAlice = false;
                 if (c.get(Calendar.HOUR_OF_DAY) == 23) {
-                    Autoreply.instance.threadPool.execute(new Runnable() {
+                    SJFExecutors.execute(new Runnable() {
 							@Override
 							public void run() {
 								for (GroupConfig groupConfig : ConfigManager.getGroupConfigs()) {
@@ -51,7 +51,7 @@ public class MTimeTip extends BaseGroupModule implements Runnable {
                 }
                 if (c.get(Calendar.HOUR_OF_DAY) == 6) {
                     Autoreply.sleeping = false;
-					Autoreply.instance.threadPool.execute(new Runnable(){
+					SJFExecutors.execute(new Runnable(){
 
 							@Override
 							public void run() {

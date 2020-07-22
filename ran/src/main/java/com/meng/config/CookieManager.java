@@ -2,9 +2,9 @@ package com.meng.config;
 
 import com.google.gson.reflect.*;
 import com.meng.*;
+import com.meng.sjfmd.libs.*;
 import com.meng.tools.*;
 import java.io.*;
-import java.lang.reflect.*;
 import java.nio.charset.*;
 import java.util.concurrent.*;
 
@@ -17,7 +17,7 @@ public class CookieManager {
         if (!jsonBaseConfigFile.exists()) {
             saveConfig();
 		}
-        cookieMap = Autoreply.gson.fromJson(Tools.FileTool.readString(Autoreply.appDirectory + "cookieMap.json"), new TypeToken<ConcurrentHashMap<Integer,String>>() {}.getType());
+        cookieMap = GSON.fromJson(FileTool.readString(Autoreply.appDirectory + "cookieMap.json"), new TypeToken<ConcurrentHashMap<Integer,String>>() {}.getType());
 	}
 
 	public void setGrzx(String grzx) {
@@ -65,7 +65,7 @@ public class CookieManager {
             File file = new File(Autoreply.appDirectory + "cookieMap.json");
             FileOutputStream fos = new FileOutputStream(file);
             OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-            writer.write(Autoreply.gson.toJson(cookieMap));
+            writer.write(GSON.toJson(cookieMap));
             writer.flush();
             fos.close();
 		} catch (IOException e) {

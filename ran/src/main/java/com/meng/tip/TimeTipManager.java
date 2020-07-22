@@ -3,6 +3,8 @@ package com.meng.tip;
 import com.meng.*;
 import java.io.*;
 import java.util.*;
+import com.meng.tools.*;
+import java.util.concurrent.*;
 
 public class TimeTipManager implements Runnable {
     private HashSet<TimeTipItem> hashSet = new HashSet<>();
@@ -20,6 +22,8 @@ public class TimeTipManager implements Runnable {
 								Autoreply.sendMessage(233861874L, 0, Autoreply.instance.CC.image(new File(Autoreply.appDirectory + "pic\\提醒\\jieli.jpg")));
 							}
 						}));
+						//SJFExecutors.scheduleAtFixedRate(this,0,1,TimeUnit.DAYS);
+						
     }
 
     @Override

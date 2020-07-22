@@ -2,10 +2,11 @@ package com.meng.modules;
 
 import com.google.gson.*;
 import com.meng.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.bilibili.live.*;
 import com.meng.config.*;
 import com.meng.config.javabeans.*;
-import com.meng.SJFInterfaces.*;
+import com.meng.sjfmd.libs.*;
 import com.meng.tools.*;
 import com.meng.tools.override.*;
 import com.sobte.cqp.jcq.entity.*;
@@ -126,7 +127,7 @@ public class MAdminMsg extends BaseGroupModule {
             }
             ConfigManager.getGroupConfig(fromGroup).setMainSwitchEnable(true);
             Autoreply.sendMessage(fromGroup, fromQQ, "已启用");
-            ConfigManager.saveConfig();
+            ConfigManager.save();
 			return true;
 		}
 
@@ -262,7 +263,7 @@ public class MAdminMsg extends BaseGroupModule {
 				ConfigManager.addBlockQQ(qq);
 				sb.append(qq).append(" ");
 			}
-			ConfigManager.saveConfig();
+			ConfigManager.save();
 			Autoreply.sendMessage(fromGroup, fromQQ, sb.toString());
 			return true;
 		}
@@ -275,7 +276,7 @@ public class MAdminMsg extends BaseGroupModule {
 				ConfigManager.addBlackQQ(qq);
 				sb.append(qq).append(" ");
 			}
-			ConfigManager.saveConfig();
+			ConfigManager.save();
 			Autoreply.sendMessage(fromGroup, fromQQ, sb.toString());
 			return true;
 		}
@@ -296,16 +297,15 @@ public class MAdminMsg extends BaseGroupModule {
 					hashSet.add(personInfo);
 				}
 			}
-			Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.gson.toJson(hashSet));
+			Autoreply.sendMessage(fromGroup, fromQQ, GSON.toJson(hashSet));
 			return true;
 		}
 		if (msg.equals("线程数")) {
-			ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Autoreply.instance.threadPool;
-			String s = "taskCount：" + threadPoolExecutor.getTaskCount() + "\n" +
-				"completedTaskCount：" + threadPoolExecutor.getCompletedTaskCount() + "\n" +
-				"largestPoolSize：" + threadPoolExecutor.getLargestPoolSize() + "\n" +
-				"poolSize：" + threadPoolExecutor.getPoolSize() + "\n" +
-				"activeCount：" + threadPoolExecutor.getActiveCount();
+			String s = "taskCount：" + SJFExecutors.getTaskCount() + "\n" +
+				"completedTaskCount：" + SJFExecutors.getCompletedTaskCount() + "\n" +
+				"largestPoolSize：" + SJFExecutors.getLargestPoolSize() + "\n" +
+				"poolSize：" + SJFExecutors.getPoolSize() + "\n" +
+				"activeCount：" + SJFExecutors.getActiveCount();
 			Autoreply.sendMessage(fromGroup, fromQQ, s);
 			return true;
 		}
@@ -371,10 +371,10 @@ public class MAdminMsg extends BaseGroupModule {
 			}
 			switch (strings[2]) {
 				case "喵":
-					Autoreply.instance.threadPool.execute(new DeleteMessageRunnable(Autoreply.sendMessage(Long.parseLong(strings[1]), 0, Autoreply.instance.CC.record("miao.mp3"))));
+					SJFExecutors.execute(new DeleteMessageRunnable(Autoreply.sendMessage(Long.parseLong(strings[1]), 0, Autoreply.instance.CC.record("miao.mp3"))));
 					break;
 				case "娇喘":
-					Autoreply.instance.threadPool.execute(new DeleteMessageRunnable(Autoreply.sendMessage(Long.parseLong(strings[1]), 0, Autoreply.instance.CC.record("mmm.mp3"))));
+					SJFExecutors.execute(new DeleteMessageRunnable(Autoreply.sendMessage(Long.parseLong(strings[1]), 0, Autoreply.instance.CC.record("mmm.mp3"))));
 					break;
 				default:
 					Autoreply.sendMessage(Long.parseLong(strings[1]), 0, strings[2]);

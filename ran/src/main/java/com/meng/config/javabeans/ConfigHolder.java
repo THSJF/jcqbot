@@ -9,7 +9,8 @@ public class ConfigHolder {
     public HashSet<Long> blackGroup = new HashSet<>();
     public HashSet<String> blockWord = new HashSet<>();
     public HashSet<PersonInfo> personInfos = new HashSet<>();
-    public HashSet<Long> masters = new HashSet<>();
+    public HashSet<Long> owner = new HashSet<>();
+	public HashSet<Long> masters = new HashSet<>();
     public HashSet<Long> admins = new HashSet<>();
     public HashMap<Long,String> nicknameMap = new HashMap<>();
 	public long ogg = 0;

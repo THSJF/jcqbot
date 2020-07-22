@@ -10,6 +10,10 @@ import static com.meng.Autoreply.sendMessage;
 import static com.meng.Autoreply.CC;
 import static com.sobte.cqp.jcq.event.JcqApp.CQ;
 
+/**
+ * @author 司徒灵羽
+ */
+
 public class GroupEventListener implements IGroupEvent ,IRequest {
 
 	@Override
