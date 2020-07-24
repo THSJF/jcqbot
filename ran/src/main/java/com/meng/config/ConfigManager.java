@@ -335,9 +335,6 @@ public class ConfigManager implements IPersistentData {
 
 	@Override
 	public void setDataBean(Object o) {
-		if (o.getClass() != getDataType()) {
-			throw new RuntimeException("bean类型错误");
-		}
 		instance.configHolder = (ConfigHolder) o;
 	}
 

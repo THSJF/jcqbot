@@ -30,7 +30,7 @@ public class DataPersistenter {
 
 	public static boolean read(IPersistentData pb) {    
         try {
-			pb.setDataBean(GSON.fromJson(FileTool.readString(Autoreply.appDirectory + pb.getPersistentName()), pb.getDataClass()));
+			pb.setDataBean(GSON.fromJson(FileTool.readString(Autoreply.appDirectory + pb.getPersistentName()), pb.getDataType()));
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();

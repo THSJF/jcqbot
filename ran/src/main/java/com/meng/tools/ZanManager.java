@@ -8,8 +8,35 @@ import com.meng.sjfmd.libs.*;
 import java.io.*;
 import java.nio.charset.*;
 import java.util.*;
+import com.meng.SJFInterfaces.*;
+import java.lang.reflect.*;
 
-public class ZanManager {
+/**
+ * @author 司徒灵羽
+ */
+
+public class ZanManager implements IPersistentData {
+
+	@Override
+	public String getPersistentName() {
+		return "configV3_zan.json";
+	}
+
+	@Override
+	public Type getDataType() {
+		return new TypeToken<HashSet<Long>>(){}.getType();
+	}
+
+	@Override
+	public Object getDataBean() {
+		return hashSet;
+	}
+
+	@Override
+	public void setDataBean(Object o) {
+		hashSet = (HashSet<Long>) o;
+	}
+
     private HashSet<Long> hashSet = new HashSet<>();
     private String configPath = Autoreply.appDirectory + "configV3_zan.json";
 

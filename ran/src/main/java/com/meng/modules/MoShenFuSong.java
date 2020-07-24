@@ -7,6 +7,10 @@ import com.meng.tools.*;
 import java.io.*;
 import java.util.*;
 
+/**
+ * @author 司徒灵羽
+ */
+ 
 public class MoShenFuSong extends BaseGroupModule {
 
 	@Override
@@ -20,23 +24,23 @@ public class MoShenFuSong extends BaseGroupModule {
 			return false;
 		}
 		if (msg.contains("大膜法")) { 
-            switch (msg) {
+            switch (msg.toLowerCase()) {
                 case "大膜法 膜神复诵":
 					SJFExecutors.execute(new MoRunnable(fromGroup, fromQQ, new Random().nextInt(4)));
 					break;
-                case "大膜法 膜神复诵 Easy":
+                case "大膜法 膜神复诵 easy":
 					SJFExecutors.execute(new MoRunnable(fromGroup, fromQQ, 0));
 					break;
-                case "大膜法 膜神复诵 Normal":
+                case "大膜法 膜神复诵 normal":
 					SJFExecutors.execute(new MoRunnable(fromGroup, fromQQ, 1));
 					break;
-                case "大膜法 膜神复诵 Hard":
+                case "大膜法 膜神复诵 hard":
 					SJFExecutors.execute(new MoRunnable(fromGroup, fromQQ, 2));
 					break;
-                case "大膜法 膜神复诵 Lunatic":
+                case "大膜法 膜神复诵 lunatic":
 					SJFExecutors.execute(new MoRunnable(fromGroup, fromQQ, 3));
 					break;
-                case "大膜法 膜神复诵 Overdrive":
+                case "大膜法 膜神复诵 overdrive":
 					SJFExecutors.execute(new MoRunnable(fromGroup, fromQQ, 4));
 					break;
                 case "大膜法 c568连":

@@ -95,7 +95,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
         SJFExecutors.execute(updateListener);
 		//   threadPool.execute(fileTipManager);
 		danmakuListenerManager = new DanmakuListenerManager();
-        SJFExecutors.execute(new CleanRunnable());
+        new CleanRunnable();
 		SJFExecutors.execute(new BirthdayTip());
 		ConfigManager.init();
 		System.out.println("加载完成,用时" + (System.currentTimeMillis() - startTime));

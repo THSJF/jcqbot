@@ -1,17 +1,15 @@
 package com.meng.modules;
 
-import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
-import com.meng.config.*;
 import com.meng.SJFInterfaces.*;
+import com.meng.config.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.lang.reflect.*;
-import java.nio.charset.*;
 import java.util.*;
 import java.util.Map.*;
-import com.meng.sjfmd.libs.*;
+import java.util.concurrent.*;
 
 /**
  * @author 司徒灵羽
@@ -20,7 +18,6 @@ import com.meng.sjfmd.libs.*;
 public class MUserCounter extends BaseGroupModule implements IPersistentData {
 
 	private HashMap<Long, UserInfo> countMap = new HashMap<>();
-    private File file;
 
     public class UserInfo {
         public int speak = 0;
@@ -38,32 +35,13 @@ public class MUserCounter extends BaseGroupModule implements IPersistentData {
 
 	@Override
 	public MUserCounter load() {
-		
-		file = new File(Autoreply.appDirectory + "properties\\UserCount.json");
-        if (!file.exists()) {
-            try {
-                FileOutputStream fos = new FileOutputStream(file);
-                OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-                writer.write(new Gson().toJson(countMap));
-                writer.flush();
-                fos.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        countMap = GSON.fromJson(FileTool.readString(file), new TypeToken<HashMap<Long, UserInfo>>() {}.getType());
-        SJFExecutors.execute(new Runnable() {
+		DataPersistenter.read(this);
+		SJFExecutors.executeAtFixedRate(new Runnable() {
 				@Override
 				public void run() {
 					saveData();
 				}
-			});
-        SJFExecutors.execute(new Runnable() {
-				@Override
-				public void run() {
-					backupData();
-				}
-			});
+			}, 0, 1, TimeUnit.MINUTES);
 		return this;
     }
 
@@ -363,36 +341,9 @@ public class MUserCounter extends BaseGroupModule implements IPersistentData {
     }
 
     private void saveData() {
-        while (true) {
-            try {
-                Thread.sleep(60000);
-                FileOutputStream fos = new FileOutputStream(file);
-                OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-                writer.write(new Gson().toJson(countMap));
-                writer.flush();
-                fos.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+		DataPersistenter.save(this);
     }
 
-    private void backupData() {
-        while (true) {
-            try {
-                Thread.sleep(86400000);
-                File backup = new File(file.getAbsolutePath() + ".bak" + System.currentTimeMillis());
-                FileOutputStream fos = new FileOutputStream(backup);
-                OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-                writer.write(new Gson().toJson(countMap));
-                writer.flush();
-                fos.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-	
 	@Override
 	public String getPersistentName() {
 		return "properties\\UserCount.json";
@@ -410,9 +361,6 @@ public class MUserCounter extends BaseGroupModule implements IPersistentData {
 
 	@Override
 	public void setDataBean(Object o) {
-		if(o.getClass()!=HashMap.class){
-			throw new RuntimeException("bean类型错误");
-		}
-		countMap = (HashMap<Long, MUserCounter.UserInfo>) o;
+		countMap = (HashMap) o;
 	}
 }

@@ -32,11 +32,11 @@ public class MSetu extends BaseGroupModule {
 			File[] files = (new File(Autoreply.appDirectory + "setu/")).listFiles();
 			File folder = (File) Tools.ArrayTool.rfa(files);
 			File[] pics = folder.listFiles();
-			SJFExecutors.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(pics)))));
+		MessageDeleter.autoDelete(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(pics))));
 		} else if (msg.endsWith("色图")) {
 			File[] files = (new File(Autoreply.appDirectory + "setu/" + msg.replace("色图", ""))).listFiles();
 			if (files != null && files.length > 0) {
-				SJFExecutors.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files)))));
+				MessageDeleter.autoDelete(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files))));
 			}
 			return true;
 		}

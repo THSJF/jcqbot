@@ -1,5 +1,9 @@
 package com.meng.gameData.TouHou.zun;
 
+/**
+ * @author 司徒灵羽
+ */
+
 public class TH16GameData {
 	public static final String gameName="东方天空璋 ~ Hidden Star in Four Seasons.";
 	public static final String gameNameCN="东方天空璋";

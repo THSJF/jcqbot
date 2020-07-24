@@ -371,10 +371,10 @@ public class MAdminMsg extends BaseGroupModule {
 			}
 			switch (strings[2]) {
 				case "喵":
-					SJFExecutors.execute(new DeleteMessageRunnable(Autoreply.sendMessage(Long.parseLong(strings[1]), 0, Autoreply.instance.CC.record("miao.mp3"))));
+					MessageDeleter.autoDelete(Autoreply.sendMessage(Long.parseLong(strings[1]), 0, Autoreply.instance.CC.record("miao.mp3")));
 					break;
 				case "娇喘":
-					SJFExecutors.execute(new DeleteMessageRunnable(Autoreply.sendMessage(Long.parseLong(strings[1]), 0, Autoreply.instance.CC.record("mmm.mp3"))));
+					MessageDeleter.autoDelete(Autoreply.sendMessage(Long.parseLong(strings[1]), 0, Autoreply.instance.CC.record("mmm.mp3")));
 					break;
 				default:
 					Autoreply.sendMessage(Long.parseLong(strings[1]), 0, strings[2]);

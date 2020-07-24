@@ -24,7 +24,7 @@ public class MPicSearch extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if(!ConfigManager.getGroupConfig(fromGroup).isPicSearchEnable()){
+		if (!ConfigManager.getGroupConfig(fromGroup).isPicSearchEnable()) {
 			return false;
 		}
 		if (msg.equalsIgnoreCase("sp.help")) {
@@ -36,10 +36,10 @@ public class MPicSearch extends BaseGroupModule {
             sendMsg(0, fromQQ, "网站代号：\n0 H-Magazines\n2 H-Game CG\n3 DoujinshiDB\n5 pixiv Images\n8 Nico Nico Seiga\n9 Danbooru\n10 drawr Images\n11 Nijie Images\n12 Yande.re\n13 Openings.moe\n15 Shutterstock\n16 FAKKU\n18 H-Misc\n19 2D-Market\n20 MediBang\n21 Anime\n22 H-Anime\n23 Movies\n24 Shows\n25 Gelbooru\n26 Konachan\n27 Sankaku Channel\n28 Anime-Pictures.net\n29 e621.net\n30 Idol Complex\n31 bcy.net Illust\n32 bcy.net Cosplay\n33 PortalGraphics.net (Hist)\n34 deviantArt\n35 Pawoo.net\n36 Manga");
             return true;
         }
-		
+
 		CQImage cQImage = Autoreply.instance.CC.getCQImage(msg);
 		File imageFile=null;
-		
+
 		try {
 			imageFile = Autoreply.instance.fileTypeUtil.checkFormat(cQImage.download(Autoreply.appDirectory + "downloadImages/", cQImage.getMd5()));
 		} catch (IOException e) {
@@ -132,7 +132,7 @@ public class MPicSearch extends BaseGroupModule {
 				fInputStream = new FileInputStream(picF);
 				Connection.Response response = Jsoup.connect("https://saucenao.com/search.php?db=" + database).timeout(60000).data("file", "image.jpg", fInputStream).method(Connection.Method.POST).execute();
 				if (response.statusCode() != 200) {
-					SJFExecutors.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, "statusCode" + response.statusCode())));
+					MessageDeleter.autoDelete(Autoreply.sendMessage(fromGroup, fromQQ, "statusCode" + response.statusCode()));
 				}
 				mResults = new PicResults(Jsoup.parse(response.body()));
 			} catch (Exception e) {

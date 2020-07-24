@@ -4,6 +4,7 @@ import com.meng.*;
 import com.meng.SJFInterfaces.*;
 import com.meng.config.*;
 import java.util.*;
+import java.lang.reflect.*;
 
 /**
  * @author 司徒灵羽
@@ -52,7 +53,7 @@ public class SenctenceCollecet extends BaseGroupModule implements IPersistentDat
 	}
 
 	@Override
-	public Class<?> getDataClass() {
+	public Type getDataType() {
 		return SenBean.class;
 	}
 
@@ -63,9 +64,6 @@ public class SenctenceCollecet extends BaseGroupModule implements IPersistentDat
 
 	@Override
 	public void setDataBean(Object o) {
-		if (o.getClass() != getDataClass()) {
-			throw new RuntimeException("bean类型错误");
-		}
 		senb = (SenctenceCollecet.SenBean) o;
 	}
 }

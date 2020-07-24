@@ -7,11 +7,15 @@ public class SJFExecutors {
 	/**
 	 * @author 司徒灵羽
 	 */
-	
+
 	private static ScheduledThreadPoolExecutor scheduledExecutorService = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(32);
 	private static ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newCachedThreadPool();
 
 
+	public static void executeAfterTime(Runnable runnable, long delay, TimeUnit timeUnit) {
+		scheduledExecutorService.schedule(runnable, delay, timeUnit);
+	}
+	
 	public static void executeWithFixedDelay(Runnable runnable, long wait, long delay, TimeUnit time) {
 		scheduledExecutorService.scheduleWithFixedDelay(runnable, wait, delay, time);
 	}

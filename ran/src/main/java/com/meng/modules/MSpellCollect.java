@@ -2,23 +2,27 @@ package com.meng.modules;
 
 import com.google.gson.reflect.*;
 import com.meng.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.config.*;
 import com.meng.dice.*;
 import com.meng.gameData.TouHou.zun.*;
-import com.meng.SJFInterfaces.*;
+import com.meng.sjfmd.libs.*;
 import com.meng.tools.*;
 import java.io.*;
+import java.lang.reflect.*;
 import java.nio.charset.*;
 import java.util.*;
 import java.util.concurrent.*;
-import com.meng.sjfmd.libs.*;
 
-public class MSpellCollect extends BaseGroupModule {
+/**
+ * @author 司徒灵羽
+ */
+
+public class MSpellCollect extends BaseGroupModule implements IPersistentData {
 	public ConcurrentHashMap<Long,HashSet<String>> userSpellsMap=new ConcurrentHashMap<>();
 	public ConcurrentHashMap<Long,ArchievementBean> archiMap=new ConcurrentHashMap<>();
 	private HashSet<Long> todayCard=new HashSet<>();
 	private HashSet<Long> todaySign=new HashSet<>();
-	private File archiFile;
 	private File spellFile;
 	public ArrayList<Archievement> archList=new ArrayList<>();
 
@@ -29,10 +33,7 @@ public class MSpellCollect extends BaseGroupModule {
             saveConfig();
         }
         userSpellsMap = GSON.fromJson(FileTool.readString(Autoreply.appDirectory + "/properties/spells.json"), new TypeToken<ConcurrentHashMap<Long,HashSet<String>>>() {}.getType());
-		archiFile = new File(Autoreply.appDirectory + "/properties/archievement.json");
-        if (!archiFile.exists()) {
-            saveArchiConfig();
-        }
+		DataPersistenter.read(this);
         archiMap = GSON.fromJson(FileTool.readString(Autoreply.appDirectory + "/properties/archievement.json"), new TypeToken<ConcurrentHashMap<Long,ArchievementBean>>() {}.getType());
 		archList.add(new Archievement("恶魔领地", "收集东方红魔乡全部符卡", ArchievementBean.th6All, TH06GameData.spells.length, TH06GameData.spells));
 		archList.add(new Archievement("完美樱花", "收集东方妖妖梦全部符卡",  ArchievementBean.th7All, TH07GameData.spells.length, TH07GameData.spells));
@@ -108,32 +109,18 @@ public class MSpellCollect extends BaseGroupModule {
 		//郭敬明 七个一寸法师
 		// 轻工业( 
 
-		SJFExecutors.execute(new Runnable() {
-				@Override
-				public void run() {
-					backupData();
-				}
-			});
-		SJFExecutors.execute(new Runnable(){
+		SJFExecutors.executeAtFixedRate(new Runnable(){
 
 				@Override
 				public void run() {
-					while (true) {
-						Calendar c = Calendar.getInstance();
-						if (c.get(Calendar.MINUTE) == 0 && c.get(Calendar.HOUR_OF_DAY) == 0) {
-							todayCard.clear();
-							todaySign.clear();
-						}
-						try {
-							Thread.sleep(30000);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					}
+					todaySign.clear();
+					todayCard.clear();
 				}
-			});
+			}, TimeFormater.getNextDay(), 24 * 60 * 60 * 1000 , TimeUnit.MILLISECONDS);
 		return this;
 	}
+
+
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
@@ -467,28 +454,6 @@ public class MSpellCollect extends BaseGroupModule {
 		return false;
 	}
 
-	private void backupData() {
-        while (true) {
-            try {
-                Thread.sleep(86400000);
-                File backup1= new File(spellFile.getAbsolutePath() + ".bak" + System.currentTimeMillis());
-                FileOutputStream fos1 = new FileOutputStream(backup1);
-                OutputStreamWriter writer1 = new OutputStreamWriter(fos1, StandardCharsets.UTF_8);
-                writer1.write(GSON.toJson(userSpellsMap));
-                writer1.flush();
-                fos1.close();			
-				File ar=new File(archiFile.getAbsolutePath() + ".bak" + System.currentTimeMillis());
-				FileOutputStream fos = new FileOutputStream(ar);
-                OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-                writer.write(GSON.toJson(archiMap));
-                writer.flush();
-                fos.close();			
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
 	public void saveConfig() {
         try {
             FileOutputStream fos = new FileOutputStream(spellFile);
@@ -502,15 +467,26 @@ public class MSpellCollect extends BaseGroupModule {
     }
 
 	public void saveArchiConfig() {
-        try {
-            FileOutputStream fos = new FileOutputStream(archiFile);
-            OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-            writer.write(GSON.toJson(archiMap));
-            writer.flush();
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+		DataPersistenter.save(this);
     }
 
+	@Override
+	public String getPersistentName() {
+		return "/properties/archievement.json";
+	}
+
+	@Override
+	public Type getDataType() {
+		return new TypeToken<ArrayList<Archievement>>() {}.getType();
+	}
+
+	@Override
+	public Object getDataBean() {
+		return archList;
+	}
+
+	@Override
+	public void setDataBean(Object o) {
+		archList = (ArrayList) o;
+	}
 }

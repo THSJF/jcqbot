@@ -1,5 +1,9 @@
 package com.meng.gameData.TouHou.zun;
 
+/**
+ * @author 司徒灵羽
+ */
+
 public class TH08GameData {
 	public static final String gameName="东方永夜抄 ~ Imperishable Night.";
 	public static final String gameNameCN="东方永夜抄";

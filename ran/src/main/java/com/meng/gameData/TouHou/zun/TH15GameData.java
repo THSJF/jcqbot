@@ -1,5 +1,9 @@
 package com.meng.gameData.TouHou.zun;
 
+/**
+ * @author 司徒灵羽
+ */
+
 public class TH15GameData {
 	public static final String gameName="东方绀珠传 ~ Legacy of Lunatic Kingdom.";
 	public static final String gameNameCN="东方绀珠传";

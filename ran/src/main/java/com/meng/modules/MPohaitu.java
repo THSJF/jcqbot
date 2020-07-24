@@ -1,8 +1,8 @@
 package com.meng.modules;
 
 import com.meng.*;
-import com.meng.config.*;
 import com.meng.SJFInterfaces.*;
+import com.meng.config.*;
 import com.meng.tools.*;
 import com.sobte.cqp.jcq.entity.*;
 import java.io.*;
@@ -17,7 +17,7 @@ public class MPohaitu extends BaseGroupModule {
 
 	@Override
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
-		if(!ConfigManager.getGroupConfig(fromGroup).isPoHaiEnable()){
+		if (!ConfigManager.getGroupConfig(fromGroup).isPoHaiEnable()) {
 			return false;
 		}
 		if (msg.equals("迫害图")) {
@@ -44,7 +44,7 @@ public class MPohaitu extends BaseGroupModule {
 			}
 			File[] files = (new File(Autoreply.appDirectory + "pohai/" + msg.replace("迫害图", ""))).listFiles();
 			if (files != null && files.length > 0) {
-				SJFExecutors.execute(new DeleteMessageRunnable(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files)))));
+				MessageDeleter.autoDelete(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files))));
 				ModuleManager.getGroupModule(MUserCounter.class).incPohaitu(fromQQ);
 				ModuleManager.getGroupModule(MGroupCounter.class).incPohaitu(fromGroup);
 				ModuleManager.getGroupModule(MUserCounter.class).incPohaitu(Autoreply.CQ.getLoginQQ());
