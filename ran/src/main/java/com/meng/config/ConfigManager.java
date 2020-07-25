@@ -320,7 +320,7 @@ public class ConfigManager implements IPersistentData {
 
 	@Override
 	public String getPersistentName() {
-		return "configV3.json";
+		return "ncfg.json";
 	}
 
 	@Override

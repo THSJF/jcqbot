@@ -36,7 +36,6 @@ public class ModuleManager extends BaseModule implements IGroupMessage, IPrivate
 		load(SenctenceCollecet.class);
 		load(MessageRefuse.class);
 		load(MGroupCounterChart.class);
-		load(MGroupCounterChart.class);
 		load(MGroupCounter.class);
 		load(MUserCounter.class);
 		load(MTimeTip.class);
@@ -85,7 +84,7 @@ public class ModuleManager extends BaseModule implements IGroupMessage, IPrivate
 				m.invoke(o);
 			}
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 		if (o == null) {
 			Autoreply.sendMessage(Autoreply.yysGroup, 0, "加载失败:" + cls.getName());
@@ -131,6 +130,7 @@ public class ModuleManager extends BaseModule implements IGroupMessage, IPrivate
 			return true;
 		}
 		for (IGroupMessage m : groupModules) {
+			System.out.println(m.getClass().getName());
 			if (m.onGroupMessage(fromGroup, fromQQ, msg, msgId)) {
 				return true;
 			}

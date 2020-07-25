@@ -20,7 +20,7 @@ import org.jsoup.select.*;
 
 public class MPicSearch extends BaseGroupModule {
 
-    private ConcurrentHashMap<Long, Boolean> ready = new ConcurrentHashMap<>();
+    private HashSet<Long> ready = new HashSet<>();
 
 	@Override
 	public MPicSearch load() {
@@ -56,10 +56,10 @@ public class MPicSearch extends BaseGroupModule {
             }
             return true;
         } else if (imageFile == null && msg.equals("sp")) {
-            ready.put(fromQQ, true);
+            ready.add(fromQQ);
             sendMsg(fromGroup, fromQQ, "需要一张图片");
             return true;
-        } else if (imageFile != null && ready.keySet().contains(fromQQ)) {
+        } else if (imageFile != null && ready.contains(fromQQ)) {
             try {
                 sendMsg(fromGroup, fromQQ, "土豆折寿中……");
                 ModuleManager.getGroupModule(MUserCounter.class).incSearchPicture(fromQQ);

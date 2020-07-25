@@ -65,13 +65,13 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 		createdImageFolder = Autoreply.appDirectory + "createdImages/";
         // 返回如：D:\CoolQ\app\com.sobte.cqp.jcq\app\com.example.demo\
         System.out.println("开始加载");
+		long startTime = System.currentTimeMillis();
+		ConfigManager.init();
 		ModuleManager.instance = new ModuleManager();
 		ModuleManager.instance.load();
-		sender = (MessageSender) ModuleManager.getModule(MessageSender.class);
+		sender = new MessageSender();
 		sender.setCQ(CQ);
 		cookieManager = new CookieManager();
-        long startTime = System.currentTimeMillis();
-
         zanManager = new ZanManager();
         liveListener = new LiveListener();
         updateListener = new UpdateListener();
@@ -95,7 +95,6 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 		danmakuListenerManager = new DanmakuListenerManager();
         new CleanRunnable();
 		SJFExecutors.execute(new BirthdayTip());
-		ConfigManager.init();
 		System.out.println("加载完成,用时" + (System.currentTimeMillis() - startTime));
         return 0;
     }

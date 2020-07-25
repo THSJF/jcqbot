@@ -1,47 +1,34 @@
 package com.meng.modules;
 
-import com.google.gson.*;
 import com.google.gson.reflect.*;
 import com.meng.*;
 import com.meng.SJFInterfaces.*;
 import com.meng.config.*;
-import com.meng.sjfmd.libs.*;
 import com.meng.tools.*;
 import java.awt.*;
 import java.io.*;
-import java.nio.charset.*;
+import java.lang.reflect.*;
 import java.text.*;
 import java.util.*;
+import java.util.concurrent.*;
 import org.jfree.chart.*;
 import org.jfree.chart.axis.*;
 import org.jfree.chart.plot.*;
 import org.jfree.data.time.*;   
 
-public class MGroupCounterChart extends BaseGroupModule {
+public class MGroupCounterChart extends BaseGroupModule implements IPersistentData {
+
 	public HashMap<Long,GroupSpeak> groupsMap = new HashMap<>(32);
-	private File historyFile;
 
 	@Override
 	public MGroupCounterChart load() {
-		historyFile = new File(Autoreply.appDirectory + "properties\\GroupCount2.json");
-        if (!historyFile.exists()) {
-            try {
-                FileOutputStream fos = new FileOutputStream(historyFile);
-                OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-                writer.write(new Gson().toJson(groupsMap));
-                writer.flush();
-                fos.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        groupsMap = GSON.fromJson(FileTool.readString(historyFile), new TypeToken<HashMap<Long, GroupSpeak>>() {}.getType());
-		SJFExecutors.execute(new Runnable() {
+		DataPersistenter.read(this);
+		SJFExecutors.executeAtFixedRate(new Runnable() {
 				@Override
 				public void run() {
 					saveData();
 				}
-			});
+			}, 0, 1, TimeUnit.MINUTES);
 		return this;
 	}
 	public class GroupSpeak {
@@ -168,18 +155,27 @@ public class MGroupCounterChart extends BaseGroupModule {
 	}
 
 	private void saveData() {
-        while (true) {
-            try {
-                Thread.sleep(60000);
-                FileOutputStream fos = new FileOutputStream(historyFile);
-                OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-                writer.write(new Gson().toJson(groupsMap));
-                writer.flush();
-                fos.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        DataPersistenter.save(this);
     }
+
+	@Override
+	public String getPersistentName() {
+		return "properties\\GroupCount2.json";
+	}
+
+	@Override
+	public Type getDataType() {
+		return new TypeToken<HashMap<Long, GroupSpeak>>() {}.getType();
+	}
+
+	@Override
+	public Object getDataBean() {
+		return groupsMap;
+	}
+
+	@Override
+	public void setDataBean(Object o) {
+		groupsMap = (HashMap) o;
+	}
 }
 

@@ -477,16 +477,16 @@ public class MSpellCollect extends BaseGroupModule implements IPersistentData {
 
 	@Override
 	public Type getDataType() {
-		return new TypeToken<ArrayList<Archievement>>() {}.getType();
+		return new TypeToken<ConcurrentHashMap<Long,ArchievementBean>>() {}.getType();
 	}
 
 	@Override
 	public Object getDataBean() {
-		return archList;
+		return archiMap;
 	}
 
 	@Override
 	public void setDataBean(Object o) {
-		archList = (ArrayList) o;
+		archiMap = (ConcurrentHashMap) o;
 	}
 }
