@@ -28,7 +28,7 @@ public class MGroupCounterChart extends BaseGroupModule implements IPersistentDa
 				public void run() {
 					saveData();
 				}
-			}, 0, 1, TimeUnit.MINUTES);
+			}, 1, 1, TimeUnit.MINUTES);
 		return this;
 	}
 	public class GroupSpeak {
@@ -41,7 +41,7 @@ public class MGroupCounterChart extends BaseGroupModule implements IPersistentDa
 		if (!ConfigManager.getGroupConfig(fromGroup).isGroupCountChartEnable()) {
 			return false;
 		}
-		GroupSpeak gs=groupsMap.get(fromGroup);
+		GroupSpeak gs = groupsMap.get(fromGroup);
 		if (gs == null) {
 			gs = new GroupSpeak();
 			groupsMap.put(fromGroup, gs);

@@ -17,20 +17,15 @@ public class MessageRefuse extends BaseGroupModule {
 
 	@Override
 	public MessageRefuse load() {
-		SJFExecutors.execute(new Runnable(){
+		SJFExecutors.executeAtFixedRate(new Runnable(){
 
 				@Override
 				public void run() {
-					while (true) {
-						for (FireWallBean mb : msgMap.values()) {
-							mb.lastSeconedMsgs = 0;
-						}
-						try {
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {}
+					for (FireWallBean mb : msgMap.values()) {
+						mb.lastSeconedMsgs = 0;
 					}
 				}
-			});
+			}, 1, 1, TimeUnit.SECONDS);
 		return this;
 	}
 

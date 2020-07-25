@@ -42,7 +42,7 @@ public class MGroupCounter extends BaseGroupModule implements IPersistentData {
 				public void run() {
 					saveData();
 				}
-			}, 0, 1, TimeUnit.MINUTES);
+			}, 1, 1, TimeUnit.MINUTES);
 		return this;
     }
 
