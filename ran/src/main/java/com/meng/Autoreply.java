@@ -13,7 +13,6 @@ import com.sobte.cqp.jcq.entity.*;
 import com.sobte.cqp.jcq.event.*;
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.*;
 
 /**
  * @author 司徒灵羽
@@ -30,7 +29,6 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 	public ZanManager zanManager;
     public UpdateListener updateListener;
     public LiveListener liveListener;
-	public FileTypeUtil fileTypeUtil = new FileTypeUtil();
 	public CookieManager cookieManager;
 	public DanmakuListenerManager danmakuListenerManager;
 	public RitsukageServer connectServer;
@@ -398,7 +396,7 @@ public class Autoreply extends JcqAppAbstract implements ICQVer, IMsg, IRequest 
 					break;
 				case "imageFolder":
 					File[] files = (new File(appDirectory + stri[1])).listFiles();
-                    value = instance.sender.sendGroup(toGroup, stri[2].replace("--image--", instance.CC.image((File) Tools.ArrayTool.rfa(files))));
+                    value = instance.sender.sendGroup(toGroup, stri[2].replace("--image--", instance.CC.image(Tools.ArrayTool.rfa(files))));
 					break;
 				default:
 					value = instance.sender.sendGroup(toGroup, msg);

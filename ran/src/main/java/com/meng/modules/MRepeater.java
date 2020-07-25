@@ -1,17 +1,13 @@
 package com.meng.modules;
 
-import com.madgag.gif.fmsware.*;
 import com.meng.*;
-import com.meng.config.*;
-import com.meng.config.javabeans.*;
 import com.meng.SJFInterfaces.*;
-import com.meng.tools.*;
-import java.awt.*;
-import java.awt.image.*;
-import java.io.*;
+import com.meng.config.*;
 import java.util.*;
-import javax.imageio.*;
 
+/**
+ * @author 司徒灵羽
+ */
 
 public class MRepeater extends BaseGroupModule {
 
@@ -27,7 +23,7 @@ public class MRepeater extends BaseGroupModule {
 		if (!ConfigManager.getGroupConfig(fromGroup).isRepeaterEnable()) {
 			return false;
 		}
-		Repeater rp=repeaters.get(fromGroup);
+		Repeater rp = repeaters.get(fromGroup);
 		if (rp == null) {
 			rp = new Repeater(fromGroup);
 			repeaters.put(fromGroup, rp);

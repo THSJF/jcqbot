@@ -98,7 +98,7 @@ public class MTimeTip extends BaseGroupModule implements Runnable {
 	public boolean onGroupMessage(long fromGroup, long fromQQ, String msg, int msgId) {
 		if (!tipedYYS && fromGroup == groupYuTang && fromQQ == YYS) {
             String[] strings = new String[]{"想吃YYS", "想食YYS", "想上YYS", Autoreply.instance.CC.at(1418780411L) + "老婆"};
-            Autoreply.sendMessage(groupYuTang, 0, (String) Tools.ArrayTool.rfa(strings));
+            Autoreply.sendMessage(groupYuTang, 0, Tools.ArrayTool.rfa(strings));
             tipedYYS = true;
             return true;
         }

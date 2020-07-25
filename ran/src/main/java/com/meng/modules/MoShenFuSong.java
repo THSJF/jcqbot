@@ -1,8 +1,8 @@
 package com.meng.modules;
 
 import com.meng.*;
-import com.meng.config.*;
 import com.meng.SJFInterfaces.*;
+import com.meng.config.*;
 import com.meng.tools.*;
 import java.io.*;
 import java.util.*;
@@ -77,44 +77,44 @@ public class MoShenFuSong extends BaseGroupModule {
 			switch (flag) {
 				case 0:
 					for (int i = 0; i < 4; ++i) {
-						Autoreply.CQ.sendGroupMsg(fromGroup, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files)));
+						Autoreply.CQ.sendGroupMsg(fromGroup, Autoreply.instance.CC.image(Tools.ArrayTool.rfa(files)));
 						sleeps(2000);
 					}
 					break;
 				case 1:
 					for (int i = 0; i < 5; ++i) {
-						Autoreply.CQ.sendGroupMsg(fromGroup, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files)));
+						Autoreply.CQ.sendGroupMsg(fromGroup, Autoreply.instance.CC.image(Tools.ArrayTool.rfa(files)));
 						sleeps(1000);
 					}
 					break;
 				case 2:
 					for (int i = 0; i < 6; ++i) {
-						Autoreply.CQ.sendGroupMsg(fromGroup, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files)));
+						Autoreply.CQ.sendGroupMsg(fromGroup, Autoreply.instance.CC.image(Tools.ArrayTool.rfa(files)));
 						sleeps(500);
 					}
 					break;
 				case 3:
 					for (int i = 0; i < 8; ++i) {
-						Autoreply.CQ.sendGroupMsg(fromGroup, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files)));
+						Autoreply.CQ.sendGroupMsg(fromGroup, Autoreply.instance.CC.image(Tools.ArrayTool.rfa(files)));
 						sleeps(100);
 					}
 					break;
 				case 4:
 					for (int i = 0; i < 24; ++i) {
-						Autoreply.CQ.sendGroupMsg(fromGroup, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files)));
+						Autoreply.CQ.sendGroupMsg(fromGroup, Autoreply.instance.CC.image(Tools.ArrayTool.rfa(files)));
 						sleeps(100);
 					}
 					break;
 				case 5:
 					if (ConfigManager.isMaster(fromQQ)) {
 						for (int i = 0; i < 68; ++i) {
-							Autoreply.CQ.sendGroupMsg(fromGroup, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files)));
+							Autoreply.CQ.sendGroupMsg(fromGroup, Autoreply.instance.CC.image(Tools.ArrayTool.rfa(files)));
 						}
 					}
 					break;
 				case 6:
 					for (int i = 0; i < 5; ++i) {
-						Autoreply.CQ.sendGroupMsg(fromGroup, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(filesFFF)));
+						Autoreply.CQ.sendGroupMsg(fromGroup, Autoreply.instance.CC.image(Tools.ArrayTool.rfa(filesFFF)));
 					}
 					break;
 			}

@@ -4,19 +4,23 @@ import java.io.*;
 import java.util.*;
 
 public class FileTypeUtil {
-    private Map<String, String> fileTypeMap = new HashMap<String, String>();
+    private static Map<String, String> fileTypeMap = new HashMap<String, String>();
 
-    public FileTypeUtil() {
-        fileTypeMap.put("ffd8ffe000104a464946", "jpg"); //JPEG (jpg)
+	static{
+		fileTypeMap.put("ffd8ffe000104a464946", "jpg"); //JPEG (jpg)
         fileTypeMap.put("89504e470d0a1a0a0000", "png"); //PNG (png)
         fileTypeMap.put("47494638396126026f01", "gif"); //GIF (gif)
         fileTypeMap.put("49492a00227105008037", "tif"); //TIFF (tif)
         fileTypeMap.put("424d228c010000000000", "bmp"); //16色位图(bmp)
         fileTypeMap.put("424d8240090000000000", "bmp"); //24位位图(bmp)
         fileTypeMap.put("424d8e1b030000000000", "bmp"); //256色位图(bmp)
-    }
+	}
+	
+    private FileTypeUtil() {
+		
+	}
 
-    private String bytesToHexString(byte[] src) {
+    private static String bytesToHexString(byte[] src) {
         StringBuilder stringBuilder = new StringBuilder();
         if (null == src || src.length <= 0) {
             return null;
@@ -33,7 +37,7 @@ public class FileTypeUtil {
         return stringBuilder.toString();
     }
 
-    public String getFileType(File file) {
+    public static String getFileType(File file) {
         String res = "";
         FileInputStream fis = null;
         try {
@@ -60,7 +64,7 @@ public class FileTypeUtil {
         return res;
     }
 
-    public File checkFormat(File file) {
+    public static File checkFormat(File file) {
         File ret;
         String type = getFileType(file);
         String fullName = file.getName();

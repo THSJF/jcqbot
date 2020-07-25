@@ -1,6 +1,6 @@
 package com.meng.tools.override;
 
-import com.meng.*;
+import com.meng.tools.*;
 import com.sobte.cqp.jcq.entity.*;
 import com.sobte.cqp.jcq.message.*;
 import com.sobte.cqp.jcq.util.*;
@@ -25,7 +25,7 @@ public class CQCodeCC extends CQCode {
         try {
             image = new CQImage(path, false);
             path = image.download("data/image/", image.getMd5());
-            path = Autoreply.instance.fileTypeUtil.checkFormat(path);
+            path = FileTypeUtil.checkFormat(path);
             path.deleteOnExit();
         } catch (IOException e) {
             e.printStackTrace();

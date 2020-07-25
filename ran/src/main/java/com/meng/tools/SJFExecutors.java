@@ -11,7 +11,6 @@ public class SJFExecutors {
 	private static ScheduledThreadPoolExecutor scheduledExecutorService = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(32);
 	private static ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newCachedThreadPool();
 
-
 	public static void executeAfterTime(Runnable runnable, long delay, TimeUnit timeUnit) {
 		scheduledExecutorService.schedule(runnable, delay, timeUnit);
 	}

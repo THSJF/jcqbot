@@ -33,7 +33,7 @@ public class MBarcode extends BaseGroupModule {
             for (int i = 0, imagesSize = images.size(); i < imagesSize; i++) {
 				CQImage image = images.get(i);
                 try {
-                    imgs[i] = Autoreply.instance.fileTypeUtil.checkFormat(image.download(Autoreply.appDirectory + "downloadImages/", image.getMd5()));
+                    imgs[i] = FileTypeUtil.checkFormat(image.download(Autoreply.appDirectory + "downloadImages/", image.getMd5()));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

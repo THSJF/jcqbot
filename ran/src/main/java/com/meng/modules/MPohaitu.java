@@ -44,7 +44,7 @@ public class MPohaitu extends BaseGroupModule {
 			}
 			File[] files = (new File(Autoreply.appDirectory + "pohai/" + msg.replace("迫害图", ""))).listFiles();
 			if (files != null && files.length > 0) {
-				MessageDeleter.autoDelete(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files))));
+				MessageDeleter.autoDelete(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image(Tools.ArrayTool.rfa(files))));
 				ModuleManager.getGroupModule(MUserCounter.class).incPohaitu(fromQQ);
 				ModuleManager.getGroupModule(MGroupCounter.class).incPohaitu(fromGroup);
 				ModuleManager.getGroupModule(MUserCounter.class).incPohaitu(Autoreply.CQ.getLoginQQ());
@@ -72,7 +72,7 @@ public class MPohaitu extends BaseGroupModule {
 			List<CQImage> imgList = Autoreply.instance.CC.getCQImages(msg);
 			for (CQImage cqImage : imgList) {
 				try {
-					Autoreply.instance.fileTypeUtil.checkFormat(cqImage.download(Autoreply.appDirectory + File.separator + "pohai/" + pohaituName, cqImage.getMd5()));
+					FileTypeUtil.checkFormat(cqImage.download(Autoreply.appDirectory + File.separator + "pohai/" + pohaituName, cqImage.getMd5()));
 				} catch (IOException e) {
 					e.printStackTrace();
 					Autoreply.sendMessage(fromGroup, fromQQ, e.toString());

@@ -1,13 +1,12 @@
 package com.meng.modules;
 
 import com.meng.*;
+import com.meng.SJFInterfaces.*;
 import com.meng.config.*;
 import com.meng.gameData.TouHou.zun.*;
-import com.meng.SJFInterfaces.*;
-import com.meng.tools.*;
-import java.io.*;
-import java.util.*;
 import com.meng.sjfmd.libs.*;
+import com.meng.tools.*;
+import java.util.*;
 
 public class MDiceImitate extends BaseGroupModule {
 	public static String[] spells;
@@ -186,7 +185,7 @@ public class MDiceImitate extends BaseGroupModule {
                     case "diff":
                     case "difficult":
                     case "难度":
-                        Autoreply.sendMessage(fromGroup, 0, (String) Tools.ArrayTool.rfa(plDiff));
+                        Autoreply.sendMessage(fromGroup, 0, Tools.ArrayTool.rfa(plDiff));
                         break;
                     case "stage":
                     case "关卡":
@@ -384,70 +383,70 @@ public class MDiceImitate extends BaseGroupModule {
             case "东方灵异传":
             case "th1":
             case "th01":
-                Autoreply.sendMessage(fromGroup, 0, (String) Tools.ArrayTool.rfa(pl01));
+                Autoreply.sendMessage(fromGroup, 0, Tools.ArrayTool.rfa(pl01));
                 break;
             case "东方封魔录":
             case "th2":
             case "th02":
-                Autoreply.sendMessage(fromGroup, 0, (String) Tools.ArrayTool.rfa(pl02));
+                Autoreply.sendMessage(fromGroup, 0, Tools.ArrayTool.rfa(pl02));
                 break;
             case "东方梦时空":
             case "th3":
             case "th03":
-                Autoreply.sendMessage(fromGroup, 0, (String) Tools.ArrayTool.rfa(pl03));
+                Autoreply.sendMessage(fromGroup, 0, Tools.ArrayTool.rfa(pl03));
                 break;
             case "东方幻想乡":
             case "th4":
             case "th04":
-                Autoreply.sendMessage(fromGroup, 0, (String) Tools.ArrayTool.rfa(pl04));
+                Autoreply.sendMessage(fromGroup, 0, Tools.ArrayTool.rfa(pl04));
                 break;
             case "东方怪绮谈":
             case "th5":
             case "th05":
-                Autoreply.sendMessage(fromGroup, 0, (String) Tools.ArrayTool.rfa(pl05));
+                Autoreply.sendMessage(fromGroup, 0, Tools.ArrayTool.rfa(pl05));
                 break;
             case "东方红魔乡":
             case "th6":
             case "th06":
             case "tEoSD":
-                Autoreply.sendMessage(fromGroup, 0, (String) Tools.ArrayTool.rfa(TH06GameData.players));
+                Autoreply.sendMessage(fromGroup, 0, Tools.ArrayTool.rfa(TH06GameData.players));
                 break;
             case "东方妖妖梦":
             case "th7":
             case "th07":
             case "PCB":
-                Autoreply.sendMessage(fromGroup, 0, (String) Tools.ArrayTool.rfa(TH07GameData.players));
+                Autoreply.sendMessage(fromGroup, 0, Tools.ArrayTool.rfa(TH07GameData.players));
                 break;
             case "东方永夜抄":
             case "th8":
             case "th08":
             case "IN":
-                Autoreply.sendMessage(fromGroup, 0, (String) Tools.ArrayTool.rfa(TH08GameData.players));
+                Autoreply.sendMessage(fromGroup, 0, Tools.ArrayTool.rfa(TH08GameData.players));
                 break;
             case "东方花映冢":
             case "th9":
             case "th09":
             case "PoFV":
-                Autoreply.sendMessage(fromGroup, 0, (String) Tools.ArrayTool.rfa(pl09));
+                Autoreply.sendMessage(fromGroup, 0, Tools.ArrayTool.rfa(pl09));
                 break;
             case "东方风神录":
             case "th10":
             case "MoF":
-                Autoreply.sendMessage(fromGroup, 0, (String) Tools.ArrayTool.rfa(TH10GameData.players));
+                Autoreply.sendMessage(fromGroup, 0, Tools.ArrayTool.rfa(TH10GameData.players));
                 break;
             case "东方地灵殿":
             case "th11":
-                Autoreply.sendMessage(fromGroup, 0, (String) Tools.ArrayTool.rfa(TH11GameData.players));
+                Autoreply.sendMessage(fromGroup, 0, Tools.ArrayTool.rfa(TH11GameData.players));
                 break;
             case "东方星莲船":
             case "th12":
             case "UFO":
-                Autoreply.sendMessage(fromGroup, 0, (String) Tools.ArrayTool.rfa(TH12GameData.players));
+                Autoreply.sendMessage(fromGroup, 0, Tools.ArrayTool.rfa(TH12GameData.players));
                 break;
             case "东方神灵庙":
             case "th13":
             case "TD":
-                Autoreply.sendMessage(fromGroup, 0, (String) Tools.ArrayTool.rfa(TH13GameData.players));
+                Autoreply.sendMessage(fromGroup, 0, Tools.ArrayTool.rfa(TH13GameData.players));
                 break;
             case "东方辉针城":
             case "th14":
@@ -457,7 +456,7 @@ public class MDiceImitate extends BaseGroupModule {
             case "东方绀珠传":
             case "th15":
             case "LoLK":
-                Autoreply.sendMessage(fromGroup, 0, (String) Tools.ArrayTool.rfa(TH15GameData.players));
+                Autoreply.sendMessage(fromGroup, 0, Tools.ArrayTool.rfa(TH15GameData.players));
                 break;
             case "东方天空璋":
             case "th16":

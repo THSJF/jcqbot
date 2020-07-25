@@ -8,14 +8,19 @@ import com.meng.config.*;
 import com.meng.sjfmd.libs.*;
 import com.meng.tools.*;
 import java.io.*;
-import java.nio.charset.*;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.Map.*;
+import java.util.concurrent.*;
 
-public class MGroupCounter extends BaseGroupModule {
+/**
+ * @author 司徒灵羽
+ */
+ 
+public class MGroupCounter extends BaseGroupModule implements IPersistentData {
+
     private HashMap<String, GroupInfo> countMap = new HashMap<>();
-    private File file;
-
+	
     public class GroupInfo {
         public int speak = 0;
         public int pic = 0;
@@ -31,31 +36,13 @@ public class MGroupCounter extends BaseGroupModule {
 
 	@Override
 	public MGroupCounter load() {
-		file = new File(Autoreply.appDirectory + "properties\\GroupCount.json");
-        if (!file.exists()) {
-            try {
-                FileOutputStream fos = new FileOutputStream(file);
-                OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-                writer.write(new Gson().toJson(countMap));
-                writer.flush();
-                fos.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        countMap = new Gson().fromJson(FileTool.readString(file), new TypeToken<HashMap<String, GroupInfo>>() { }.getType());
-        SJFExecutors.execute(new Runnable() {
+		DataPersistenter.read(this);
+		SJFExecutors.executeAtFixedRate(new Runnable() {
 				@Override
 				public void run() {
 					saveData();
 				}
-			});
-        SJFExecutors.execute(new Runnable() {
-				@Override
-				public void run() {
-					backupData();
-				}
-			});
+			}, 0, 1, TimeUnit.MINUTES);
 		return this;
     }
 
@@ -277,33 +264,27 @@ public class MGroupCounter extends BaseGroupModule {
     }
 
     private void saveData() {
-        while (true) {
-            try {
-                Thread.sleep(60000);
-                FileOutputStream fos = new FileOutputStream(file);
-                OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-                writer.write(new Gson().toJson(countMap));
-                writer.flush();
-                fos.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        DataPersistenter.save(this);
     }
 
-    private void backupData() {
-        while (true) {
-            try {
-                Thread.sleep(86400000);
-                File backup = new File(file.getAbsolutePath() + ".bak" + System.currentTimeMillis());
-                FileOutputStream fos = new FileOutputStream(backup);
-                OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-                writer.write(new Gson().toJson(countMap));
-                writer.flush();
-                fos.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
+	@Override
+	public String getPersistentName() {
+		return "properties\\GroupCount.json";
+	}
+
+	@Override
+	public Type getDataType() {
+		return new TypeToken<HashMap<String, GroupInfo>>() {}.getType();
+	}
+
+	@Override
+	public Object getDataBean() {
+		return countMap;
+	}
+
+	@Override
+	public void setDataBean(Object o) {
+		countMap = (HashMap) o;
+	}
+
 }

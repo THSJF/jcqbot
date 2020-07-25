@@ -249,7 +249,7 @@ public class Tools {
 			}
 			return finalArray;
 		}
-		public static Object rfa(Object[] array) {
+		public static <T> T rfa(T[] array) {
 			return array[Autoreply.instance.random.nextInt(array.length)];
 		}
 	}

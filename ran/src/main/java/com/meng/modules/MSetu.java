@@ -1,4 +1,5 @@
 package com.meng.modules;
+
 import com.meng.*;
 import com.meng.config.*;
 import com.meng.SJFInterfaces.*;
@@ -6,6 +7,10 @@ import com.meng.tools.*;
 import com.sobte.cqp.jcq.entity.*;
 import java.io.*;
 import java.util.*;
+
+/**
+ * @author 司徒灵羽
+ */
 
 public class MSetu extends BaseGroupModule {
 
@@ -30,13 +35,13 @@ public class MSetu extends BaseGroupModule {
 			return true;
 		} else if (msg.equals("随机色图")) {
 			File[] files = (new File(Autoreply.appDirectory + "setu/")).listFiles();
-			File folder = (File) Tools.ArrayTool.rfa(files);
+			File folder = (File)Tools.ArrayTool.rfa(files);
 			File[] pics = folder.listFiles();
-		MessageDeleter.autoDelete(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(pics))));
+			MessageDeleter.autoDelete(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image(Tools.ArrayTool.rfa(pics))));
 		} else if (msg.endsWith("色图")) {
 			File[] files = (new File(Autoreply.appDirectory + "setu/" + msg.replace("色图", ""))).listFiles();
 			if (files != null && files.length > 0) {
-				MessageDeleter.autoDelete(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files))));
+				MessageDeleter.autoDelete(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image(Tools.ArrayTool.rfa(files))));
 			}
 			return true;
 		}
@@ -48,7 +53,7 @@ public class MSetu extends BaseGroupModule {
 			List<CQImage> imgList = Autoreply.instance.CC.getCQImages(msg);
 			for (CQImage cqImage : imgList) {
 				try {
-					Autoreply.instance.fileTypeUtil.checkFormat(cqImage.download(Autoreply.appDirectory + File.separator + "setu/" + setuName, cqImage.getMd5()));
+					FileTypeUtil.checkFormat(cqImage.download(Autoreply.appDirectory + File.separator + "setu/" + setuName, cqImage.getMd5()));
 				} catch (IOException e) {
 					e.printStackTrace();
 					Autoreply.sendMessage(fromGroup, fromQQ, e.toString());

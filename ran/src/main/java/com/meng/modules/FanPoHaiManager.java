@@ -61,7 +61,7 @@ public class FanPoHaiManager extends BaseGroupModule {
 				for (int i = 0, imagesSize = images.size(); i < imagesSize; i++) {
 					CQImage image = images.get(i);
 					try {
-						imgs[i] = Autoreply.instance.fileTypeUtil.checkFormat(image.download(Autoreply.appDirectory + "downloadImages/", image.getMd5()));
+						imgs[i] = FileTypeUtil.checkFormat(image.download(Autoreply.appDirectory + "downloadImages/", image.getMd5()));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -116,7 +116,7 @@ public class FanPoHaiManager extends BaseGroupModule {
                 } else {
                     File[] files = file.listFiles();
                     if (files != null) {
-                        Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files)));
+                        Autoreply.sendMessage(fromGroup, 0, Autoreply.instance.CC.image(Tools.ArrayTool.rfa(files)));
                         ModuleManager.getGroupModule(MUserCounter.class).incPohaitu(Autoreply.CQ.getLoginQQ());
                         ModuleManager.getGroupModule(MGroupCounter.class).incPohaitu(fromGroup);
                     }

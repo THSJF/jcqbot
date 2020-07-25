@@ -24,12 +24,12 @@ public class MNvzhuang extends BaseGroupModule {
 			File[] files = (new File(Autoreply.appDirectory + "nvzhuang/")).listFiles();
 			File folder = (File) Tools.ArrayTool.rfa(files);
 			File[] pics = folder.listFiles();
-			MessageDeleter.autoDelete(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(pics))));
+			MessageDeleter.autoDelete(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image(Tools.ArrayTool.rfa(pics))));
 			return true;
 		} else if (msg.endsWith("女装")) {
 			File[] files = (new File(Autoreply.appDirectory + "nvzhuang/" + msg.replace("女装", ""))).listFiles();
 			if (files != null && files.length > 0) {
-				MessageDeleter.autoDelete(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image((File) Tools.ArrayTool.rfa(files))));
+				MessageDeleter.autoDelete(Autoreply.sendMessage(fromGroup, fromQQ, Autoreply.instance.CC.image(Tools.ArrayTool.rfa(files))));
 			}
 			return true;
 		}
@@ -41,7 +41,7 @@ public class MNvzhuang extends BaseGroupModule {
 			List<CQImage> imgList = Autoreply.instance.CC.getCQImages(msg);
 			for (CQImage cqImage : imgList) {
 				try {
-					Autoreply.instance.fileTypeUtil.checkFormat(cqImage.download(Autoreply.appDirectory + File.separator + "nvzhuang/" + setuName, cqImage.getMd5()));
+					FileTypeUtil.checkFormat(cqImage.download(Autoreply.appDirectory + File.separator + "nvzhuang/" + setuName, cqImage.getMd5()));
 				} catch (IOException e) {
 					e.printStackTrace();
 					Autoreply.sendMessage(fromGroup, fromQQ, e.toString());

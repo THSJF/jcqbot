@@ -44,7 +44,7 @@ public class MOcr extends BaseGroupModule {
 		JSONObject response;
         try {
 			CQImage cQImage = Autoreply.instance.CC.getCQImage(msg);
-			File imgf=Autoreply.instance.fileTypeUtil.checkFormat(cQImage.download(Autoreply.appDirectory + "downloadImages/", cQImage.getMd5()));
+			File imgf = FileTypeUtil.checkFormat(cQImage.download(Autoreply.appDirectory + "downloadImages/", cQImage.getMd5()));
             if (imgf != null) {
                 response = faceYoutu.GeneralOcr(imgf.getAbsolutePath());
             } else {
